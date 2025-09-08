@@ -13,7 +13,7 @@
         },
         {
             "type": "Label",
-            "caption": "TIP-Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
+            "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
         },
         {
             "type": "ExpansionPanel",
@@ -30,18 +30,23 @@
                         },
                         {
                             "type": "PasswordTextBox",
+                            "caption": "Password",
+                            "enabled": true,
                             "name": "Password",
-                            "caption": "Password:",
-                            "width": "300px"
-                        },
-                        {
-                            "type": "ValidationTextBox",
-                            "name": "IP",
-                            "caption": "Device IP (local, e.g. 192.168.1.101):",
+                            "onChange": "",
+                            "validate": "",
+                            "value": "",
+                            "visible": true,
                             "width": "300px"
                         }
                     ]
-                }
+                },
+                {
+                    "type": "ValidationTextBox",
+                    "name": "IP",
+                    "caption": "Device IP (local, e.g. 192.168.1.101):",
+                    "width": "300px"
+                },
             ]
         },
 
@@ -86,16 +91,6 @@
                     "type": "CheckBox",
                     "name": "Enable XYZ",
                     "caption": "Automatically do something!"
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "Label",
-                            "caption": " ",
-                            "width": "40px"
-                        }
-                    ]
                 }
             ]
         }
