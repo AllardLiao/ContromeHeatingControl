@@ -1,0 +1,9 @@
+# Node / NPM
+node_modules/
+npm-debug.log
+
+# VSCode
+.vscode/
+
+# PHP / Logs
+*.log
