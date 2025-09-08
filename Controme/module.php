@@ -9,6 +9,9 @@ class ContromeHeatingControl extends IPSModule
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
+        
+        // Timer für zyklische Abfrage (alle 5 Minuten)
+        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, "CON_UpdateData(\$id);");
     }
 
     public function ApplyChanges()
@@ -26,8 +29,6 @@ class ContromeHeatingControl extends IPSModule
             IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
         }
 
-        // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, "CON_UpdateData(\$id);");
     }
 
     // Button-Action oder Timer-Action
