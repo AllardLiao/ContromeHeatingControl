@@ -46,7 +46,7 @@
                     "name": "IP",
                     "caption": "Device IP (local, e.g. 192.168.1.101):",
                     "width": "300px"
-                },
+                }
             ]
         },
 
