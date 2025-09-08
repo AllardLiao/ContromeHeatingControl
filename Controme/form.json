@@ -24,7 +24,7 @@
                     "items": [
                         {
                             "type": "ValidationTextBox",
-                            "name": "Username",
+                            "name": "User",
                             "caption": "Username (Super-Admin in der Controme App):",
                             "width": "300px"
                         },
@@ -43,7 +43,7 @@
                 },
                 {
                     "type": "ValidationTextBox",
-                    "name": "IP",
+                    "name": "IPAddress",
                     "caption": "Device IP (local, e.g. 192.168.1.101):",
                     "width": "300px"
                 }
