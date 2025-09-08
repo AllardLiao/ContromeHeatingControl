@@ -13,7 +13,7 @@
         },
         {
             "type": "Label",
-            "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. <br>Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
+            "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
         },
         {
             "type": "ExpansionPanel",
@@ -25,7 +25,7 @@
                         {
                             "type": "ValidationTextBox",
                             "name": "User",
-                            "caption": "Username (Super-Admin in der Controme App):",
+                            "caption": "Username (Super-Admin in der Controme App)",
                             "width": "300px"
                         },
                         {
@@ -107,7 +107,7 @@
                         {
                             "type": "Button",
                             "caption": "Update data",
-                            "onClick": "IPS_RequestAction($id,'Restart',true);",
+                            "onClick": "IPS_RequestAction($id,'UpdateData',true);",
                             "enabled": true
                         }
                     ]

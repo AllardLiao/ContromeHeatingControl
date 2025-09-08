@@ -9,9 +9,9 @@ class ContromeHeatingControl extends IPSModule
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
-        
+
         // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, "CON_UpdateData(\$id);");
+        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData");');
     }
 
     public function ApplyChanges()
@@ -28,7 +28,22 @@ class ContromeHeatingControl extends IPSModule
             IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
             IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
         }
+    }
 
+    /**
+     * Is called when, for example, a button is clicked in the visualization.
+     *
+     *  @param string $ident Ident of the variable
+     *  @param string $value The value to be set
+     */
+    public function RequestAction($ident, $value){
+        switch($ident) {
+            case "UpdateData":
+                $this->UpdateData();
+                break;
+            default:
+                throw new Exception("Invalid ident");
+        }
     }
 
     // Button-Action oder Timer-Action
