@@ -9,5 +9,16 @@
   "parentRequirements": [],
   "childRequirements": [],
   "implemented": [],
-  "prefix": "CONTROMEHC"
+  "prefix": "CONTROMEHC",
+  "url": "https://github.com/AllardLiao/ContromeHeatingControl",
+
+  "elements": [
+    { "name": "IPAddress", "type": "ValidationTextBox", "caption": "IP-Adresse" },
+    { "name": "User", "type": "ValidationTextBox", "caption": "Benutzername" },
+    { "name": "Password", "type": "PasswordTextBox", "caption": "Passwort" }
+  ],
+
+  "actions": [
+    { "name": "UpdateData", "caption": "Daten aktualisieren" }
+  ]
 }
