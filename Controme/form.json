@@ -1,0 +1,181 @@
+{
+    "elements": [
+        {
+            "type": "RowLayout",
+            "items": [
+                {
+                    "type": "Label",
+                    "caption": "\nControme Heating Control\n ",
+                    "link": false,
+                    "bold": true
+                }
+            ]
+        },
+        {
+            "type": "Label",
+            "caption": "TIP-Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Connection ...",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "ValidationTextBox",
+                            "name": "Username",
+                            "caption": "Username (Super-Admin in der Controme App):",
+                            "width": "300px"
+                        },
+                        {
+                            "type": "PasswordTextBox",
+                            "name": "Password",
+                            "caption": "Password:",
+                            "width": "300px"
+                        }
+                        {
+                            "type": "ValidationTextBox",
+                            "name": "IP",
+                            "caption": "Device IP (local, e.g. 192.168.1.101):",
+                            "width": "300px"
+                        }
+                    ]
+                }
+            ]
+        },
+
+        {
+            "type": "ExpansionPanel",
+            "caption": "Visualisation ...",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuOnColor",
+                            "caption": "Tile background color (online):",
+                            "allowTransparent": true
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuOffColor",
+                            "caption": "Tile background color (offline):",
+                            "allowTransparent": true
+                        }
+                    ]
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "VisuNaviBar",
+                    "caption": "Show navigation bar (Prev, Back, Next)?"
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "VisuActionBar",
+                    "caption": "Show action bar (Clear pages, Reload pages, Sync, Reboot)?"
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Advanced settings ...",
+            "items": [
+                {
+                    "type": "CheckBox",
+                    "name": "Enable XYZ",
+                    "caption": "Automatically do something!"
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "caption": " ",
+                            "width": "40px"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "ExpansionPanel",
+            "caption": "Execute action ...",
+            "expanded": true,
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Update data",
+                            "onClick": "IPS_RequestAction($id,'Restart',true);",
+                            "enabled": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Source code, donation and licence ...",
+            "items": [
+                {
+                    "type": "Label",
+                    "caption": "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.",
+                    "bold": true
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTk2Ljc1IiBoZWlnaHQ9IjI4IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkdJVEhVQjogQFdJTEtXQVJFIj48dGl0bGU+R0lUSFVCOiBAV0lMS1dBUkU8L3RpdGxlPjxnIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+PHJlY3Qgd2lkdGg9Ijg3LjUiIGhlaWdodD0iMjgiIGZpbGw9IiM1NTUiLz48cmVjdCB4PSI4Ny41IiB3aWR0aD0iMTA5LjI1IiBoZWlnaHQ9IjI4IiBmaWxsPSIjMTgxNzE3Ii8+PC9nPjxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJWZXJkYW5hLEdlbmV2YSxEZWphVnUgU2FucyxzYW5zLXNlcmlmIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmb250LXNpemU9IjEwMCI+PGltYWdlIHg9IjkiIHk9IjciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgeGxpbms6aHJlZj0iZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCbWFXeHNQU0ozYUdsMFpYTnRiMnRsSWlCeWIyeGxQU0pwYldjaUlIWnBaWGRDYjNnOUlqQWdNQ0F5TkNBeU5DSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhkR2wwYkdVK1IybDBTSFZpUEM5MGFYUnNaVDQ4Y0dGMGFDQmtQU0pOTVRJZ0xqSTVOMk10Tmk0Mk15QXdMVEV5SURVdU16Y3pMVEV5SURFeUlEQWdOUzR6TURNZ015NDBNemdnT1M0NElEZ3VNakExSURFeExqTTROUzQyTGpFeE15NDRNaTB1TWpVNExqZ3lMUzQxTnpjZ01DMHVNamcxTFM0d01TMHhMakEwTFM0d01UVXRNaTR3TkMwekxqTXpPQzQzTWpRdE5DNHdOREl0TVM0Mk1TMDBMakEwTWkweExqWXhRelF1TkRJeUlERTRMakEzSURNdU5qTXpJREUzTGpjZ015NDJNek1nTVRjdU4yTXRNUzR3T0RjdExqYzBOQzR3T0RRdExqY3lPUzR3T0RRdExqY3lPU0F4TGpJd05TNHdPRFFnTVM0NE16Z2dNUzR5TXpZZ01TNDRNemdnTVM0eU16WWdNUzR3TnlBeExqZ3pOU0F5TGpnd09TQXhMak13TlNBekxqUTVOUzQ1T1RndU1UQTRMUzQzTnpZdU5ERTNMVEV1TXpBMUxqYzJMVEV1TmpBMUxUSXVOalkxTFM0ekxUVXVORFkyTFRFdU16TXlMVFV1TkRZMkxUVXVPVE1nTUMweExqTXhMalEyTlMweUxqTTRJREV1TWpNMUxUTXVNakl0TGpFek5TMHVNekF6TFM0MU5DMHhMalV5TXk0eE1EVXRNeTR4TnpZZ01DQXdJREV1TURBMUxTNHpNaklnTXk0eklERXVNak11T1RZdExqSTJOeUF4TGprNExTNHpPVGtnTXkwdU5EQTFJREV1TURJdU1EQTJJREl1TURRdU1UTTRJRE1nTGpRd05TQXlMakk0TFRFdU5UVXlJRE11TWpnMUxURXVNak1nTXk0eU9EVXRNUzR5TXk0Mk5EVWdNUzQyTlRNdU1qUWdNaTQ0TnpNdU1USWdNeTR4TnpZdU56WTFMamcwSURFdU1qTWdNUzQ1TVNBeExqSXpJRE11TWpJZ01DQTBMall4TFRJdU9EQTFJRFV1TmpJMUxUVXVORGMxSURVdU9USXVOREl1TXpZdU9ERWdNUzR3T1RZdU9ERWdNaTR5TWlBd0lERXVOakEyTFM0d01UVWdNaTQ0T1RZdExqQXhOU0F6TGpJNE5pQXdJQzR6TVRVdU1qRXVOamt1T0RJMUxqVTNRekl3TGpVMk5TQXlNaTR3T1RJZ01qUWdNVGN1TlRreUlESTBJREV5TGpJNU4yTXdMVFl1TmpJM0xUVXVNemN6TFRFeUxURXlMVEV5SWk4K1BDOXpkbWMrIi8+PHRleHQgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHg9IjUyMi41IiB5PSIxNzUiIHRleHRMZW5ndGg9IjQ2NSIgZmlsbD0iI2ZmZiI+R0lUSFVCPC90ZXh0Pjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSIxNDIxLjI1IiB5PSIxNzUiIHRleHRMZW5ndGg9Ijg1Mi41IiBmaWxsPSIjZmZmIiBmb250LXdlaWdodD0iYm9sZCI+QFdJTEtXQVJFPC90ZXh0PjwvZz48L3N2Zz4=",
+                            "onClick": "echo 'https://github.com/AllardLiao/ContromeHeatingControl';"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "EchoPopup",
+            "type": "PopupAlert",
+            "visible": false,
+            "popup": {
+                "items": [
+                    {
+                        "type": "Label",
+                        "name": "EchoMessage",
+                        "caption": ""
+                    }
+                ]
+            }
+        },
+        {
+            "name": "EchoText",
+            "type": "PopupAlert",
+            "visible": false,
+            "popup": {
+                "items": [
+                    {
+                        "type": "ValidationTextBox",
+                        "name": "JSONL",
+                        "caption": "Definition:",
+                        "multiline": true,
+                        "width": "900px"
+                    }
+                ]
+            }
+        }
+    ],
+    "status": [
+        {
+            "code": 201,
+            "icon": "inactive",
+            "caption": "Object linking incorrect"
+        }
+    ]
+}

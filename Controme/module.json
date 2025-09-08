@@ -10,10 +10,5 @@
   "parentRequirements": [],
   "childRequirements": [],
   "implemented": [],
-  "prefix": "CONTROMEHC",
-  "elements": [
-    { "name": "IPAddress", "type": "ValidationTextBox", "caption": "IP-Adresse" },
-    { "name": "User", "type": "ValidationTextBox", "caption": "Benutzername" },
-    { "name": "Password", "type": "PasswordTextBox", "caption": "Passwort" }
-]
+  "prefix": "CONTROMEHC"
 }
