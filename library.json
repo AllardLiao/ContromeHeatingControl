@@ -1,9 +1,13 @@
 {
-  "id": "AAD105E2-9CE8-4BD1-BC81-BCA3156C23C1",
+  "id": "{AAD105E2-9CE8-4BD1-BC81-BCA3156C23C1}",
   "author": "Kai Oey",
   "name": "Controme Heating Control",
   "url": "https://github.com/AllardLiao/ContromeHeatingControl",
+  "compatibility": {
+    "version": "7.0"
+  },
   "version": "1.0",
+  "build": 1,
   "modules": [
     {
       "id": "{535BB2D0-A326-43F4-85F5-035FAC460907}",
