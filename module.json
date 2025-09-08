@@ -1,0 +1,24 @@
+{
+  "id": "{535bb2d0-a326-43f4-85f5-035fac460907}",
+  "name": "Controme Heating Control",
+  "type": 3,
+  "vendor": "Synergetix - Kai Oey aka AllardLiao",
+  "aliases": [
+    "Controme Heizungssteuerung"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "CON",
+  "url": "https://github.com/AllardLiao/ContromeHeatingControl",
+
+  "elements": [
+    { "name": "IPAddress", "type": "ValidationTextBox", "caption": "IP-Adresse" },
+    { "name": "User", "type": "ValidationTextBox", "caption": "Benutzername" },
+    { "name": "Password", "type": "PasswordTextBox", "caption": "Passwort" }
+  ],
+
+  "actions": [
+    { "name": "UpdateData", "caption": "Daten aktualisieren" }
+  ]
+}
