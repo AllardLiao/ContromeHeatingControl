@@ -33,7 +33,7 @@
                             "name": "Password",
                             "caption": "Password:",
                             "width": "300px"
-                        }
+                        },
                         {
                             "type": "ValidationTextBox",
                             "name": "IP",
