@@ -41,7 +41,6 @@ trait DebugHelper
         } else {
             parent::SendDebug($msg, $data, $format);
         }
-        return true;
     }
 
     /**
