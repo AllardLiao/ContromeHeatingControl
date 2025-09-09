@@ -78,7 +78,6 @@ class ContromeHeatingControl extends IPSModuleStrict
     // Test-Button-Action
     public function CheckConnection(): bool
     {
-        echo "start";
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
@@ -86,7 +85,7 @@ class ContromeHeatingControl extends IPSModuleStrict
         if (empty($ip) || empty($user) || empty($pass)) {
             echo "User fehlt";
             $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
-            $this->UpdateFormField("Result", "current", "Please set all 3 parameters (username, password and device IP).");
+            $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
             return false;
         }
 
@@ -101,18 +100,18 @@ class ContromeHeatingControl extends IPSModuleStrict
 
         if ($json === FALSE) {
             $this->SendDebug("CheckConnection", "Fehler beim Abrufen von $url", 0);
-            $this->UpdateFormField("Result", "current", "No connection.");
+            $this->UpdateFormField("Result", "caption", "No connection.");
             return false;
         }
 
         $data = json_decode($json, true);
         if ($data === null) {
             $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
-            $this->UpdateFormField("Result", "current", "Error: JSON-Decode - please contact developer.");
+            $this->UpdateFormField("Result", "caption", "Error: JSON-Decode - please contact developer.");
             return false;
         }
-        echo "test";
-        $this->UpdateFormField("Result", "current", "Success - connection established!");
+
+        $this->UpdateFormField("Result", "caption", "Success - connection established!");
         return true;
     }
     // Button-Action oder Timer-Action
