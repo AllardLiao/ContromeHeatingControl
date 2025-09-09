@@ -26,7 +26,7 @@ trait DebugHelper
      * @param mixed  $data   Data output.
      * @param int    $format Output format.
      */
-    protected function SendDebug($msg, $data, $format = 0)
+    protected function SendDebug($msg, $data, $format = 0): bool
     {
         if (is_object($data)) {
             foreach ($data as $key => $value) {
@@ -41,6 +41,7 @@ trait DebugHelper
         } else {
             parent::SendDebug($msg, $data, $format);
         }
+        return true;
     }
 
     /**
