@@ -84,6 +84,7 @@ class ContromeHeatingControl extends IPSModuleStrict
         $pass = $this->ReadPropertyString("Password");
 
         if (empty($ip) || empty($user) || empty($pass)) {
+            echo "User fehlt";
             $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
             $this->UpdateFormField("Result", "current", "Please set all 3 parameters (username, password and device IP).");
             return false;
