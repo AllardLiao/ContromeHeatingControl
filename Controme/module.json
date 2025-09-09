@@ -1,14 +1,12 @@
 {
-  "id": "{535BB2D0-A326-43F4-85F5-035FAC460907}",
-  "name": "Controme Heating Control",
-  "url": "https://github.com/AllardLiao/ContromeHeatingControl",
-  "type": 3,
-  "vendor": "Synergetix - Kai Oey aka AllardLiao",
-  "aliases": [
-    "Controme Heizungssteuerung"
-  ],
-  "parentRequirements": [],
-  "childRequirements": [],
-  "implemented": [],
-  "prefix": "CONTROMEHC"
+    "id": "{111AA683-23A4-AABB-909A-ECC5F0FE6303}",
+    "name": "Controme Heating Control",
+    "type": 3,
+    "vendor": "Synergetix",
+    "aliases": ["Controme Heizungssteuerung"],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "CONTROMEHC",
+    "url": "https://github.com/AllardLiao/ContromeHeatingControl"
 }

@@ -1,8 +1,21 @@
 <?php
-class ContromeHeatingControl extends IPSModule
+require_once __DIR__ . "/../libs/_ipsmodule.php";
+// General functions
+require_once __DIR__ . '/../libs/_traits.php';
+
+class ContromeHeatingControl extends IPSModuleStrict
 {
+    use DebugHelper;
+    use EventHelper;
+    use ProfileHelper;
+    use VariableHelper;
+    use VersionHelper;
+    use FormatHelper;
+    use WidgetHelper;
+
     public function Create()
     {
+        // Never delete this line!
         parent::Create();
 
         // Konfigurationselemente
@@ -11,11 +24,19 @@ class ContromeHeatingControl extends IPSModule
         $this->RegisterPropertyString("Password", "");
 
         // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData");');
+        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
     }
+
+    public function Destroy()
+    {
+        // Never delete this line!
+        parent::Destroy();
+    }
+
 
     public function ApplyChanges()
     {
+        // Never delete this line!
         parent::ApplyChanges();
 
         // Variablenprofil für Betriebsart sicherstellen
