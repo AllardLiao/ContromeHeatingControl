@@ -100,6 +100,10 @@
                     "type": "RowLayout",
                     "items": [
                         {
+                            "type": "Label",
+                            "caption": "\nCheck connection to Controme MiniServer."
+                        },
+                        {
                             "type": "Button",
                             "caption": "Check connection",
                             "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
@@ -108,13 +112,32 @@
                         {
                             "type": "Label",
                             "name": "Result",
-                            "caption": "..."
+                            "caption": " "
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "caption": "\nRead the configuration of the Controme MiniServer and create IPS structure and variables."
+                        },
+                        {
+                            "type": "Button",
+                            "caption": "Read heating instances and create IPS variables",
+                            "onClick": "IPS_RequestAction($id,'ReadHeatingInstances',true);",
+                            "enabled": true
+                        },
+                        {
+                            "type": "Label",
+                            "name": "StatusInstances",
+                            "caption": " "
                         }
                     ]
                 }
             ]
-        },
-        {
+        },        {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",
             "expanded": true,
@@ -152,7 +175,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nLicense\n ",
+                    "caption": "\nLicense ",
                     "link": false,
                     "bold": true
                 },

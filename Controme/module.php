@@ -70,12 +70,18 @@ class ContromeHeatingControl extends IPSModuleStrict
             case "CheckConnection":
                 $this->CheckConnection();
                 break;
+            case "ReadHeatingInstances":
+                break;
             default:
                 throw new Exception("Invalid ident");
         }
     }
 
-    // Test-Button-Action
+    /**
+     * Is called by pressing the button "Check Connection" from the instance configuration
+     *
+     * @return boolean
+     */
     public function CheckConnection(): bool
     {
         $this->ApplyChanges();
@@ -115,6 +121,62 @@ class ContromeHeatingControl extends IPSModuleStrict
         $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
         return true;
     }
+
+    /**
+     * Connects to the Controme MiniServer and reads the current values
+     * Upon success returns true
+     *
+     * @return boolean
+     *
+    */
+    public function ReadHeatingInstances(): bool
+    {
+        $ip   = $this->ReadPropertyString("IPAddress");
+        $user = $this->ReadPropertyString("User");
+        $pass = $this->ReadPropertyString("Password");
+
+        if (empty($ip) || empty($user) || empty($pass)) {
+            $this->SendDebug("ReadHeatingInstances", "IP, User oder Passwort nicht gesetzt!", 0);
+            return false;
+        }
+
+        $url = "http://$ip/get/json/v1/1/temps/";
+        $opts = [
+            "http" => [
+                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
+            ]
+        ];
+        $context = stream_context_create($opts);
+        $json = @file_get_contents($url, false, $context);
+
+        if ($json === FALSE) {
+            $this->SendDebug("ReadHeatingInstances", "Fehler beim Abrufen von $url", 0);
+            return false;
+        }
+
+        $data = json_decode($json, true);
+        if ($data === null) {
+            $this->SendDebug("ReadHeatingInstances", "Fehler beim JSON-Decode", 0);
+            return false;
+        }
+
+        $heatingInstances = [];
+        foreach ($data as $etage) {
+            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
+            foreach ($etage['raeume'] as $raum) {
+                $raumName = $raum['name'] ?? "Raum";
+                $raumId   = $raum['id'] ?? uniqid();
+                $heatingInstances[] = [
+                    'id' => $raumId,
+                    'name' => $raumName
+                ];
+            }
+        }
+
+        $this->SendDebug("ReadHeatingInstances", "Gefundene Instanzen: " . print_r($heatingInstances, true), 0);
+        return true;
+    }
+
     // Button-Action oder Timer-Action
     public function UpdateData()
     {
@@ -157,13 +219,13 @@ class ContromeHeatingControl extends IPSModuleStrict
                 $raumId   = $raum['id'] ?? uniqid();
 
                 // Kategorie für Raum
-                $catID = $this->GetOrCreateCategory("raum_" . $raumId, $raumName, 0);
+                $catID = $this->GetOrCreateCategory("raum_" . $raumId, $raumName, $this->InstanceID);
 
                 // Variablen anlegen
-                $istTempID  = $this->GetOrCreateVariable("ist", "Ist-Temperatur", "~Temperature.Room", $catID, 2);
-                $sollTempID = $this->GetOrCreateVariable("soll", "Soll-Temperatur", "~Temperature.Room", $catID, 2);
-                $humID      = $this->GetOrCreateVariable("feuchte", "Luftfeuchtigkeit", "~Humidity.F", $catID, 2);
-                $modeID     = $this->GetOrCreateVariable("betriebsart", "Betriebsart", "Controme.Betriebsart", $catID, 1);
+                $istTempID  = $this->GetOrCreateVariable("currentTemp", "Ist-Temperatur", "~Temperature.Room", $catID, 2);
+                $sollTempID = $this->GetOrCreateVariable("targertTemp", "Soll-Temperatur", "~Temperature.Room", $catID, 2);
+                $humID      = $this->GetOrCreateVariable("humidity", "Luftfeuchtigkeit", "~Humidity.F", $catID, 2);
+                $modeID     = $this->GetOrCreateVariable("operationMode", "Betriebsart", "Controme.Betriebsart", $catID, 1);
 
                 // Werte setzen
                 if (isset($raum['temperatur']))     SetValue($istTempID, floatval($raum['temperatur']));
@@ -201,7 +263,7 @@ class ContromeHeatingControl extends IPSModuleStrict
     // --- Hilfsfunktionen ---
     private function GetOrCreateCategory($ident, $name, $parentID)
     {
-        $id = @IPS_GetObjectIDByIdent($ident, $parentID);
+        $id = @$this->GetIDForIdent($ident);
         if ($id === false) {
             $id = IPS_CreateCategory();
             IPS_SetParent($id, $parentID);
@@ -213,7 +275,7 @@ class ContromeHeatingControl extends IPSModuleStrict
 
     private function GetOrCreateVariable($ident, $name, $profile, $parentID, $type)
     {
-        $id = @IPS_GetObjectIDByIdent($ident, $parentID);
+        $id = @$this->GetIDForIdent($ident);
         if ($id === false) {
             $id = IPS_CreateVariable($type);
             IPS_SetParent($id, $parentID);
