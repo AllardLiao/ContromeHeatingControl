@@ -28,7 +28,7 @@ class ContromeHeatingControl extends IPSModuleStrict
         $this->RegisterPropertyString("Password", "");
 
         // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
+        $this->RegisterTimer("UpdateContromeData", 60 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
     }
 
     public function Destroy(): void
