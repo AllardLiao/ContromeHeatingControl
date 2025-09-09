@@ -71,6 +71,7 @@ class ContromeHeatingControl extends IPSModuleStrict
                 $this->CheckConnection();
                 break;
             case "ReadHeatingInstances":
+                $this->ReadHeatingInstances();
                 break;
             default:
                 throw new Exception("Invalid ident");
