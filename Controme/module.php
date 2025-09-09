@@ -3,7 +3,7 @@
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
 
-class ContromeHeatingControl extends IPSModuleStrict
+class ContromeHeatingControl extends IPSModule
 {
     use DebugHelper;
     use EventHelper;
