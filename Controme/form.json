@@ -105,7 +105,7 @@
             "items": [
                 {
                     "type": "CheckBox",
-                    "name": "Enable Something",
+                    "name": "Do Something",
                     "caption": "Automatically do something!"
                 }
             ]
