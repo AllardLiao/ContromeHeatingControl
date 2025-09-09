@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../libs/_ipsmodule.php";
+// require_once __DIR__ . "/../libs/_ipsmodule.php";
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
 
