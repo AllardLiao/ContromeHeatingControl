@@ -4,6 +4,8 @@ npm-debug.log
 
 # VSCode
 .vscode/
+.style/
+.ips_stubs/
 
 # PHP / Logs
 *.log
