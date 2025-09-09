@@ -111,7 +111,7 @@ class ContromeHeatingControl extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "Error: JSON-Decode - please contact developer.");
             return false;
         }
-        $this->SendDebug("CheckConnection", print_r($data));
+        $this->SendDebug("CheckConnection", $user . " // " . print_r($data));
         $this->UpdateFormField("Result", "caption", "Success - connection established!");
         return true;
     }
