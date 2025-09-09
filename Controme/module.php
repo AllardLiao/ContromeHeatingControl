@@ -1,14 +1,12 @@
 <?php
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
+
+// IPS-Stubs nur in der Entwicklungsumgebung laden
 if (substr(__DIR__,0, 10) == "/Users/kai") {
     // Development
     include_once __DIR__ . '/../.ips_stubs/autoload.php';
-} else {
-    // Production
-    // automatisch vorhanden
 }
-exit;
 class ContromeHeatingControl extends IPSModuleStrict
 {
     use DebugHelper;
@@ -74,6 +72,56 @@ class ContromeHeatingControl extends IPSModuleStrict
         }
     }
 
+    public function GetConfigurationForm(): string
+    {
+        $form = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
+        // Übersetzungen
+        $this->Translate($form);
+        return json_encode($form);
+    }
+
+    public function ReloadConfigurationForm(): void
+    {
+        $this->ReloadForm();
+    }
+
+    // Test-Button-Action
+    public function CheckConnection(): bool
+    {
+        $ip   = $this->ReadPropertyString("IPAddress");
+        $user = $this->ReadPropertyString("User");
+        $pass = $this->ReadPropertyString("Password");
+
+        if (empty($ip) || empty($user) || empty($pass)) {
+            $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
+            return false;
+        }
+
+        $url = "http://$ip/get/json/v1/1/temps/";
+        $opts = [
+            "http" => [
+                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
+            ]
+        ];
+        $context = stream_context_create($opts);
+        $json = @file_get_contents($url, false, $context);
+
+        if ($json === FALSE) {
+            $this->SendDebug("CheckConnection", "Fehler beim Abrufen von $url", 0);
+            $this->UpdateFormField("Result", "current", "Kann keine Verbindung herstellen.");
+            return false;
+        }
+
+        $data = json_decode($json, true);
+        if ($data === null) {
+            $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
+            $this->UpdateFormField("Result", "current", "Fehler beim JSON-Decode - Bitte Module-Hersteller kontaktieren.");
+            return false;
+        }
+
+        $this->UpdateFormField("Result", "current", "Verbindung steht!");
+        return true;
+    }
     // Button-Action oder Timer-Action
     public function UpdateData()
     {

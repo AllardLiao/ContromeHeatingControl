@@ -3,7 +3,7 @@
     "name": "Controme Heating Control",
     "type": 3,
     "vendor": "Controme GmbH",
-    "aliases": ["Controme Heizungssteuerung", "Controme Heizung"],
+    "aliases": ["Controme Heizungssteuerung"],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],

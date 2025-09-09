@@ -53,7 +53,7 @@
                         {
                             "type": "Button",
                             "caption": "Check connection",
-                            "onClick": "IPS_RequestAction($id,'UpdateData',true);",
+                            "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
                             "enabled": true
                         },
                         {
