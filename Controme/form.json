@@ -126,7 +126,7 @@
                         {
                             "type": "Button",
                             "caption": "Read heating instances and create IPS variables",
-                            "onClick": "IPS_RequestAction($id,'ReadHeatingInstances',true);",
+                            "onClick": "IPS_RequestAction($id,'UpdateDataFromInstanceForm',true);",
                             "enabled": true
                         },
                         {

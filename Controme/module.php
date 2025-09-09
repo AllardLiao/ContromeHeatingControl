@@ -67,11 +67,11 @@ class ContromeHeatingControl extends IPSModuleStrict
             case "UpdateData":
                 $this->UpdateData();
                 break;
+            case "UpdateDataFromInstanceForm":
+                $this->UpdateDataFromInstanceForm();
+                break;
             case "CheckConnection":
                 $this->CheckConnection();
-                break;
-            case "ReadHeatingInstances":
-                $this->ReadHeatingInstances();
                 break;
             default:
                 throw new Exception("Invalid ident");
@@ -124,62 +124,27 @@ class ContromeHeatingControl extends IPSModuleStrict
     }
 
     /**
-     * Connects to the Controme MiniServer and reads the current values
-     * Upon success returns true
+     * Update Data - called from instance form
      *
      * @return boolean
-     *
-    */
-    public function ReadHeatingInstances(): bool
+     */
+    private function UpdateDataFromInstanceForm(): bool
     {
-        $ip   = $this->ReadPropertyString("IPAddress");
-        $user = $this->ReadPropertyString("User");
-        $pass = $this->ReadPropertyString("Password");
-
-        if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug("ReadHeatingInstances", "IP, User oder Passwort nicht gesetzt!", 0);
-            return false;
+        $result = $this->UpdateData();
+        if ($result) {
+            $this->UpdateFormField("StatusInstances", "caption", "Data successfully updated from instance form.");
+        } else {
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to update data from instance form.");
         }
-
-        $url = "http://$ip/get/json/v1/1/temps/";
-        $opts = [
-            "http" => [
-                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
-            ]
-        ];
-        $context = stream_context_create($opts);
-        $json = @file_get_contents($url, false, $context);
-
-        if ($json === FALSE) {
-            $this->SendDebug("ReadHeatingInstances", "Fehler beim Abrufen von $url", 0);
-            return false;
-        }
-
-        $data = json_decode($json, true);
-        if ($data === null) {
-            $this->SendDebug("ReadHeatingInstances", "Fehler beim JSON-Decode", 0);
-            return false;
-        }
-
-        $heatingInstances = [];
-        foreach ($data as $etage) {
-            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
-            foreach ($etage['raeume'] as $raum) {
-                $raumName = $raum['name'] ?? "Raum";
-                $raumId   = $raum['id'] ?? uniqid();
-                $heatingInstances[] = [
-                    'id' => $raumId,
-                    'name' => $raumName
-                ];
-            }
-        }
-
-        $this->SendDebug("ReadHeatingInstances", "Gefundene Instanzen: " . print_r($heatingInstances, true), 0);
-        return true;
+        return $result;
     }
 
-    // Button-Action oder Timer-Action
-    public function UpdateData()
+    /**
+     * Update Data from Controme MiniServer
+     *
+     * @return boolean
+     */
+    public function UpdateData(): bool
     {
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
@@ -187,7 +152,7 @@ class ContromeHeatingControl extends IPSModuleStrict
 
         if (empty($ip) || empty($user) || empty($pass)) {
             $this->SendDebug("UpdateData", "IP, User oder Passwort nicht gesetzt!", 0);
-            return;
+            return false;
         }
 
         $url = "http://$ip/get/json/v1/1/temps/";
@@ -201,16 +166,15 @@ class ContromeHeatingControl extends IPSModuleStrict
 
         if ($json === FALSE) {
             $this->SendDebug("UpdateData", "Fehler beim Abrufen von $url", 0);
-            return;
+            return false;
         }
 
         $data = json_decode($json, true);
         if ($data === null) {
             $this->SendDebug("UpdateData", "Fehler beim JSON-Decode", 0);
-            return;
+            return false;
         }
-        $text = print_r($data, true);
-        $this->SendDebug("UpdateData", "Input: " . $text, 0);
+
         // Räume durchgehen
         foreach ($data as $etage) {
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
@@ -259,6 +223,8 @@ class ContromeHeatingControl extends IPSModuleStrict
                 }
             }
         }
+        $this->SendDebug("UpdateData", "Updated Controme Heating Data.", 0);
+        return true;
     }
 
     // --- Hilfsfunktionen ---
