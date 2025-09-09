@@ -1,9 +1,12 @@
 <?php
-// require_once __DIR__ . "/../libs/_ipsmodule.php";
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
-include_once __DIR__ . '/../.ips_stubs/autoload.php';
 
+// IPS-Stubs nur in der Entwicklungsumgebung laden
+if (substr(__DIR__,0, 10) == "/Users/kai") {
+    // Development
+    include_once __DIR__ . '/../.ips_stubs/autoload.php';
+}
 class ContromeHeatingControl extends IPSModuleStrict
 {
     use DebugHelper;
@@ -64,11 +67,54 @@ class ContromeHeatingControl extends IPSModuleStrict
             case "UpdateData":
                 $this->UpdateData();
                 break;
+            case "CheckConnection":
+                $this->CheckConnection();
+                break;
             default:
                 throw new Exception("Invalid ident");
         }
     }
 
+    // Test-Button-Action
+    public function CheckConnection(): bool
+    {
+        $this->ApplyChanges();
+
+        $ip   = $this->ReadPropertyString("IPAddress");
+        $user = $this->ReadPropertyString("User");
+        $pass = $this->ReadPropertyString("Password");
+
+        if (empty($ip) || empty($user) || empty($pass)) {
+            $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
+            $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
+            return false;
+        }
+
+        $url = "http://$ip/get/json/v1/1/temps/";
+        $opts = [
+            "http" => [
+                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
+            ]
+        ];
+        $context = stream_context_create($opts);
+        $json = @file_get_contents($url, false, $context);
+
+        if ($json === FALSE) {
+            $this->SendDebug("CheckConnection", "Fehler beim Abrufen von $url", 0);
+            $this->UpdateFormField("Result", "caption", "No connection.");
+            return false;
+        }
+
+        $data = json_decode($json, true);
+        if ($data === null) {
+            $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
+            $this->UpdateFormField("Result", "caption", "Error: JSON-Decode - please contact developer.");
+            return false;
+        }
+        $this->SendDebug("CheckConnection", "Success - connection established for user " . $user . "!");
+        $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
+        return true;
+    }
     // Button-Action oder Timer-Action
     public function UpdateData()
     {

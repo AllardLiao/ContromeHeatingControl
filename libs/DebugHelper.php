@@ -26,20 +26,22 @@ trait DebugHelper
      * @param mixed  $data   Data output.
      * @param int    $format Output format.
      */
-    protected function SendDebug($msg, $data, $format = 0)
+    protected function SendDebug($msg, $data, $format = 0): bool
     {
         if (is_object($data)) {
             foreach ($data as $key => $value) {
                 $this->SendDebug($msg . ':' . $key, $value, 1);
             }
+            return true;
         } elseif (is_array($data)) {
             foreach ($data as $key => $value) {
                 $this->SendDebug($msg . ':' . $key, $value, 0);
             }
+            return true;
         } elseif (is_bool($data)) {
-            parent::SendDebug($msg, ($data ? 'TRUE' : 'FALSE'), 0);
+            return parent::SendDebug($msg, ($data ? 'TRUE' : 'FALSE'), 0);
         } else {
-            parent::SendDebug($msg, $data, $format);
+            return parent::SendDebug($msg, $data, $format);
         }
     }
 
@@ -95,8 +97,9 @@ trait DebugHelper
      * @param string $msg  Title of the log message.
      * @param int    $type message typ (KL_DEBUG| KL_ERROR| KL_MESSAGE| KL_NOTIFY (default)| KL_WARNING).
      */
-    protected function LogMessage($msg, $type = KL_NOTIFY)
+    protected function LogMessage($msg, $type = KL_NOTIFY): bool
     {
         parent::LogMessage($msg, $type);
+        return true;
     }
 }
