@@ -81,6 +81,7 @@ class ContromeHeatingControl extends IPSModuleStrict
 
         if (empty($ip) || empty($user) || empty($pass)) {
             $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
+            $this->UpdateFormField("Result", "current", "Please set all 3 parameters (username, password and device IP).");
             return false;
         }
 
@@ -95,14 +96,14 @@ class ContromeHeatingControl extends IPSModuleStrict
 
         if ($json === FALSE) {
             $this->SendDebug("CheckConnection", "Fehler beim Abrufen von $url", 0);
-            $this->UpdateFormField("Result", "current", "Kann keine Verbindung herstellen.");
+            $this->UpdateFormField("Result", "current", "No connection.");
             return false;
         }
 
         $data = json_decode($json, true);
         if ($data === null) {
             $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
-            $this->UpdateFormField("Result", "current", "Fehler beim JSON-Decode - Bitte Module-Hersteller kontaktieren.");
+            $this->UpdateFormField("Result", "current", "Error: JSON-Decode - please contact developer.");
             return false;
         }
 
