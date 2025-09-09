@@ -107,7 +107,7 @@ class ContromeHeatingControl extends IPSModuleStrict
             return false;
         }
 
-        $this->UpdateFormField("Result", "current", "Verbindung steht!");
+        $this->UpdateFormField("Result", "current", "Success - connection established!");
         return true;
     }
     // Button-Action oder Timer-Action

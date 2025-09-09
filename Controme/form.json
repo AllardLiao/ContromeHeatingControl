@@ -58,7 +58,8 @@
                         },
                         {
                             "type": "Label",
-                            "caption": "Result"
+                            "name": "Result",
+                            "caption": ""
                         }
                     ]
                 }

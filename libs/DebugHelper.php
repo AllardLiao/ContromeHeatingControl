@@ -32,14 +32,16 @@ trait DebugHelper
             foreach ($data as $key => $value) {
                 $this->SendDebug($msg . ':' . $key, $value, 1);
             }
+            return true;
         } elseif (is_array($data)) {
             foreach ($data as $key => $value) {
                 $this->SendDebug($msg . ':' . $key, $value, 0);
             }
+            return true;
         } elseif (is_bool($data)) {
-            parent::SendDebug($msg, ($data ? 'TRUE' : 'FALSE'), 0);
+            return parent::SendDebug($msg, ($data ? 'TRUE' : 'FALSE'), 0);
         } else {
-            parent::SendDebug($msg, $data, $format);
+            return parent::SendDebug($msg, $data, $format);
         }
     }
 
