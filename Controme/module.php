@@ -30,7 +30,7 @@ class ContromeHeatingControl extends IPSModuleStrict
         $this->RegisterPropertyInteger("UpdateInterval", 10);
 
         // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 60 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
+        $this->RegisterTimer("UpdateContromeData", 10 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
     }
 
     public function Destroy(): void
@@ -54,6 +54,12 @@ class ContromeHeatingControl extends IPSModuleStrict
             IPS_SetVariableProfileAssociation($profile, 1, "Dauer-Aus", "", -1);
             IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
             IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
+        }
+
+        if ($this->ReadPropertyBoolean("AutoUpdate")) {
+            $this->SetTimerInterval("UpdateContromeData", $this->ReadPropertyInteger("UpdateInterval") * 60 * 1000);
+        } else {
+            $this->SetTimerInterval("UpdateContromeData", 0);
         }
     }
 
