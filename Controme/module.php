@@ -72,19 +72,6 @@ class ContromeHeatingControl extends IPSModuleStrict
         }
     }
 
-    public function GetConfigurationForm(): string
-    {
-        $form = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
-        // Übersetzungen
-        $this->Translate($form);
-        return json_encode($form);
-    }
-
-    public function ReloadConfigurationForm(): void
-    {
-        $this->ReloadForm();
-    }
-
     // Test-Button-Action
     public function CheckConnection(): bool
     {
