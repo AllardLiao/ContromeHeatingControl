@@ -2,8 +2,9 @@
 // require_once __DIR__ . "/../libs/_ipsmodule.php";
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
+include_once __DIR__ . '/../.ips_stubs/autoload.php';
 
-class ContromeHeatingControl extends IPSModule
+class ContromeHeatingControl extends IPSModuleStrict
 {
     use DebugHelper;
     use EventHelper;
@@ -13,7 +14,7 @@ class ContromeHeatingControl extends IPSModule
     use FormatHelper;
     use WidgetHelper;
 
-    public function Create()
+    public function Create(): void
     {
         // Never delete this line!
         parent::Create();
@@ -27,14 +28,14 @@ class ContromeHeatingControl extends IPSModule
         $this->RegisterTimer("UpdateContromeData", 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
     }
 
-    public function Destroy()
+    public function Destroy(): void
     {
         // Never delete this line!
         parent::Destroy();
     }
 
 
-    public function ApplyChanges()
+    public function ApplyChanges(): void
     {
         // Never delete this line!
         parent::ApplyChanges();
@@ -57,7 +58,8 @@ class ContromeHeatingControl extends IPSModule
      *  @param string $ident Ident of the variable
      *  @param string $value The value to be set
      */
-    public function RequestAction($ident, $value){
+    public function RequestAction(string $ident, mixed $value): void
+    {
         switch($ident) {
             case "UpdateData":
                 $this->UpdateData();
