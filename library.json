@@ -1,12 +1,12 @@
 {
-  "id": "{AAD105E2-9CE8-4BD1-BC81-BCA3156C23C1}",
-  "name": "Controme Heating Control",
-  "author": "Kai Oey (AllardLiao)",
-  "url": "https://github.com/AllardLiao/ContromeHeatingControl",
-  "compatibility": {
-    "version": "8.1"
-  },
-  "version": "1.0",
-  "build": 20250908,
-  "date": 1757299200
+    "id": "{E0BE2963-D034-4010-DFFE-C03FC0E9F9F2}",
+    "name": "Controme Heating Control",
+    "author": "Kai J. Oey",
+    "url": "https://github.com/AllardLiao/ContromeHeatingControl",
+    "compatibility": {
+        "version": "7.1"
+    },
+    "version": "1.0",
+    "build": 0,
+    "date": 0
 }
