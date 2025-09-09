@@ -95,8 +95,9 @@ trait DebugHelper
      * @param string $msg  Title of the log message.
      * @param int    $type message typ (KL_DEBUG| KL_ERROR| KL_MESSAGE| KL_NOTIFY (default)| KL_WARNING).
      */
-    protected function LogMessage($msg, $type = KL_NOTIFY)
+    protected function LogMessage($msg, $type = KL_NOTIFY): bool
     {
         parent::LogMessage($msg, $type);
+        return true;
     }
 }
