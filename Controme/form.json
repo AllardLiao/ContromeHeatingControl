@@ -84,8 +84,14 @@
             "items": [
                 {
                     "type": "CheckBox",
-                    "name": "whatever",
-                    "caption": "Automatically do something!"
+                    "name": "AutoUpdate",
+                    "caption": "Automatically update values"
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "UpdateInterval",
+                    "caption": "Update interval",
+                    "suffix": "minutes"
                 }
             ]
         }
@@ -121,11 +127,15 @@
                     "caption": "\nRead the configuration of the Controme MiniServer and create IPS structure and variables."
                 },
                 {
+                    "type": "Label",
+                    "caption": "\nThe same procedure will be executed on a regular basis."
+                },
+                {
                     "type": "RowLayout",
                     "items": [
                         {
                             "type": "Button",
-                            "caption": "Read heating instances and create IPS variables",
+                            "caption": "Create IPS variables",
                             "onClick": "IPS_RequestAction($id,'UpdateDataFromInstanceForm',true);",
                             "enabled": true
                         },

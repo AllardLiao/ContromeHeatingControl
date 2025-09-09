@@ -26,6 +26,8 @@ class ContromeHeatingControl extends IPSModuleStrict
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
+        $this->RegisterPropertyBoolean("AutoUpdate", true);
+        $this->RegisterPropertyInteger("UpdateInterval", 10);
 
         // Timer für zyklische Abfrage (alle 5 Minuten)
         $this->RegisterTimer("UpdateContromeData", 60 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
@@ -132,9 +134,9 @@ class ContromeHeatingControl extends IPSModuleStrict
     {
         $result = $this->UpdateData();
         if ($result) {
-            $this->UpdateFormField("StatusInstances", "caption", "Data successfully updated from instance form.");
+            $this->UpdateFormField("StatusInstances", "caption", "Data successfully updated.");
         } else {
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to update data from instance form.");
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to update data.");
         }
         return $result;
     }
