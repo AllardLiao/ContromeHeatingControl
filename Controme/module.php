@@ -98,7 +98,8 @@ class ContromeHeatingControl extends IPSModule
             $this->SendDebug("UpdateData", "Fehler beim JSON-Decode", 0);
             return;
         }
-        $this->SendDebug("UpdateData", "Output: " . implode(", ", $data), 0);
+        $text = print_r($data, true);
+        $this->SendDebug("UpdateData", "Input: " . $text, 0);
         // Räume durchgehen
         foreach ($data as $etage) {
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
