@@ -122,6 +122,7 @@
         {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",
+            "expanded": true,
             "items": [
                 {
                     "type": "Label",
