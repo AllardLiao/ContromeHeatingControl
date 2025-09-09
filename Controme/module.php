@@ -78,6 +78,7 @@ class ContromeHeatingControl extends IPSModuleStrict
     // Test-Button-Action
     public function CheckConnection(): bool
     {
+        echo "start";
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
