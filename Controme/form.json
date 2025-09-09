@@ -59,7 +59,7 @@
                         {
                             "type": "Label",
                             "name": "Result",
-                            "caption": ""
+                            "caption": "..."
                         }
                     ]
                 }
