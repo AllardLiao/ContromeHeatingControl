@@ -2,7 +2,7 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "\nControme Heating Control\n ",
+            "caption": "\nControme Heating Control - I/O Socket\n ",
             "link": false,
             "bold": true
         },
@@ -11,38 +11,32 @@
             "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
         },
         {
-            "type": "ExpansionPanel",
-            "caption": "Connection ...",
+            "type": "RowLayout",
             "items": [
                 {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "ValidationTextBox",
-                            "name": "User",
-                            "caption": "Username (Super-Admin from your Controme App)",
-                            "width": "300px"
-                        },
-                        {
-                            "type": "PasswordTextBox",
-                            "caption": "Password",
-                            "enabled": true,
-                            "name": "Password",
-                            "onChange": "",
-                            "validate": "",
-                            "value": "",
-                            "visible": true,
-                            "width": "300px"
-                        }
-                    ]
+                    "type": "ValidationTextBox",
+                    "name": "User",
+                    "caption": "Username (Super-Admin from your Controme App)",
+                    "width": "300px"
                 },
                 {
-                    "type": "ValidationTextBox",
-                    "name": "IPAddress",
-                    "caption": "Device IP (local, e.g. 192.168.1.101)",
+                    "type": "PasswordTextBox",
+                    "caption": "Password",
+                    "enabled": true,
+                    "name": "Password",
+                    "onChange": "",
+                    "validate": "",
+                    "value": "",
+                    "visible": true,
                     "width": "300px"
                 }
             ]
+        },
+        {
+            "type": "ValidationTextBox",
+            "name": "IPAddress",
+            "caption": "Device IP (local, e.g. 192.168.1.101)",
+            "width": "300px"
         },
         {
             "type": "List",
@@ -57,15 +51,19 @@
                 "direction": "ascending"
             },
             "columns": [{
-                "caption": "FlooID",    "name": "FloorID",  "width": "10px",    "save": true,   "visible": false
+                "caption": "FlooID",    "name": "FloorID",  "width": "50px",    "save": true,   "visible": true
             }, {
-                "caption": "Floor",     "name": "Floor",    "width": "200px",   "save": true
+                "caption": "Floor",     "name": "Floor",    "width": "275px",   "save": true,   "visible": true,    "edit": {"type": "ValidationTextBox", "caption": "Floor"}
             }, {
-                "caption": "RoomID",    "name": "RoomID",   "width": "10px",    "save": true,   "visible": false
+                "caption": "RoomID",    "name": "RoomID",   "width": "50px",    "save": true,   "visible": true
             }, {
-                "caption": "Room",      "name": "Room",     "width": "275px",   "save": true
+                "caption": "Room",      "name": "Room",     "width": "275px",   "save": true,   "visible": true,    "edit": {"type": "ValidationTextBox", "caption": "Floor"}
             }],
             "values": []
+        },
+        {
+            "type": "Label",
+            "caption": "Note: the names of the floors and rooms can be changed here. In case you updates the list using the \"Fetch Room List\"-button, changes will be overwritten. The modules Controme Room Thermostat and Controme Central Control receive their data using the id's as identifier."
         },
         {
             "type": "Button",
@@ -106,11 +104,11 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nRead the configuration of the Controme MiniServer and create IPS structure and variables."
+                    "caption": "\nRead the configuration of the Controme MiniServer to be able to create IPS Controme Central Control and Controme Room Thermostat instances."
                 },
                 {
                     "type": "Label",
-                    "caption": "This must be executed initially and in case the configuration of the Controme Mini-Server's room names change in order to provide correct information to the central control and room thermostat instances."
+                    "caption": "This has to be executed \n1) initially and \n2) in case the configuration of the Controme Mini-Server's ID's (for floors and/or rooms) change (in order to provide correct information to the central control and room thermostat instances)."
                 },
                 {
                     "type": "RowLayout",
@@ -130,7 +128,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Note: if the names of the rooms change in the Controme System after instances are created from this module, the instances will not receive updated data."
+                    "caption": "Note: \n1)In case the ID's of the floors/rooms change in the Controme System after instances are created from this module, the instances will not receive data or receive wrong data.\n2) The floor/rooms names are changed within the "
                 }
             ]
         },
