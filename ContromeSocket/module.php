@@ -26,7 +26,7 @@ class ContromeSocket extends IPSModuleStrict
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
-        $this->RegisterAttributeString("Rooms", ""); // gem. Controme-API: get-rooms
+        $this->RegisterPropertyString("Rooms", ""); // gem. Controme-API: get-rooms
     }
 
     public function Destroy(): void
