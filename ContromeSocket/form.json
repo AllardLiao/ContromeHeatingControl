@@ -127,7 +127,7 @@
                         "caption": "FlooID",
                         "name": "FloorID",
                         "width": "10px",
-                        "add": 0,
+                        "save": true,
                         "visible": false,
                         "edit": {
                             "type": "SelectInstance"
@@ -136,7 +136,7 @@
                         "caption": "Floor",
                         "name": "Floor",
                         "width": "200px",
-                        "add": 0,
+                        "save": true,
                         "edit": {
                             "type": "SelectInstance"
                         }
@@ -144,7 +144,7 @@
                         "caption": "RoomID",
                         "name": "RoomID",
                         "width": "10px",
-                        "add": 0,
+                        "save": true,
                         "visible": false,
                         "edit": {
                             "type": "SelectInstance"
@@ -153,7 +153,7 @@
                         "caption": "Room",
                         "name": "Room",
                         "width": "275px",
-                        "add": 0,
+                        "save": true,
                         "edit": {
                             "type": "SelectInstance"
                         }
