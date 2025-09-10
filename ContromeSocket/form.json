@@ -45,21 +45,37 @@
             ]
         },
         {
-            "type": "ExpansionPanel",
-            "caption": "Advanced settings ...",
-            "items": [
-                {
-                    "type": "CheckBox",
-                    "name": "AutoUpdate",
-                    "caption": "Automatically update values"
-                },
-                {
-                    "type": "NumberSpinner",
-                    "name": "UpdateInterval",
-                    "caption": "Update interval",
-                    "suffix": "minutes"
-                }
-            ]
+            "type": "List",
+            "name": "Rooms",
+            "caption": "Rooms",
+            "rowCount": 5,
+            "loadValuesFromConfiguration": true,
+            "add": false,
+            "delete": false,
+            "sort": {
+                "column": "Floor",
+                "direction": "ascending"
+            },
+            "columns": [{
+                "caption": "FlooID",    "name": "FloorID",  "width": "10px",    "save": true,   "visible": false
+            }, {
+                "caption": "Floor",     "name": "Floor",    "width": "200px",   "save": true
+            }, {
+                "caption": "RoomID",    "name": "RoomID",   "width": "10px",    "save": true,   "visible": false
+            }, {
+                "caption": "Room",      "name": "Room",     "width": "275px",   "save": true
+            }],
+            "values": []
+        },
+        {
+            "type": "Button",
+            "caption": "Create instances for selected room",
+            "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
+        },
+        {
+            "type": "Button",
+            "caption": "Create Instance for central control",
+            "onClick": "echo('Instance Central Control');"
         }
     ],
     "actions": [
@@ -113,37 +129,8 @@
                     ]
                 },
                 {
-                    "type": "List",
-                    "name": "Rooms",
-                    "caption": "Rooms",
-                    "rowCount": 5,
-                    "loadValuesFromConfiguration": true,
-                    "add": false,
-                    "delete": false,
-                    "sort": {
-                        "column": "Floor",
-                        "direction": "ascending"
-                    },
-                    "columns": [{
-                        "caption": "FlooID",    "name": "FloorID",  "width": "10px",    "save": true,   "visible": false
-                    }, {
-                        "caption": "Floor",     "name": "Floor",    "width": "200px",   "save": true
-                    }, {
-                        "caption": "RoomID",    "name": "RoomID",   "width": "10px",    "save": true,   "visible": false
-                    }, {
-                        "caption": "Room",      "name": "Room",     "width": "275px",   "save": true
-                    }],
-                    "values": []
-                },
-                {
-                    "type": "Button",
-                    "caption": "Create instances for selected room",
-                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
-                },
-                {
-                    "type": "Button",
-                    "caption": "Create Instance for central control",
-                    "onClick": "echo('Instance Central Control');"
+                    "type": "Label",
+                    "caption": "Note: if the names of the rooms change in the Controme System after instances are created from this module, the instances will not receive updated data."
                 }
             ]
         },
