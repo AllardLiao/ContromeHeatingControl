@@ -222,4 +222,30 @@ class ContromeGateway extends IPSModuleStrict
         }
         return $id;
     }
+
+    public function GetRoomData(int $floorId, int $roomId)
+    {
+        // Beispiel: Abfrage an Controme API bauen
+        $ip = $this->ReadPropertyString("IPAddress");
+
+        $url = "http://{$ip}/api/get/json/rooms/{$floorId}/{$roomId}";
+
+        $response = @file_get_contents($url);
+
+        if ($response === false) {
+            $this->SendDebug("CONGW-GetRoomData", "Failed to fetch room data from $url", 0);
+            $this->LogMessage("CONGW-GetRoomData: " . "Failed to fetch room data from $url", KL_ERROR);
+            return false;
+        }
+
+        $data = json_decode($response, true);
+
+        if (!is_array($data)) {
+            $this->SendDebug("CONGW-GetRoomData", "Invalid JSON response from $url", 0);
+            $this->LogMessage("CONGW-GetRoomData: " . "Invalid JSON response from $url", KL_ERROR);
+            return false;
+        }
+
+        return $data;
+    }
 }

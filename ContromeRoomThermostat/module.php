@@ -19,6 +19,11 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
     include_once __DIR__ . '/../.ips_stubs/autoload.php';
 }
 
+// Bibliotheks-übergreifende Constanten einbinden
+require_once __DIR__ . '/../libs/ContromeConstants.php';
+use Controme\GUIDs;
+use Controme\ACTIONs;
+
 class ContromeRoomThermostat extends IPSModuleStrict
 {
     use DebugHelper;
@@ -117,8 +122,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
 
         $result = $this->SendDataToParent(json_encode([
-            "DataID" => "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}",
-            "Action" => "CheckConnection"
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
         if ($result) {
@@ -129,6 +134,37 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
             $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
             $this->LogMessage("CONRT-" . $this->InstanceID . " - CheckConnection - Connection failed", KL_ERROR);
+            return false;
+        }
+
+        $floorId = $this->ReadPropertyInteger("FloorID");
+        $roomId  = $this->ReadPropertyInteger("RoomID");
+
+        // Anfrage ans Gateway schicken
+        $result = $this->SendDataToParent(json_encode([
+            "DataID"  => GUIDs::DATAFLOW, // die gemeinsame DataFlow-GUID
+            "Action"  => ACTIONs::GET_ROOM_DATA,
+            "FloorID" => $floorId,
+            "RoomID"  => $roomId
+        ]));
+
+        if ($result === false) {
+            $this->SendDebug("CheckConnection", "Fetching Data: no response from gateway!", 0);
+            $this->UpdateFormField("Result", "caption", "Fetching Data: no response from gateway!");
+            $this->LogMessage("Fetching Data: no response from gateway", KL_ERROR);
+            return false;
+        }
+
+        $data = json_decode($result, true);
+        if (isset($data['name'])) {
+            $this->SendDebug("CheckConnection", "Fetching Data: Room {$data['name']} found", 0);
+            $this->UpdateFormField("Result", "caption", "Fetching Data: Room {$data['name']} found");
+            $this->LogMessage("Fetching Data: Room {$data['name']} found", KL_MESSAGE);
+        } else {
+            $this->SendDebug("CheckConnection", "Fetching Data: Room data not valid!", 0);
+            $this->UpdateFormField("Result", "caption", "Fetching Data: Room data not valid!");
+            $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
+            return false;
         }
 
         return true;
