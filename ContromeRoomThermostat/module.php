@@ -126,9 +126,6 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
-        $this->SendDebug("CheckConnection", "FAIL:" . print_r($result));
-        return false;
-
         if ($result) {
             $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
             $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
