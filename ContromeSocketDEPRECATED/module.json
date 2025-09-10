@@ -3,7 +3,7 @@
     "name": "ContromeSocket",
     "type": 3,
     "vendor": "Controme GmbH",
-    "aliases": ["Controme Heizungssteuerung"],
+    "aliases": ["Controme Heizungssteuerung DEP"],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
