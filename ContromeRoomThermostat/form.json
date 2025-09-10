@@ -8,15 +8,16 @@
         },
         {
             "type": "Label",
-            "caption": "Symcon Modul zur Einzel-Raumsteuerung der Temperatur. \nAnzeige von Ist-Temperatur, Luftfeuchte und Betriebsart. Änderung von Soll-Temperaturen."
+            "caption": "Symcon module for individual room temperature control.\n\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface."
         },
         {
             "type": "Label",
-            "caption": "\nRaum:"
+            "caption": "\nRoom and Floor Assignment\n ",
+            "bold": true
         },
         {
             "type": "Label",
-            "caption": "Normally there aro no changes necessary - only apply changes if you know what you are doing...\nIf applieing changes, the floor- and room-names will be automatically updated upon next data update if left empty. Otherwise the names set here will be user for the corresponding ID."
+            "caption": "In most cases, no changes are required here. Only modify these settings if you are sure of what you are doing.\n\nIf you leave the floor and room names empty, they will be updated automatically with the next data update. If you enter names here, those will be used for the corresponding IDs withing IPS."
         },
         {
             "type": "RowLayout",
