@@ -135,7 +135,7 @@
                     }, {
                         "caption": "Floor",
                         "name": "Floor",
-                        "width": "75px",
+                        "width": "200px",
                         "add": 0,
                         "edit": {
                             "type": "SelectInstance"
@@ -152,7 +152,7 @@
                     }, {
                         "caption": "Room",
                         "name": "Room",
-                        "width": "75px",
+                        "width": "275px",
                         "add": 0,
                         "edit": {
                             "type": "SelectInstance"
