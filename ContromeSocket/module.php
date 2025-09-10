@@ -177,7 +177,7 @@ class ContromeSocket extends IPSModuleStrict
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
 
         // Räume Speichern
-        $this->WriteAttributeString("Rooms", $json);
+        //$this->WriteAttributeString("Rooms", $json);
 
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
