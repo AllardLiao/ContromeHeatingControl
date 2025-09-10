@@ -1,10 +1,10 @@
 {
     "id": "{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}",
     "name": "ContromeSocket",
-    "type": 1,
+    "type": 2,
     "vendor": "Controme GmbH",
     "aliases": [
-        ""
+        "Controme I/O Socket"
     ],
     "parentRequirements": [],
     "childRequirements": [
