@@ -137,10 +137,7 @@
                         "caption": "Floor",
                         "name": "Floor",
                         "width": "200px",
-                        "save": true,
-                        "edit": {
-                            "type": "SelectInstance"
-                        }
+                        "save": true
                     }, {
                         "caption": "RoomID",
                         "name": "RoomID",
