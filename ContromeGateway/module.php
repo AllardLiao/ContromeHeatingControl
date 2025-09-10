@@ -7,7 +7,7 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
     // Development
     include_once __DIR__ . '/../.ips_stubs/autoload.php';
 }
-class ContromeSocket extends IPSModuleStrict
+class ContromeGateway extends IPSModuleStrict
 {
     use DebugHelper;
     use EventHelper;
