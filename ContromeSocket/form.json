@@ -117,13 +117,39 @@
                     "name": "Rooms",
                     "caption": "Rooms",
                     "rowCount": 5,
-                    "add": true,
-                    "delete": true,
+                    "add": false,
+                    "delete": false,
                     "sort": {
                         "column": "Room",
                         "direction": "ascending"
                     },
                     "columns": [{
+                        "caption": "FlooID",
+                        "name": "FloorID",
+                        "width": "10px",
+                        "add": 0,
+                        "visible": false,
+                        "edit": {
+                            "type": "SelectInstance"
+                        }
+                    }, {
+                        "caption": "Floor",
+                        "name": "Floor",
+                        "width": "75px",
+                        "add": 0,
+                        "edit": {
+                            "type": "SelectInstance"
+                        }
+                    }, {
+                        "caption": "RoomID",
+                        "name": "RoomID",
+                        "width": "10px",
+                        "add": 0,
+                        "visible": false,
+                        "edit": {
+                            "type": "SelectInstance"
+                        }
+                    }, {
                         "caption": "Room",
                         "name": "Room",
                         "width": "75px",
@@ -131,18 +157,12 @@
                         "edit": {
                             "type": "SelectInstance"
                         }
-                    }, {
-                        "caption": "Name",
-                        "name": "Name",
-                        "width": "auto",
-                        "add": ""
                     }],
                     "values": [{
-                        "InstanceID": 12435,
-                        "Name": "TEST...",
-                        "State": "OK!",
-                        "Temperature": 23.31,
-                        "rowColor": "#ff0000"
+                        "FloorID": 1,
+                        "Floor": "EG",
+                        "RoomID": 1,
+                        "Room": "Wohnzimmer"
                     }]
                 }
             ]

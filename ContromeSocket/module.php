@@ -26,6 +26,7 @@ class ContromeSocket extends IPSModuleStrict
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
+        $this->RegisterAttributeString("Rooms", ""); // gem. Controme-API: get-rooms
     }
 
     public function Destroy(): void
@@ -159,19 +160,25 @@ class ContromeSocket extends IPSModuleStrict
             return false;
         }
 
-        // Räume durchgehen
+        // Räume durchgehen und Json für Formular-Liste erstellen.
+        $formListJson = [];
         foreach ($data as $etage) {
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
 
             foreach ($etage['raeume'] as $raum) {
-                $etageName = $etage['etagenname'] ?? "Haus";
-                $raumName = $raum['name'] ?? "Raum";
-                $raumId   = $raum['id'] ?? uniqid();
-
-                // Variable für Raum
-                $catID = $this->GetOrCreateVariable("ID_" . $etageName . "_" . $raumId, $etageName . "_" . $raumName, "~TextBox", $this->InstanceID, 3);
+                $formListJson[] = [
+                    "FloorID" => $etage['id'] ?? 0,
+                    "Floor"   => $etage['etagenname'] ?? "Haus",
+                    "RoomID"  => $raum['id'] ?? 0,
+                    "Room"    => $raum['name'] ?? "Raum",
+                ];
             }
         }
+        $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
+
+        // Räume Speichern
+        $this->WriteAttributeString("Rooms", $json);
+
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("FetchRoomList", "StatusInstances", "Room list updated.");
         return true;
