@@ -174,8 +174,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.",
-                    "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                    "caption": "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.",
                 }
             ]
         },
