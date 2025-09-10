@@ -91,7 +91,7 @@ class ContromeSocket extends IPSModuleStrict
             return false;
         }
 
-        $url = "http://$ip/get/json/v1/1/temps/";
+        $url = "http://$ip/get/json/v1/1/rooms/";
         $opts = [
             "http" => [
                 "header" => "Authorization: Basic " . base64_encode("$user:$pass")
@@ -137,7 +137,7 @@ class ContromeSocket extends IPSModuleStrict
             return false;
         }
 
-        $url = "http://$ip/get/json/v1/1/temps/";
+        $url = "http://$ip/get/json/v1/1/rooms/";
         $opts = [
             "http" => [
                 "header" => "Authorization: Basic " . base64_encode("$user:$pass")
@@ -164,11 +164,12 @@ class ContromeSocket extends IPSModuleStrict
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
 
             foreach ($etage['raeume'] as $raum) {
+                $etageName = $etage['etagenname'] ?? "Haus";
                 $raumName = $raum['name'] ?? "Raum";
                 $raumId   = $raum['id'] ?? uniqid();
 
                 // Variable für Raum
-                $catID = $this->GetOrCreateVariable("raum_" . $raumId, $raumName, "~TextBox", $this->InstanceID, 3);
+                $catID = $this->GetOrCreateVariable($etageName . "_" . $raumId, $raumName, "~TextBox", $this->InstanceID, 3);
             }
         }
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
