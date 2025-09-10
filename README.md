@@ -32,3 +32,26 @@ Dies bedeutet insbesondere, dass die Namen über die Definition im Controme-Mini
 Benennnung der Räume und Sensoren im Controme Mini-Server
 
 by Kai J. Oey
+
+## License
+
+This project is licensed under the [CC BY-NC-SA 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+### Third-party Licenses
+
+- This module uses **traits from the [StylePHP](https://github.com/symcon/StylePHP) project** by Symcon GmbH,
+  licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+- This module uses **traits from Heiko Wilknitz** ([wilkware.de](https://wilkware.de)),
+  licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+## Credits & Acknowledgments
+
+This project was developed to integrate **Controme Smart Heating** systems into IP-Symcon.
+Special thanks to:
+
+- **Controme GmbH** ([controme.com](https://www.controme.com)) for review of the project.
+- **Symcon GmbH** for IP-Symcon and the [StylePHP](https://github.com/symcon/StylePHP) project, which served as a basis for parts of this module.
+- **Heiko Wilknitz** ([wilkware.de](https://wilkware.de)) for providing open-source traits under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+This module is an independent community project and is not officially affiliated with or endorsed by Controme GmbH nor by Symcon GmbH.

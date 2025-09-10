@@ -40,7 +40,7 @@
         },
         {
             "type": "ExpansionPanel",
-            "caption": "Comtrome Instance Creation...",
+            "caption": "Controme Instance Creation...",
             "download": "",
             "expanded": false,
             "link": false,
@@ -51,7 +51,7 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "Please read the configuration of the Controme MiniServer first (Button \"Fetch Room List\").",
+                    "caption": "If not done: please read the configuration of the Controme MiniServer first (Button \"Fetch Room List\").",
                     "bold": true
                 },
                 {
@@ -151,18 +151,18 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nRead the configuration of the Controme MiniServer to be able to create IPS Controme Central Control and Controme Room Thermostat instances."
+                    "caption": "\nTo create IPS Controme Central Control and Room Thermostat instances, you must first read the configuration from the Controme MiniServer."
                 },
                 {
                     "type": "Label",
-                    "caption": "This has to be executed \n1) initially and \n2) in case the configuration of the Controme Mini-Server's ID's (for floors and/or rooms) change (in order to provide correct information to the central control and room thermostat instances)."
+                    "caption": "Please execute this step:\n1) When setting up the module for the first time, and\n2) Whenever the floor or room IDs in your Controme MiniServer configuration change.\nThis ensures that the central control and room thermostat instances have the correct information."
                 },
                 {
                     "type": "RowLayout",
                     "items": [
                         {
                             "type": "Button",
-                            "caption": "Fetch room list",
+                            "caption": "Fetch Room List",
                             "onClick": "IPS_RequestAction($id,'FetchRoomList',true);",
                             "enabled": true
                         },
@@ -175,7 +175,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Note: \n1)In case the ID's of the floors/rooms change in the Controme System after instances are created from this module, the instances will not receive data or receive wrong data.\n2) The floor/rooms names are changed within the "
+                    "caption": "Note:\n1) If floor or room IDs in the Controme system change after you have created instances, those instances may not receive data or may receive incorrect data.\n2) Floor and room names can be changed within the module, but IDs must remain consistent for correct operation."
                 }
             ]
         },
@@ -227,15 +227,12 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+                    "caption": "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."
                 },
                 {
                     "type": "Label",
-                    "caption": "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
-                },
-                {
-                    "type": "Label",
-                    "caption": "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+                    "caption": "https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.",
+                    "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
                 }
             ]
         },

@@ -10,6 +10,7 @@ Beschreibung des Moduls.
 5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
 6. [WebFront](#6-webfront)
 7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
+8. [Lizenz](#8-lizenz)
 
 ### 1. Funktionsumfang
 
@@ -26,7 +27,7 @@ Beschreibung des Moduls.
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'ContromeRoomThermostat'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'ContromeRoomThermostat'-Modul mithilfe des Schnellfilters gefunden werden.
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
@@ -65,3 +66,8 @@ Erklärung der Funktion.
 
 Beispiel:
 `CONRT_BeispielFunktion(12345);`
+
+### 8. Lizenz
+
+This project is licensed under the
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
