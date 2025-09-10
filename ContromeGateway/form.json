@@ -2,13 +2,13 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "\nControme Heating Control - I/O Socket\n ",
+            "caption": "\nControme Heating Control - Gateway Component\n ",
             "link": false,
             "bold": true
         },
         {
             "type": "Label",
-            "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
+            "caption": "Symcon module for local control and monitoring of Controme heating systems. Automatic creation of rooms, sensors, actual/target temperatures, humidity, and operating mode. Supports reading and writing via the Controme API. Fully integrable into IPS with timer and variable profiles."
         },
         {
             "type": "RowLayout",
@@ -39,27 +39,78 @@
             "width": "300px"
         },
         {
-            "type": "List",
-            "name": "Rooms",
-            "caption": "Rooms",
-            "rowCount": 5,
-            "loadValuesFromConfiguration": true,
-            "add": false,
-            "delete": false,
-            "sort": {
-                "column": "Floor",
-                "direction": "ascending"
-            },
-            "columns": [{
-                "caption": "FlooID",    "name": "FloorID",  "width": "50px",    "save": true,   "visible": true
-            }, {
-                "caption": "Floor",     "name": "Floor",    "width": "275px",   "save": true,   "visible": true,    "edit": {"type": "ValidationTextBox", "caption": "Floor"}
-            }, {
-                "caption": "RoomID",    "name": "RoomID",   "width": "50px",    "save": true,   "visible": true
-            }, {
-                "caption": "Room",      "name": "Room",     "width": "275px",   "save": true,   "visible": true,    "edit": {"type": "ValidationTextBox", "caption": "Floor"}
-            }],
-            "values": []
+            "type": "ExpansionPanel",
+            "caption": "Comtrome Instance Creation...",
+            "download": "",
+            "expanded": false,
+            "link": false,
+            "name": "",
+            "onClick": "",
+            "visible": true,
+            "width": "",
+            "items": [
+                {
+                    "type": "Label",
+                    "caption": "\nPlease read the configuration of the Controme MiniServer first (Button \"Fetch Room List\")."
+                },
+                {
+                    "type": "Button",
+                    "caption": "Create Instance for central control",
+                    "onClick": "echo('Instance Central Control');"
+                },
+                {
+                    "type": "List",
+                    "name": "Rooms",
+                    "caption": "Rooms",
+                    "rowCount": 5,
+                    "loadValuesFromConfiguration": true,
+                    "add": false,
+                    "delete": false,
+                    "sort": {
+                        "column": "Floor",
+                        "direction": "ascending"
+                    },
+                    "columns": [
+                        {
+                            "caption": "FlooID",
+                            "name": "FloorID",
+                            "width": "50px",
+                            "save": true,
+                            "visible": true
+                        },
+                        {
+                            "caption": "Floor",
+                            "name": "Floor",
+                            "width": "275px",
+                            "save": true,
+                            "visible": true,
+                            "edit": {
+                                "type": "ValidationTextBox",
+                                "caption": "Floor"
+                            }
+                        },
+                        {
+                            "caption": "RoomID",
+                            "name": "RoomID",
+                            "width": "50px",
+                            "save": true,
+                            "visible": true
+                        },
+                        {
+                            "caption": "Room",
+                            "name": "Room",
+                            "width": "275px",
+                            "save": true,
+                            "visible": true,
+                            "edit": {
+                                "type": "ValidationTextBox",
+                                "caption": "Floor"
+                            }
+                        }
+                    ],
+                    "values": []
+                }
+            ]
         },
         {
             "type": "Label",
@@ -69,11 +120,6 @@
             "type": "Button",
             "caption": "Create instances for selected room",
             "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
-        },
-        {
-            "type": "Button",
-            "caption": "Create Instance for central control",
-            "onClick": "echo('Instance Central Control');"
         }
     ],
     "actions": [
