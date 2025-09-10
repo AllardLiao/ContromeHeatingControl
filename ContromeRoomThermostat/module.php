@@ -105,7 +105,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         if (empty($floorID) || empty($roomID)) {
             $this->SendDebug("CheckConnection", "Please configure FloorID, Floor, RoomID and Room!", 0);
-            $this->UpdateFormField("Result", "caption", "Please set all 4 parameters (username, password and device IP).");
+            $this->UpdateFormField("Result", "caption", "Please set all 4 parameters (floor-ID and -name, room-ID and -name).");
             return false;
         }
 
