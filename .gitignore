@@ -13,3 +13,6 @@ npm-debug.log
 # Temporary files
 *.tmp
 temp
+
+# Deprecated files
+*DEPRECATED*
