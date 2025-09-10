@@ -108,17 +108,21 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $roomID = $this->ReadPropertyString("RoomID");
         $room = $this->ReadPropertyString("Room");
 
+        // Der Output kann unter Umständen die Ergebnisse von zwei Prüfschritten enthalten, deswegen eine Merker-Variable
+        $outputText = "";
+
         if (empty($floorID) || empty($roomID)) {
-            $this->SendDebug("CheckConnection", "Please configure FloorID, Floor, RoomID and Room!", 0);
-            $this->UpdateFormField("Result", "caption", "Please set all 4 parameters (floor-ID and -name, room-ID and -name).");
+            $this->SendDebug("CheckConnection", "Please configure Floor-ID and Room-ID!", 0);
+            $outputText .= "Please set all parameters floor-ID and room-ID).\n";
+            $this->UpdateFormField("Result", "caption", $outputText);
             return false;
         }
 
         if (empty($floor) || empty($room)) {
             $this->SendDebug("CheckConnection", "Missing parameters floor and/or room.", 0);
-            $this->UpdateFormField("Result", "caption", "Missing parameters floor and/or room.");
-            $this->LogMessage("CheckConnection: floor and room names missing. Fetching from I/O Socket upon next update.", KL_NOTIFY);
-            return false;
+            $outputText .= "Missing parameters floor and/or room.\n";
+            $this->UpdateFormField("Result", "caption", $outputText);
+            $this->LogMessage("CheckConnection: floor and room names missing. Fetching from gateway upon next update.", KL_NOTIFY);
         }
 
         $result = $this->SendDataToParent(json_encode([
@@ -128,11 +132,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         if ($result) {
             $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
-            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
+            $outputText .= "Connection to Gateway and Controme Mini-Server is working!\n";
+            $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
         } else {
             $this->SendDebug("CheckConnection", "Connection failed!", 0);
-            $this->UpdateFormField("Result", "caption", "Connection failed!");
+            $outputText .= "Connection failed!\n";
+            $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Connection failed!", KL_ERROR);
             return false;
         }
@@ -150,7 +156,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         if ($result === false) {
             $this->SendDebug("CheckConnection", "Fetching Data: no response from gateway!", 0);
-            $this->UpdateFormField("Result", "caption", "Fetching Data: no response from gateway!");
+            $outputText .= "Fetching Data: no response from gateway!\n";
+            $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: no response from gateway", KL_ERROR);
             return false;
         }
@@ -158,11 +165,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $data = json_decode($result, true);
         if (isset($data['name'])) {
             $this->SendDebug("CheckConnection", "Fetching Data: Room {$data['name']} found", 0);
-            $this->UpdateFormField("Result", "caption", "Fetching Data: Room {$data['name']} found");
+            $outputText .= "Fetching Data: Room {$data['name']} found.";
+            $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room {$data['name']} found", KL_MESSAGE);
         } else {
             $this->SendDebug("CheckConnection", "Fetching Data: Room data not valid!", 0);
-            $this->UpdateFormField("Result", "caption", "Fetching Data: Room data not valid!");
+            $outputText .= "Fetching Data: Room data not valid!";
+            $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
             return false;
         }
