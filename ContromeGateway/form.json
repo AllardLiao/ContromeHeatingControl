@@ -51,7 +51,8 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "\nPlease read the configuration of the Controme MiniServer first (Button \"Fetch Room List\")."
+                    "caption": "Please read the configuration of the Controme MiniServer first (Button \"Fetch Room List\").",
+                    "bold": true
                 },
                 {
                     "type": "Button",
@@ -109,17 +110,17 @@
                         }
                     ],
                     "values": []
+                },
+                {
+                    "type": "Label",
+                    "caption": "Note: You can change the names of floors and rooms here. However, if you update the list using the \"Fetch Room List\" button, your changes will be overwritten. The Controme Room Thermostat and Controme Central Control modules use the IDs as unique identifiers to receive their data."
+                },
+                {
+                    "type": "Button",
+                    "caption": "Create instance for selected room",
+                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
                 }
             ]
-        },
-        {
-            "type": "Label",
-            "caption": "Note: the names of the floors and rooms can be changed here. In case you updates the list using the \"Fetch Room List\"-button, changes will be overwritten. The modules Controme Room Thermostat and Controme Central Control receive their data using the id's as identifier."
-        },
-        {
-            "type": "Button",
-            "caption": "Create instances for selected room",
-            "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
         }
     ],
     "actions": [
