@@ -31,7 +31,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyString("RoomID", "");
         $this->RegisterPropertyString("Room", "");
 
+        //Konfigurationselemente der zyklischen Abfrage
+        $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
+        $this->RegisterPropertyBoolean("AutoUpdate", true);
+
+
         // Konfigurationselemente der Tile-Visualisierung
+        $this->RegisterPropertyBoolean("AutoUpdate", true);
 
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
         $this->RegisterTimer("UpdateContromeDataRoomID" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
