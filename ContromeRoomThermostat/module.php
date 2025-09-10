@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
 
@@ -8,7 +10,6 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
     include_once __DIR__ . '/../.ips_stubs/autoload.php';
 }
 
-declare(strict_types=1);
 class ContromeRoomThermostat extends IPSModuleStrict
 {
     use DebugHelper;
