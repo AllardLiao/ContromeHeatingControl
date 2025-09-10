@@ -136,7 +136,7 @@
                 {
                     "type": "Button",
                     "caption": "Check connection",
-                    "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
+                    "onClick": "IPS_RequestAction($id, \"CheckConnection\", 0);",
                     "enabled": true
                 },
                 {

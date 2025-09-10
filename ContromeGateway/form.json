@@ -57,7 +57,7 @@
                 {
                     "type": "Button",
                     "caption": "Create Instance for central control",
-                    "onClick": "echo('Instance Central Control');"
+                    "onClick": "echo('TO BE IMPLEMENTED');"
                 },
                 {
                     "type": "List",
@@ -113,7 +113,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Note: You can change the names of floors and rooms here. However, if you update the list using the \"Fetch Room List\" button, your changes will be overwritten. The Controme Room Thermostat and Controme Central Control modules use the IDs as unique identifiers to receive their data."
+                    "caption": "Note: You can rename floors and rooms here for better clarity in IP-Symcon. However, if you use the \"Fetch Room List\" button, your changes will be overwritten with the names from the Controme MiniServer. The Controme Room Thermostat and Central Control modules use the floor and room IDs as unique identifiers to receive data. Changing names in IP-Symcon does not affect the connection, as long as the IDs remain unchanged."
                 },
                 {
                     "type": "Button",

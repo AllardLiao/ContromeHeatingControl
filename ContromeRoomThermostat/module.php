@@ -112,10 +112,26 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (empty($floor) || empty($room)) {
             $this->SendDebug("CheckConnection", "Missing Floor and Room.", 0);
             $this->UpdateFormField("Result", "caption", "Please set all 4 parameters (username, password and device IP).");
-            $this->LogMessage("UpdateContromeDataRoomID" . $this->InstanceID . " CheckConnection: floor and room names missing. Fetching from I/O Socket upon next update.", KL_NOTIFY);
+            $this->LogMessage("CONRT-" . $this->InstanceID . " CheckConnection: floor and room names missing. Fetching from I/O Socket upon next update.", KL_NOTIFY);
             return false;
+        }
+
+        $result = $this->SendDataToParent(json_encode([
+            "DataID" => "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}",
+            "Action" => "CheckConnection"
+        ]));
+
+        if ($result) {
+            $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
+            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
+            $this->LogMessage("CONRT-" . $this->InstanceID . " - CheckConnection - Connection successful", KL_MESSAGE);
+        } else {
+            $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
+            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
+            $this->LogMessage("CONRT-" . $this->InstanceID . " - CheckConnection - Connection failed", KL_ERROR);
         }
 
         return true;
     }
+
 }
