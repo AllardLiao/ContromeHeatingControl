@@ -124,8 +124,8 @@
                         "direction": "ascending"
                     },
                     "columns": [{
-                        "caption": "RoomID",
-                        "name": "RoomID",
+                        "caption": "Room",
+                        "name": "Room",
                         "width": "75px",
                         "add": 0,
                         "edit": {
@@ -142,7 +142,7 @@
                         "Name": "TEST...",
                         "State": "OK!",
                         "Temperature": 23.31,
-                        "rowColor": "#ff0000" 
+                        "rowColor": "#ff0000"
                     }]
                 }
             ]
