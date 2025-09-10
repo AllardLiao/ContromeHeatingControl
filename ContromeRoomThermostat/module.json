@@ -6,10 +6,11 @@
     "aliases": [
         "Controme Raumthermostat"
     ],
-    "parentRequirements": [],
+    "parentRequirements": [
+        "{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}"
+    ],
     "childRequirements": [],
     "implemented": [],
     "prefix": "CONRT",
     "url": ""
 }
-
