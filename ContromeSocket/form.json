@@ -138,7 +138,7 @@
                 {
                     "type": "Button",
                     "caption": "Create instances for selected room",
-                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
+                    "onClick": "print_r($Rooms);"
                 },
                 {
                     "type": "Button",
