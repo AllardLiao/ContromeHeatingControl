@@ -126,7 +126,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
-        echo $result;
+        $this->SendDebug("CheckConnection", "FAIL:" . print_r($result));
         return false;
 
         if ($result) {
