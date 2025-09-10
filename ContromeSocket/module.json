@@ -1,0 +1,18 @@
+{
+    "id": "{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}",
+    "name": "ContromeSocket",
+    "type": 1,
+    "vendor": "Controme GmbH",
+    "aliases": [
+        ""
+    ],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{DA7FEED6-04F3-CDA1-64D9-8BBA9540FE34}"
+    ],
+    "implemented": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "prefix": "CONHC",
+    "url": ""
+}

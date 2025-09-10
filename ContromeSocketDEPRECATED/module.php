@@ -115,7 +115,8 @@ class ContromeHeatingControl extends IPSModuleStrict
         $json = @file_get_contents($url, false, $context);
 
         if ($json === FALSE) {
-            $this->SendDebug("CheckConnection", "Fehler beim Abrufen von $url", 0);
+            $this->SendDebug("CheckConnection", "Fehler beim Zugriff", 0);
+            $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP, username and password!", KL_ERROR);
             $this->UpdateFormField("Result", "caption", "No connection.");
             return false;
         }
@@ -123,10 +124,12 @@ class ContromeHeatingControl extends IPSModuleStrict
         $data = json_decode($json, true);
         if ($data === null) {
             $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
+            $this->LogMessage("CONTROMEHC - JSON Error", KL_ERROR);
             $this->UpdateFormField("Result", "caption", "Error: JSON-Decode - please contact developer.");
             return false;
         }
         $this->SendDebug("CheckConnection", "Success - connection established for user " . $user . "!");
+        $this->LogMessage("CONTROMEHC - Successfully established connection.for user " . $user . "!", KL_NOTIFY);
         $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
         return true;
     }
@@ -196,7 +199,7 @@ class ContromeHeatingControl extends IPSModuleStrict
 
                 // Variablen anlegen
                 $istTempID  = $this->GetOrCreateVariable("currentTemp", "Ist-Temperatur", "~Temperature.Room", $catID, 2);
-                $sollTempID = $this->GetOrCreateVariable("targertTemp", "Soll-Temperatur", "~Temperature.Room", $catID, 2);
+                $sollTempID = $this->GetOrCreateVariable("targetTemp", "Soll-Temperatur", "~Temperature.Room", $catID, 2);
                 $humID      = $this->GetOrCreateVariable("humidity", "Luftfeuchtigkeit", "~Humidity.F", $catID, 2);
                 $modeID     = $this->GetOrCreateVariable("operationMode", "Betriebsart", "Controme.Betriebsart", $catID, 1);
 

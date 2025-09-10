@@ -1,6 +1,6 @@
 {
     "id": "{111AA683-23A4-AABB-909A-ECC5F0FE6303}",
-    "name": "Controme Heating Control",
+    "name": "ContromeSocket",
     "type": 3,
     "vendor": "Controme GmbH",
     "aliases": ["Controme Heizungssteuerung"],
@@ -10,3 +10,4 @@
     "prefix": "CONTROMEHC",
     "url": "https://github.com/AllardLiao/ContromeHeatingControl"
 }
+

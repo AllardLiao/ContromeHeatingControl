@@ -1,0 +1,14 @@
+{
+    "id": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
+    "name": "ContromeRoomThermostat",
+    "type": 3,
+    "vendor": "",
+    "aliases": [
+        "Controme Raumthermostat"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "CONRT",
+    "url": ""
+}
