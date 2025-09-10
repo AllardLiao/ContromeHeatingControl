@@ -18,6 +18,12 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
     // Development
     include_once __DIR__ . '/../.ips_stubs/autoload.php';
 }
+
+// Bibliotheks-übergreifende Constanten einbinden
+require_once __DIR__ . '/../libs/ContromeConstants.php';
+use Controme\GUIDs;
+use Controme\ACTIONs;
+
 class ContromeGateway extends IPSModuleStrict
 {
     use DebugHelper;
@@ -132,6 +138,49 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
+    //
+    public function ForwardData($JSONString): string
+    {
+        // Auswertung für Aufrufe von Child-Instanzen
+        $data = json_decode($JSONString, true);
+
+        if (!isset($data['Action'])) {
+            $this->SendDebug("ForwardData", "No action provided!", 0);
+            return json_encode(false);
+        }
+
+        switch ($data['Action']) {
+            case ACTIONs::CHECK_CONNECTION:
+                $ok = $this->CheckConnection(); // <- deine bestehende Funktion
+                return json_encode([
+                    "success" => $ok,
+                    "message" => $ok ? "Connected" : "Connection failed"
+                ]);
+
+            case ACTIONs::GET_ROOM_DATA:
+                if (!isset($data['FloorID']) || !isset($data['RoomID'])) {
+                    $this->SendDebug("GET_ROOM_DATA", "Missing FloorID or RoomID", 0);
+                    return json_encode(false);
+                }
+
+                $floorId = (int)$data['FloorID'];
+                $roomId  = (int)$data['RoomID'];
+
+                $roomData = $this->RequestRoomData($floorId, $roomId);
+                return json_encode($roomData);
+
+            default:
+                $this->SendDebug("ForwardData", "Unknown action: " . $data['Action'], 0);
+                return json_encode(false);
+
+        }
+
+        return json_encode([
+            "success" => false,
+            "message" => "Unknown action"
+        ]);
+    }
+
     /**
      * Update Data from Controme MiniServer
      *
@@ -223,7 +272,7 @@ class ContromeGateway extends IPSModuleStrict
         return $id;
     }
 
-    public function GetRoomData(int $floorId, int $roomId)
+    public function RequestRoomData(int $floorId, int $roomId)
     {
         // Beispiel: Abfrage an Controme API bauen
         $ip = $this->ReadPropertyString("IPAddress");
@@ -234,7 +283,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($response === false) {
             $this->SendDebug("CONGW-GetRoomData", "Failed to fetch room data from $url", 0);
-            $this->LogMessage("CONGW-GetRoomData: " . "Failed to fetch room data from $url", KL_ERROR);
+            $this->LogMessage("Failed to fetch room data from $url", KL_ERROR);
             return false;
         }
 
@@ -242,7 +291,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if (!is_array($data)) {
             $this->SendDebug("CONGW-GetRoomData", "Invalid JSON response from $url", 0);
-            $this->LogMessage("CONGW-GetRoomData: " . "Invalid JSON response from $url", KL_ERROR);
+            $this->LogMessage("Invalid JSON response from $url", KL_ERROR);
             return false;
         }
 

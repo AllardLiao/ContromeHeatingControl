@@ -125,12 +125,14 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->LogMessage("CheckConnection: floor and room names missing. Fetching from gateway upon next update.", KL_NOTIFY);
         }
 
-        $result = $this->SendDataToParent(json_encode([
+        $response = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
             "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
-        if ($result) {
+        $result = json_decode($response, true);
+
+        if ($result['success']) {
             $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
             $outputText .= "Connection to Gateway and Controme Mini-Server is working!\n";
             $this->UpdateFormField("Result", "caption", $outputText);
