@@ -134,7 +134,7 @@ class ContromeSocket extends IPSModuleStrict
 
         if (empty($ip) || empty($user) || empty($pass)) {
             $this->SendDebug("FetchRoomList", "IP, User oder Passwort nicht gesetzt!", 0);
-            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to login - missing argument.");
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to login - missing argument.");
             return false;
         }
 
@@ -149,14 +149,14 @@ class ContromeSocket extends IPSModuleStrict
 
         if ($json === FALSE) {
             $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url", 0);
-            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to read data.");
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
             return false;
         }
 
         $data = json_decode($json, true);
         if ($data === null) {
             $this->SendDebug("FetchRoomList", "Fehler beim JSON-Decode", 0);
-            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to decode data.");
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to decode data.");
             return false;
         }
 
@@ -180,7 +180,7 @@ class ContromeSocket extends IPSModuleStrict
         $this->WriteAttributeString("Rooms", $json);
 
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
-        $this->UpdateFormField("FetchRoomList", "StatusInstances", "Room list updated.");
+        $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
         return true;
     }
 
