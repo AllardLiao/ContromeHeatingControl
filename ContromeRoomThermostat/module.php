@@ -46,7 +46,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyString("Room", "");
 
         //Konfigurationselemente der zyklischen Abfrage
-        $this->RegisterPropertyInteger("UpdateInterval", 240); // in Minuten
+        $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
 
 
@@ -103,7 +103,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
      */
     public function CheckConnection(): bool
     {
-        $floorID   = $this->ReadPropertyInteger("FloorID");
+        $floorID = $this->ReadPropertyInteger("FloorID");
         $floor = $this->ReadPropertyString("Floor");
         $roomID = $this->ReadPropertyInteger("RoomID");
         $room = $this->ReadPropertyString("Room");

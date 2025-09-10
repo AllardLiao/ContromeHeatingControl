@@ -25,14 +25,14 @@
             "visible": true,
             "items": [
                 {
-                    "type": "ValidationTextBox",
+                    "type": "NumberSpinners",
                     "caption": "Floor-ID",
                     "enabled": true,
-                    "multiline": false,
                     "name": "FloorID",
                     "onChange": "",
                     "validate": "",
-                    "value": "0",
+                    "value": 0,
+                    "minimum": 0,
                     "visible": true,
                     "width": "100px"
                 },
@@ -49,14 +49,14 @@
                     "width": "200px"
                 },
                 {
-                    "type": "ValidationTextBox",
+                    "type": "NumberSpinners",
                     "caption": "Room-ID",
                     "enabled": true,
-                    "multiline": false,
                     "name": "RoomID",
                     "onChange": "",
                     "validate": "",
-                    "value": "0",
+                    "value": 0,
+                    "minimum": 0,
                     "visible": true,
                     "width": "100px"
                 },
