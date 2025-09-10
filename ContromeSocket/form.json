@@ -139,6 +139,11 @@
                     "type": "Button",
                     "caption": "Create instances for selected room",
                     "onClick": "print_r($devices['Floor'] . ' - ' . print_r($devices['Room']);"
+                },
+                {
+                    "type": "Button",
+                    "caption": "Create Instance for central control",
+                    "onClick": "echo('Instance Central Control');"
                 }
             ]
         },
