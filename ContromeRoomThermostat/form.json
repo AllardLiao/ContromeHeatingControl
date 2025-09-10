@@ -25,7 +25,7 @@
             "items": [
                 {
                     "type": "ValidationTextBox",
-                    "caption": "XYZ",
+                    "caption": "Floor-ID",
                     "enabled": true,
                     "multiline": false,
                     "name": "Floor-ID",
@@ -37,19 +37,19 @@
                 },
                 {
                     "type": "ValidationTextBox",
-                    "caption": "XYZ",
+                    "caption": "Floor name",
                     "enabled": true,
                     "multiline": false,
                     "name": "Floor-Name",
                     "onChange": "",
                     "validate": "",
-                    "value": "0",
+                    "value": "n/a",
                     "visible": true,
                     "width": "200px"
                 },
                 {
                     "type": "ValidationTextBox",
-                    "caption": "XYZ",
+                    "caption": "Room-ID",
                     "enabled": true,
                     "multiline": false,
                     "name": "Room-ID",
@@ -61,13 +61,13 @@
                 },
                 {
                     "type": "ValidationTextBox",
-                    "caption": "XYZ",
+                    "caption": "Room name",
                     "enabled": true,
                     "multiline": false,
                     "name": "Room-Name",
                     "onChange": "",
                     "validate": "",
-                    "value": "0",
+                    "value": "n/a",
                     "visible": true,
                     "width": "200px"
                 }
@@ -127,7 +127,7 @@
     "actions": [
         {
             "type": "Label",
-            "caption": "\nCheck connection to Controme MiniServer."
+            "caption": "\nCheck connection to Controme I/O-Socket and Controme Mini-Server."
         },
         {
             "type": "RowLayout",
