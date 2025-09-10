@@ -117,10 +117,11 @@
                     "name": "Rooms",
                     "caption": "Rooms",
                     "rowCount": 5,
+                    "loadValuesFromConfiguration": true,
                     "add": false,
                     "delete": false,
                     "sort": {
-                        "column": "Room",
+                        "column": "Floor",
                         "direction": "ascending"
                     },
                     "columns": [{
@@ -158,12 +159,7 @@
                             "type": "SelectInstance"
                         }
                     }],
-                    "values": [{
-                        "FloorID": 1,
-                        "Floor": "EG",
-                        "RoomID": 1,
-                        "Room": "Wohnzimmer"
-                    }]
+                    "values": []
                 }
             ]
         },
