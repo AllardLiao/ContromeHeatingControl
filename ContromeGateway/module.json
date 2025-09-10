@@ -8,9 +8,7 @@
     ],
     "parentRequirements": [],
     "childRequirements": [
-        "{DA7FEED6-04F3-CDA1-64D9-8BBA9540FE34}",
-        "{A19ABE82-5AB1-7969-3851-E6446DECEBA9}",
-        "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}"  
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
     ],
     "implemented": [
         "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
