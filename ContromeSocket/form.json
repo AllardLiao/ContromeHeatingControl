@@ -125,38 +125,20 @@
                         "direction": "ascending"
                     },
                     "columns": [{
-                        "caption": "FlooID",
-                        "name": "FloorID",
-                        "width": "10px",
-                        "save": true,
-                        "visible": false,
-                        "edit": {
-                            "type": "SelectInstance"
-                        }
+                        "caption": "FlooID",    "name": "FloorID",  "width": "10px",    "save": true,   "visible": false
                     }, {
-                        "caption": "Floor",
-                        "name": "Floor",
-                        "width": "200px",
-                        "save": true
+                        "caption": "Floor",     "name": "Floor",    "width": "200px",   "save": true
                     }, {
-                        "caption": "RoomID",
-                        "name": "RoomID",
-                        "width": "10px",
-                        "save": true,
-                        "visible": false,
-                        "edit": {
-                            "type": "SelectInstance"
-                        }
+                        "caption": "RoomID",    "name": "RoomID",   "width": "10px",    "save": true,   "visible": false
                     }, {
-                        "caption": "Room",
-                        "name": "Room",
-                        "width": "275px",
-                        "save": true,
-                        "edit": {
-                            "type": "SelectInstance"
-                        }
+                        "caption": "Room",      "name": "Room",     "width": "275px",   "save": true
                     }],
                     "values": []
+                },
+                {
+                    "type": "Button",
+                    "caption": "Create instances for selected room",
+                    "onClick": "print_r($devices['Floor'] . ' - ' . print_r($devices['Room']);"
                 }
             ]
         },
