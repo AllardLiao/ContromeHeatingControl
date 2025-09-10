@@ -115,9 +115,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
 
         if (empty($floor) || empty($room)) {
-            $this->SendDebug("CheckConnection", "Missing Floor and Room.", 0);
-            $this->UpdateFormField("Result", "caption", "Please set all 4 parameters (username, password and device IP).");
-            $this->LogMessage("CONRT-" . $this->InstanceID . " CheckConnection: floor and room names missing. Fetching from I/O Socket upon next update.", KL_NOTIFY);
+            $this->SendDebug("CheckConnection", "Missing parameters floor and/or room.", 0);
+            $this->UpdateFormField("Result", "caption", "Missing parameters floor and/or room.");
+            $this->LogMessage("CheckConnection: floor and room names missing. Fetching from I/O Socket upon next update.", KL_NOTIFY);
             return false;
         }
 
@@ -129,11 +129,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if ($result) {
             $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
             $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
-            $this->LogMessage("CONRT-" . $this->InstanceID . " - CheckConnection - Connection successful", KL_MESSAGE);
+            $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
         } else {
-            $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
-            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!");
-            $this->LogMessage("CONRT-" . $this->InstanceID . " - CheckConnection - Connection failed", KL_ERROR);
+            $this->SendDebug("CheckConnection", "Connection failed!", 0);
+            $this->UpdateFormField("Result", "caption", "Connection failed!");
+            $this->LogMessage("Connection failed!", KL_ERROR);
             return false;
         }
 
