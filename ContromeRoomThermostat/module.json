@@ -2,9 +2,9 @@
     "id": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
     "name": "ContromeRoomThermostat",
     "type": 3,
-    "vendor": "",
+    "vendor": "Controme GmbH",
     "aliases": [
-        "Controme Raumthermostat" 
+        "Controme Raumthermostat"
     ],
     "parentRequirements": [],
     "childRequirements": [],
@@ -12,3 +12,4 @@
     "prefix": "CONRT",
     "url": ""
 }
+
