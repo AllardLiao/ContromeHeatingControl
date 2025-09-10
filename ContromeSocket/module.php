@@ -169,7 +169,7 @@ class ContromeSocket extends IPSModuleStrict
                 $raumId   = $raum['id'] ?? uniqid();
 
                 // Variable für Raum
-                $catID = $this->GetOrCreateVariable($etageName . "_" . $raumId, $raumName, "~TextBox", $this->InstanceID, 3);
+                $catID = $this->GetOrCreateVariable("ID_" . $etageName . "_" . $raumId, $etageName . "_" . $raumName, "~TextBox", $this->InstanceID, 3);
             }
         }
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
