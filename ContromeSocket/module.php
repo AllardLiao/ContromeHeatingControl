@@ -26,11 +26,6 @@ class ContromeSocket extends IPSModuleStrict
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
-        $this->RegisterPropertyBoolean("AutoUpdate", true);
-        $this->RegisterPropertyInteger("UpdateInterval", 10);
-
-        // Timer für zyklische Abfrage (alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeData", 10 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
     }
 
     public function Destroy(): void
@@ -55,12 +50,6 @@ class ContromeSocket extends IPSModuleStrict
             IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
             IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
         }
-
-        if ($this->ReadPropertyBoolean("AutoUpdate")) {
-            $this->SetTimerInterval("UpdateContromeData", $this->ReadPropertyInteger("UpdateInterval") * 60 * 1000);
-        } else {
-            $this->SetTimerInterval("UpdateContromeData", 0);
-        }
     }
 
     /**
@@ -72,11 +61,8 @@ class ContromeSocket extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case "UpdateData":
-                $this->UpdateData();
-                break;
-            case "UpdateDataFromInstanceForm":
-                $this->UpdateDataFromInstanceForm();
+            case "FetchRoomList":
+                $this->FetchRoomList();
                 break;
             case "CheckConnection":
                 $this->CheckConnection();
@@ -135,34 +121,19 @@ class ContromeSocket extends IPSModuleStrict
     }
 
     /**
-     * Update Data - called from instance form
-     *
-     * @return boolean
-     */
-    private function UpdateDataFromInstanceForm(): bool
-    {
-        $result = $this->UpdateData();
-        if ($result) {
-            $this->UpdateFormField("StatusInstances", "caption", "Data successfully updated.");
-        } else {
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to update data.");
-        }
-        return $result;
-    }
-
-    /**
      * Update Data from Controme MiniServer
      *
      * @return boolean
      */
-    public function UpdateData(): bool
+    public function FetchRoomList(): bool
     {
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
 
         if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug("UpdateData", "IP, User oder Passwort nicht gesetzt!", 0);
+            $this->SendDebug("FetchRoomList", "IP, User oder Passwort nicht gesetzt!", 0);
+            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to login - missing argument.");
             return false;
         }
 
@@ -176,13 +147,15 @@ class ContromeSocket extends IPSModuleStrict
         $json = @file_get_contents($url, false, $context);
 
         if ($json === FALSE) {
-            $this->SendDebug("UpdateData", "Fehler beim Abrufen von $url", 0);
+            $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url", 0);
+            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to read data.");
             return false;
         }
 
         $data = json_decode($json, true);
         if ($data === null) {
-            $this->SendDebug("UpdateData", "Fehler beim JSON-Decode", 0);
+            $this->SendDebug("FetchRoomList", "Fehler beim JSON-Decode", 0);
+            $this->UpdateFormField("FetchRoomList", "StatusInstances", "Failed to decode data.");
             return false;
         }
 
@@ -194,47 +167,12 @@ class ContromeSocket extends IPSModuleStrict
                 $raumName = $raum['name'] ?? "Raum";
                 $raumId   = $raum['id'] ?? uniqid();
 
-                // Kategorie für Raum
-                $catID = $this->GetOrCreateCategory("raum_" . $raumId, $raumName, $this->InstanceID);
-
-                // Variablen anlegen
-                $istTempID  = $this->GetOrCreateVariable("currentTemp", "Ist-Temperatur", "~Temperature.Room", $catID, 2);
-                $sollTempID = $this->GetOrCreateVariable("targetTemp", "Soll-Temperatur", "~Temperature.Room", $catID, 2);
-                $humID      = $this->GetOrCreateVariable("humidity", "Luftfeuchtigkeit", "~Humidity.F", $catID, 2);
-                $modeID     = $this->GetOrCreateVariable("operationMode", "Betriebsart", "Controme.Betriebsart", $catID, 1);
-
-                // Werte setzen
-                if (isset($raum['temperatur']))     SetValue($istTempID, floatval($raum['temperatur']));
-                if (isset($raum['solltemperatur'])) SetValue($sollTempID, floatval($raum['solltemperatur']));
-                if (isset($raum['luftfeuchte']))    SetValue($humID, floatval($raum['luftfeuchte']));
-
-                if (isset($raum['betriebsart'])) {
-                    $modeMap = [
-                        "Cooling" => 0,
-                        "Off"     => 1,
-                        "Heating" => 2,
-                        "On"      => 3
-                    ];
-                    if (isset($modeMap[$raum['betriebsart']])) {
-                        SetValue($modeID, $modeMap[$raum['betriebsart']]);
-                    }
-                }
-
-                // Sensoren
-                if (isset($raum['sensoren']) && is_array($raum['sensoren'])) {
-                    $sensCatID = $this->GetOrCreateCategory("sensoren", "Sensoren", $catID);
-                    foreach ($raum['sensoren'] as $sensor) {
-                        $sName = $sensor['beschreibung'] != "" ? $sensor['beschreibung'] : $sensor['name'];
-                        $sIdent = "sensor_" . preg_replace('/[^a-zA-Z0-9_]/', '_', $sensor['name']);
-                        $sVarID = $this->GetOrCreateVariable($sIdent, $sName, "~Temperature.Room", $sensCatID, 2);
-                        if (isset($sensor['wert'])) {
-                            SetValue($sVarID, floatval($sensor['wert']));
-                        }
-                    }
-                }
+                // Variable für Raum
+                $catID = $this->GetOrCreateVariable("raum_" . $raumId, $raumName, "~TextBox", $this->InstanceID, 3);
             }
         }
-        $this->SendDebug("UpdateData", "Updated Controme Heating Data.", 0);
+        $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
+        $this->UpdateFormField("FetchRoomList", "StatusInstances", "Room list updated.");
         return true;
     }
 

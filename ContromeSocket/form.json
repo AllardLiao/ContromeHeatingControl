@@ -94,15 +94,15 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nThis must be executed initially and in case the configuration of the Controme Mini-Server's room names change in order to provide correct information to the central control and room thermostat instances."
+                    "caption": "This must be executed initially and in case the configuration of the Controme Mini-Server's room names change in order to provide correct information to the central control and room thermostat instances."
                 },
                 {
                     "type": "RowLayout",
                     "items": [
                         {
                             "type": "Button",
-                            "caption": "Create IPS variables",
-                            "onClick": "IPS_RequestAction($id,'UpdateDataFromInstanceForm',true);",
+                            "caption": "Fetch room list",
+                            "onClick": "IPS_RequestAction($id,'FetchRoomList',true);",
                             "enabled": true
                         },
                         {
