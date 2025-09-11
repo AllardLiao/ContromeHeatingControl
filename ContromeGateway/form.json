@@ -39,6 +39,27 @@
             "width": "300px"
         },
         {
+            "type": "NumberSpinner",
+            "caption": "House ID",
+            "digits": 0,
+            "enabled": true,
+            "hex": false,
+            "maximum": null,
+            "minimum": 1,
+            "moreDigits": false,
+            "name": "HouseID",
+            "onChange": "",
+            "suffix": "",
+            "value": 1,
+            "visible": true,
+            "width": "300px"
+        },
+        {
+            "type": "Label",
+            "caption": "Quote Controme:\n\nAPI returns nothing?\nIn this case, please first check whether you are using the correct house ID. For various reasons, the ID is sometimes \"2\" and not \"1\".",
+            "bold": true
+        },
+        {
             "type": "ExpansionPanel",
             "caption": "Controme Instance Creation...",
             "download": "",
