@@ -101,7 +101,7 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function CheckConnection(): bool
     {
-        //$this->ApplyChanges();
+        $this->ApplyChanges();
 
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
