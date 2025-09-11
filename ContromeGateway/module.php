@@ -111,6 +111,8 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
             $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
             return false;
+        } else {
+            $this->SendDebug("CheckConnection", "Check 1 - sufficient data available to try to connect.", 0);
         }
 
         // 2. Test: Verbindung zum Gateway erreichbar?
@@ -123,6 +125,8 @@ class ContromeGateway extends IPSModuleStrict
             $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP!", KL_ERROR);
             $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
             return false;
+        } else {
+            $this->SendDebug("CheckConnection", "Check 2 - connection to Controme MiniServer at $ip established.", 0);
         }
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
