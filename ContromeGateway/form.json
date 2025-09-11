@@ -170,7 +170,7 @@
                                 "type": "ValidationTextBox",
                                 "caption": "Floor"
                             },
-                            "onClick": "DD_EnableDisableFormButtons();"
+                            "onClick": "EnableDisableFormButtons();"
                         }
                     ],
                     "values": []
