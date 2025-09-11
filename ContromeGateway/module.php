@@ -170,6 +170,9 @@ class ContromeGateway extends IPSModuleStrict
                 $roomData = $this->GetTempDataForRoom($roomId);
                 return json_encode($roomData);
 
+            case ACTIONs::WRITE_SETPOINT:
+                $this->WriteSetSetpoint($JSONString);
+
             default:
                 $this->SendDebug("ForwardData", "Unknown action: " . $data['Action'], 0);
                 return json_encode(false);
