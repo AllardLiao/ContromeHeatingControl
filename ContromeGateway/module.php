@@ -349,7 +349,36 @@ class ContromeGateway extends IPSModuleStrict
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
-            $this->SendDebug('WriteSetpoint', 'HTTP request failed', 0);
+            if (isset($http_response_header) && is_array($http_response_header)) {
+                // Erste Zeile enthält den HTTP-Status
+                $statusLine = $http_response_header[0];
+                $message = $statusLine;
+
+                // Wenn es einen genaueren Status gibt, extrahieren
+                if (preg_match('{HTTP/\S+ (\d{3}) (.*)}', $statusLine, $matches)) {
+                    $statusCode = (int)$matches[1];
+                    $statusText = $matches[2];
+                    $message = "HTTP $statusCode $statusText";
+
+                    switch ($statusCode) {
+                        case 401:
+                            $message .= ' - Unauthorized (check username/password)';
+                            break;
+                        case 403:
+                            $message .= ' - Forbidden (check permissions)';
+                            break;
+                        case 404:
+                            $message .= ' - Not Found (wrong URL)';
+                            break;
+                        case 500:
+                            $message .= ' - Server error';
+                            break;
+                        // Weitere Fälle nach Bedarf
+                    }
+                }
+            }
+
+            $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
             return json_encode(['success' => false, 'message' => 'HTTP request failed']);;
         }
 
