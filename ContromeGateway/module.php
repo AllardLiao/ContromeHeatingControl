@@ -157,16 +157,15 @@ class ContromeGateway extends IPSModuleStrict
                     "message" => $ok ? "Connected" : "Connection failed"
                 ]);
 
-            case ACTIONs::GET_ROOM_DATA:
+            case ACTIONs::GET_TEMP_DATA_FOR_ROOM:
                 if (!isset($data['FloorID']) || !isset($data['RoomID'])) {
                     $this->SendDebug("GET_ROOM_DATA", "Missing FloorID or RoomID", 0);
                     return json_encode(false);
                 }
 
-                $floorId = (int)$data['FloorID'];
                 $roomId  = (int)$data['RoomID'];
 
-                $roomData = $this->GetTempDataForRoom($floorId, $roomId);
+                $roomData = $this->GetTempDataForRoom($roomId);
                 return json_encode($roomData);
 
             default:
@@ -272,12 +271,12 @@ class ContromeGateway extends IPSModuleStrict
         return $id;
     }
 
-    public function GetTempDataForRoom(int $floorId, int $roomId)
+    public function GetTempDataForRoom(int $roomId)
     {
         // Beispiel: Abfrage an Controme API bauen
         $ip = $this->ReadPropertyString("IPAddress");
 
-        $url = "http://{$ip}/api/get/json/rooms/{$floorId}/{$roomId}";
+        $url = "http://{$ip}/api/get/json/temps/{$roomId}";
 
         $response = @file_get_contents($url);
 
