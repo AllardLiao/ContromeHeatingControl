@@ -276,7 +276,7 @@ class ContromeGateway extends IPSModuleStrict
         // Beispiel: Abfrage an Controme API bauen
         $ip = $this->ReadPropertyString("IPAddress");
 
-        $url = "http://{$ip}/get/json/v1/1/temps/{$roomId}";
+        $url = "http://$ip/get/json/v1/1/temps/$roomId/";
 
         $response = @file_get_contents($url);
 
