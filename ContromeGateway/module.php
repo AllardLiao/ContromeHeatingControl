@@ -277,14 +277,6 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
-    public function getForm(): string
-    {
-        $jsonForm = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
-
-        $this->SendDebug("CreateCentralControl",  "Output: " . print_r($jsonForm, true), 0);
-
-        return json_encode($jsonForm);
-    }
     // --- Hilfsfunktionen ---
     private function GetOrCreateCategory($ident, $name, $parentID)
     {
@@ -444,6 +436,22 @@ class ContromeGateway extends IPSModuleStrict
         $this->SendDebug("CreateCentralControl", "Central Control created under parent $parentId with name '$instanceName', ID $newId", 0);
 
         return true;
+    }
+
+    public function EnableDisableFormButtons()
+    {
+        $rooms = json_decode($this->ReadPropertyString("Rooms"));
+
+        // Prüfen, ob Räume vorhanden sind
+        if (is_array($rooms) && count($rooms) > 0) {
+            // Räume existieren – Buttons einblenden
+            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
+            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
+        } else {
+            // Keine Räume vorhanden
+            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "false");
+            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "false");
+        }
     }
 
     private function CheckHttpReponseHeader($http_response_header): String

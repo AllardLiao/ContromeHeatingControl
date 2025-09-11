@@ -138,7 +138,7 @@
                             "width": "80px",
                             "save": true,
                             "visible": true,
-                            "onClick": ""
+                            "onClick": "DD_EnableDisableFormButtons();"
                         },
                         {
                             "caption": "Floor",
@@ -149,14 +149,16 @@
                             "edit": {
                                 "type": "ValidationTextBox",
                                 "caption": "Floor"
-                            }
+                            },
+                            "onClick": "DD_EnableDisableFormButtons();"
                         },
                         {
                             "caption": "RoomID",
                             "name": "RoomID",
                             "width": "50px",
                             "save": true,
-                            "visible": true
+                            "visible": true,
+                            "onClick": "DD_EnableDisableFormButtons();"
                         },
                         {
                             "caption": "Room",
@@ -167,7 +169,8 @@
                             "edit": {
                                 "type": "ValidationTextBox",
                                 "caption": "Floor"
-                            }
+                            },
+                            "onClick": "DD_EnableDisableFormButtons();"
                         }
                     ],
                     "values": []
