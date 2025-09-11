@@ -125,7 +125,7 @@ class ContromeGateway extends IPSModuleStrict
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
         $sendData = Array('RoomID' => 1, 'Setpoint' => $currentData['solltemperatur']);
-        $result = $this->WriteSetpoint();
+        $result = $this->WriteSetpoint($sendData);
 
         $decoded = json_decode($result, true);
         if (is_string($decoded)) {
