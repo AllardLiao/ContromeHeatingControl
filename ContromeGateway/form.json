@@ -74,17 +74,17 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Quote Controme:\nDa wir auf dem Miniserver keine Zertifikate installiert haben, wäre es sinnvoll, wenn Sie /set/ Aufrufe nur im lokalen Netz abschicken.",
+                    "caption": "\nSollte Controme in zukunft HTTPS unterstützen, kann dies hier einfach aktiviert werden.",
                     "italic": true
                 },
                 {
                     "type": "Label",
-                    "caption": "Sollte Controme in zukunft HTTPS unterstützen, kann dies hier einfach aktiviert werden.",
+                    "caption": "Quote Controme:\nDa wir auf dem Miniserver keine Zertifikate installiert haben, wäre es sinnvoll, wenn Sie /set/ Aufrufe nur im lokalen Netz abschicken.",
                     "italic": true
                 },
                 {
                     "type": "CheckBox",
-                    "name": "UserHTTPS",
+                    "name": "UseHTTPS",
                     "caption": "Use HTTPS (Mini server with certificates)"
                 }
             ]
