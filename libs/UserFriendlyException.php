@@ -1,3 +1,16 @@
+/**
+ * Class UserFriendlyException
+ *
+ * Eine benutzerfreundliche Exception-Klasse, die von der Standard-Exception erbt.
+ * Diese Klasse überschreibt die Standard-Ausgabe, sodass beim Auftreten eines Fehlers
+ * nur die eigentliche Fehlermeldung ausgegeben wird – ohne Stacktrace, Datei- oder Zeilenangabe.
+ * Dies ist besonders nützlich für Anwendungsfälle, in denen technische Details
+ * für den Endanwender verborgen bleiben sollen.
+ *
+ * Insbesondere in den Visualisierungen von IP-Symcon wird so eine klarere und verständlichere
+ * Fehlermeldung angezeigt.
+ */
+
 <?php
 
 declare(strict_types=1);

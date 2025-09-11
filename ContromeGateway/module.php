@@ -104,39 +104,44 @@ class ContromeGateway extends IPSModuleStrict
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
 
+        // 1. Test: Daten da?
         if (empty($ip) || empty($user) || empty($pass)) {
             $this->SendDebug("CheckConnection", "IP, User oder Passwort nicht gesetzt!", 0);
             $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
             return false;
         }
 
-        $url = "http://$ip/get/json/v1/1/rooms/";
-        $opts = [
-            "http" => [
-                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
-            ]
-        ];
-        $context = stream_context_create($opts);
-        $json = @file_get_contents($url, false, $context);
+        // 2. Test: Verbindung zum Gateway erreichbar?
+        // Dafür nutzen wir schon die Datenabruf-Funktion, denn wir brauchen den Soll-Wert von Raum 1 um das Schreiben mit Passwort zu testen.
+        $currentData = $this->GetTempDataForRoom(1); //Raum 1 sollte es immer geben.
 
-        if ($json === FALSE) {
-            $this->SendDebug("CheckConnection", "Fehler beim Zugriff", 0);
-            $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP, username and password!", KL_ERROR);
-            $this->UpdateFormField("Result", "caption", "No connection.");
+        // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
+        if ($currentData === false){
+            $this->SendDebug("CheckConnection", "No connection to Controme MiniServer at $ip - please check IP!", 0);
+            $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP!", KL_ERROR);
+            $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
             return false;
         }
 
-        $data = json_decode($json, true);
-        if ($data === null) {
-            $this->SendDebug("CheckConnection", "Fehler beim JSON-Decode", 0);
-            $this->LogMessage("CONTROMEHC - JSON Error", KL_ERROR);
-            $this->UpdateFormField("Result", "caption", "Error: JSON-Decode - please contact developer.");
+        // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
+        $sendData = Array('RoomID' => 1, 'Setpoint' => $currentData['solltemperatur']);
+        $result = $this->WriteSetpoint();
+
+        $decoded = json_decode($result, true);
+        if (is_string($decoded)) {
+            $decoded = json_decode($decoded, true);
+        }
+        $this->SendDebug("CheckConnection", "Decoded result: " . print_r($decoded, true), 0);
+        if (isset($decoded['success']) && $decoded['success'] === true) {
+            $this->SendDebug("CheckConnection", "Success - connection established for user " . $user . "!");
+            $this->LogMessage("Success - connection established for user " . $user . "!", KL_NOTIFY);
+            $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
+            return true;
+        } else {
+            $message = $this->CheckHttpReponseHeader();
+            $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
             return false;
         }
-        $this->SendDebug("CheckConnection", "Success - connection established for user " . $user . "!");
-        $this->LogMessage("CONTROMEHC - Successfully established connection.for user " . $user . "!", KL_NOTIFY);
-        $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
-        return true;
     }
 
     //
@@ -348,35 +353,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
-            if (isset($http_response_header) && is_array($http_response_header)) {
-                // Erste Zeile enthält den HTTP-Status
-                $statusLine = $http_response_header[0];
-                $message = $statusLine;
-
-                // Wenn es einen genaueren Status gibt, extrahieren
-                if (preg_match('{HTTP/\S+ (\d{3}) (.*)}', $statusLine, $matches)) {
-                    $statusCode = (int)$matches[1];
-                    $statusText = $matches[2];
-                    $message = "HTTP $statusCode $statusText";
-
-                    switch ($statusCode) {
-                        case 401:
-                            $message .= ' - Unauthorized (check username/password)';
-                            break;
-                        case 403:
-                            $message .= ' - Forbidden (check permissions)';
-                            break;
-                        case 404:
-                            $message .= ' - Not Found (wrong URL)';
-                            break;
-                        case 500:
-                            $message .= ' - Server error';
-                            break;
-                        // Weitere Fälle nach Bedarf
-                    }
-                }
-            }
-
+            $message = $this->CheckHttpReponseHeader();
             $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
             return json_encode(['success' => false, 'message' => 'HTTP request failed ' . $message]);;
         }
@@ -399,6 +376,45 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         return json_encode(['success' => true, 'message' => 'Setpoint updated']);
+
+    }
+
+    private function CheckHttpReponseHeader(): String
+    {
+        if (isset($http_response_header) && is_array($http_response_header)) {
+            // Erste Zeile enthält den HTTP-Status
+            $statusLine = $http_response_header[0];
+            $message = $statusLine;
+
+            // Wenn es einen genaueren Status gibt, extrahieren
+            if (preg_match('{HTTP/\S+ (\d{3}) (.*)}', $statusLine, $matches)) {
+                $statusCode = (int)$matches[1];
+                $statusText = $matches[2];
+                $message = "HTTP $statusCode $statusText";
+
+                switch ($statusCode) {
+                    case 401:
+                        $message .= ' - Unauthorized (check username/password)';
+                        break;
+                    case 403:
+                        $message .= ' - Forbidden (check permissions)';
+                        break;
+                    case 404:
+                        $message .= ' - Not Found (wrong URL)';
+                        break;
+                    case 500:
+                        $message .= ' - Server error';
+                        break;
+                    // Weitere Fälle nach Bedarf
+                    default:
+                        $message .= ' - Unhandeled error, other than 401,403,404,500';
+                }
+            }
+            return $message;
+        }
+        else {
+            return "No error details available.";
+        }
 
     }
 }
