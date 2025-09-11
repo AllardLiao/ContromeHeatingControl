@@ -345,8 +345,7 @@ class ContromeGateway extends IPSModuleStrict
         $postData = json_encode([
             'user'     => $user,
             'password' => $pass,
-            'action'   => 'soll', // <- evtl. anpassen (check Controme-API)
-            'value'    => (float)$setpoint
+            'soll'     => (float)$setpoint
         ]);
 
         $opts = [
