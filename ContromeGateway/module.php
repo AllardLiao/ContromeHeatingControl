@@ -294,6 +294,6 @@ class ContromeGateway extends IPSModuleStrict
             return false;
         }
 
-        return $data;
+        return json_encode($data);
     }
 }
