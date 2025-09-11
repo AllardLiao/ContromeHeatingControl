@@ -386,7 +386,7 @@ class ContromeGateway extends IPSModuleStrict
 
     private function CheckHttpReponseHeader($http_response_header): String
     {
-        if (isset($http_response_header) && is_array($http_response_header)) {
+        if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
             // Erste Zeile enthält den HTTP-Status
             $statusLine = $http_response_header[0];
             $message = $statusLine;
@@ -408,7 +408,7 @@ class ContromeGateway extends IPSModuleStrict
                         $message .= ' - Not Found (wrong URL)';
                         break;
                     case 500:
-                        $message .= ' - Server error';
+                        $message .= ' - Server error / bad message';
                         break;
                     // Weitere Fälle nach Bedarf
                     default:
@@ -418,7 +418,7 @@ class ContromeGateway extends IPSModuleStrict
             return $message;
         }
         else {
-            return "No error details available.";
+            return "HTTP request failed and no response header available.";
         }
 
     }
