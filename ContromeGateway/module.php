@@ -84,7 +84,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
         switch($ident) {
-            case "FetchRoomList":
+            case ACTIONs::FETCH_ROOM_LIST:
                 $this->FetchRoomList();
                 break;
             case ACTIONs::CHECK_CONNECTION:
@@ -261,6 +261,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
+        $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
         return true;
     }
 
@@ -432,12 +433,12 @@ class ContromeGateway extends IPSModuleStrict
 
     }
 
-    public function getJsonGet(): string
+    private function getJsonGet(): string
     {
         return $this->JSON_GET;
     }
 
-    public function setJsonGet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
+    private function setJsonGet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
     {
         // IP prüfen (IPv4 oder Hostname)
         if (!filter_var($ip, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9\-\.]+$/', $ip)) {
@@ -450,12 +451,12 @@ class ContromeGateway extends IPSModuleStrict
         $this->JSON_GET = "http" . ($useHTTPS ? "s" : "") . "://$ip/get/json/v1/$houseID/";
     }
 
-    public function getJsonSet(): string
+    private function getJsonSet(): string
     {
         return $this->JSON_SET;
     }
 
-    public function setJsonSet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
+    private function setJsonSet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
     {
         // IP prüfen (IPv4 oder Hostname)
         if (!filter_var($ip, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9\-\.]+$/', $ip)) {
