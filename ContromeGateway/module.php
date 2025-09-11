@@ -262,6 +262,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
+        $this->ReloadForm();
         return true;
     }
 
