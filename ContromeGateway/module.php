@@ -289,6 +289,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //$url = "http://$ip/get/json/v1/1/temps/$roomId/";
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
+        $this->SendDebug("CONGW-GetRoomData", "Trying URL $url", 0);
 
         $response = @file_get_contents($url);
 
