@@ -438,7 +438,7 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
-    public function EnableDisableFormButtons()
+    public function EnableDisableFormButtons(mixed $value = 1) //Das Form gibt einen WErt mit, wir ignorieren den im folgenden
     {
         $rooms = json_decode($this->ReadPropertyString("Rooms"));
 
