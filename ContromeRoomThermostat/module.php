@@ -268,11 +268,21 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $result = $this->SendDataToParent(json_encode($data));
         $this->SendDebug('SendSetpointToParent', 'Response: ' . $result, 0);
 
-        if ($result) {
-            $this->SetValue("Setpoint", $value); // lokal auch aktualisieren
-            $this->SendDebug("WriteSetpoint", "Solltemperatur erfolgreich gesetzt: " . $value, 0);
+        if ($result !== false) {
+            $decoded = json_decode($result, true);
+
+            if (isset($decoded['success']) && $decoded['success'] === true) {
+                $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
+                $this->SendDebug("WriteSetpoint", "Solltemperatur erfolgreich gesetzt: " . $value, 0);
+            } else {
+                $msg = $decoded['message'] ?? 'Unbekannter Fehler';
+                $this->SendDebug("WriteSetpoint", "Fehler beim Setzen der Solltemperatur: " . $msg, 0);
+                $this->LogMessage("Setpoint-Fehler: " . $msg, KL_ERROR);
+                // Optional: User Feedback ins Frontend
+                $this->UpdateFormField("Result", "caption", "Fehler: " . $msg);
+            }
         } else {
-            $this->SendDebug("WriteSetpoint", "Fehler beim Setzen der Solltemperatur", 0);
+            $this->SendDebug("WriteSetpoint", "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);
         }
     }
 }

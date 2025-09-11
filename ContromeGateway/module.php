@@ -379,7 +379,7 @@ class ContromeGateway extends IPSModuleStrict
             }
 
             $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
-            return json_encode(['success' => false, 'message' => 'HTTP request failed']);;
+            return json_encode(['success' => false, 'message' => 'HTTP request failed ' . $message]);;
         }
 
         // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
