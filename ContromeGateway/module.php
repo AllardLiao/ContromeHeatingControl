@@ -80,6 +80,8 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function RequestAction(string $ident, mixed $value): void
     {
+        $this->ApplyChanges();
+
         switch($ident) {
             case "FetchRoomList":
                 $this->FetchRoomList();
@@ -101,8 +103,6 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function CheckConnection(): bool
     {
-        $this->ApplyChanges();
-
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
@@ -162,6 +162,8 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug("ForwardData", "No action provided!", 0);
             return json_encode(false);
         }
+
+        $this->ApplyChanges();
 
         switch ($data['Action']) {
             case ACTIONs::CHECK_CONNECTION:

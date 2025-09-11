@@ -2,13 +2,22 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "\nControme Heating Control - Gateway Component\n ",
+            "caption": "Controme Heating Control - Gateway Component\n ",
             "link": false,
             "bold": true
         },
         {
             "type": "Label",
-            "caption": "Symcon module for local control and monitoring of Controme heating systems. Automatic creation of rooms, sensors, actual/target temperatures, humidity, and operating mode. Supports reading and writing via the Controme API. Fully integrable into IPS with timer and variable profiles."
+            "caption": "Symcon module for local control and monitoring of Controme heating systems."
+        },
+        {
+            "type": "Label",
+            "caption": "Display of rooms, sensors, actual/target temperatures, humidity, and operating mode.\nSupports reading and writing via the Controme API.\nFully integrable into IPS with timer and variable profiles.\n\n"
+        },
+        {
+            "type": "Label",
+            "caption": "\nSystem & Credentials.",
+            "bold": true
         },
         {
             "type": "RowLayout",
@@ -74,7 +83,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nSollte Controme in zukunft HTTPS unterstützen, kann dies hier einfach aktiviert werden.",
+                    "caption": "\nSollte Controme in Zukunft HTTPS unterstützen, ist der Plan, dass dies hier aktiviert werden kann.",
                     "italic": true
                 },
                 {
