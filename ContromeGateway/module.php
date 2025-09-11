@@ -42,7 +42,7 @@ class ContromeGateway extends IPSModuleStrict
         parent::Create();
 
         // Konfigurationselemente
-        $this->RegisterPropertyString("IPAddress", "");
+        $this->RegisterPropertyString("IPAddress", "127.0.0.1");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
         $this->RegisterPropertyInteger("HouseID", 1);
