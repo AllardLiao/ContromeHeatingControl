@@ -166,18 +166,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $data = json_decode($result, true);
         if (isset($data['name'])) {
-            $this->SendDebug("CheckConnection", "Fetching Data: Room " . $roomId . "found", 0);
-            $outputText .= "Fetching Data: Room $roomId found.";
+            $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId found and data seems valid.", 0);
+            $outputText .= "Fetching Data: Room $roomId found and data seems valid.";
             $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Fetching Data: Room $roomId found", KL_MESSAGE);
+            $this->LogMessage("Fetching Data: Room $roomId found and data seems valid.", KL_MESSAGE);
         } else {
             $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId data not valid!", 0);
-            $this->SendDebug("CheckConnection", "DATA: " . print_r($result, true));
-            $this->SendDebug('CheckConnection', 'RAW var_dump: ' . var_export($result, true));
-            $this->SendDebug('CheckConnection', 'gettype: ' . gettype($result) .
-                                                'strlen: ' . strlen((string)$result) .
-                                                'first chars: ' . substr((string)$result, 0, 4) .
-                                                'last chars: ' . substr((string)$result, -4), 0);
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
             return false;

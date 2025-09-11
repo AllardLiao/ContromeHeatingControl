@@ -17,7 +17,7 @@
         },
         {
             "type": "Label",
-            "caption": "In most cases, no changes are required here. Only modify these settings if you are sure of what you are doing.\n\nIf you leave the floor and room names empty, they will be updated automatically with the next data update. If you enter names here, those will be used for the corresponding IDs withing IPS."
+            "caption": "In most cases, no changes are required here. Only modify these settings if you are sure of what you are doing.\n\nIf you leave the floor and room names empty, they will be updated automatically with the next data update. If you enter individual here, those will be used for the corresponding instances withing IPS. "
         },
         {
             "type": "RowLayout",
@@ -29,6 +29,18 @@
                     "caption": "Floor-ID",
                     "enabled": true,
                     "name": "FloorID",
+                    "onChange": "",
+                    "validate": "",
+                    "value": 0,
+                    "minimum": 0,
+                    "visible": false,
+                    "width": "100px",
+                },
+                {
+                    "type": "NumberSpinner",
+                    "caption": "Room-ID",
+                    "enabled": true,
+                    "name": "RoomID",
                     "onChange": "",
                     "validate": "",
                     "value": 0,
@@ -47,18 +59,6 @@
                     "value": "n/a",
                     "visible": true,
                     "width": "200px"
-                },
-                {
-                    "type": "NumberSpinner",
-                    "caption": "Room-ID",
-                    "enabled": true,
-                    "name": "RoomID",
-                    "onChange": "",
-                    "validate": "",
-                    "value": 0,
-                    "minimum": 0,
-                    "visible": true,
-                    "width": "100px"
                 },
                 {
                     "type": "ValidationTextBox",
