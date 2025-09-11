@@ -100,7 +100,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->CheckConnection();
                 break;
             case ACTIONs::WRITE_SETPOINT:
-                $this->WriteSetpoint(floatval($value));
+                $result = $this->WriteSetpoint(floatval($value));
                 break;
             default:
                 throw new Exception("Invalid ident");
@@ -252,7 +252,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return true;
     }
 
-    private function WriteSetpoint(float $value)
+    private function WriteSetpoint(float $value): bool
     {
         $roomId  = $this->ReadPropertyInteger("RoomID");
         $floorId = $this->ReadPropertyInteger("FloorID");
@@ -283,9 +283,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->LogMessage("Setpoint-Fehler: " . $msg, KL_ERROR);
                 // Optional: User Feedback ins Frontend
                 $this->UpdateFormField("Result", "caption", "Fehler: " . $msg);
+                throw new Exception($decoded['message']);
             }
         } else {
             $this->SendDebug("WriteSetpoint", "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);
         }
+
+        return true;
     }
 }
