@@ -40,7 +40,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         parent::Create();
 
         // Konfigurationselemente des Raums
-        $this->RegisterPropertyInteger("FloorID", 0);
+        $this->RegisterPropertyInteger("FloorID", 1);
         $this->RegisterPropertyString("Floor", "");
         $this->RegisterPropertyInteger("RoomID", 0);
         $this->RegisterPropertyString("Room", "");
