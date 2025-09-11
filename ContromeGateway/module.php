@@ -333,11 +333,11 @@ class ContromeGateway extends IPSModuleStrict
         $url = "http://$ip/set/json/v1/1/soll/$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
-        $postData = http_build_query([
+        $postData = json_encode([
             'user'     => $user,
             'password' => $pass,
             'action'   => 'soll', // <- evtl. anpassen (check Controme-API)
-            'value'    => (string)$setpoint
+            'value'    => (float)$setpoint
         ]);
 
         $opts = [
@@ -408,7 +408,7 @@ class ContromeGateway extends IPSModuleStrict
                         break;
                     // Weitere Fälle nach Bedarf
                     default:
-                        $message .= ' - Unhandeled error, other than 401,403,404,500';
+                        $message .= ' - Unhandeled error.';
                 }
             }
             return $message;
