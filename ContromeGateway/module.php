@@ -50,14 +50,6 @@ class ContromeGateway extends IPSModuleStrict
         parent::Destroy();
     }
 
-    public function __construct(string $InstanceID)  {
-        parent::__construct($InstanceID);
-
-        // JSON url initialisieren
-        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-    }
-
     public function ApplyChanges(): void
     {
         // Never delete this line!
@@ -87,7 +79,9 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function RequestAction(string $ident, mixed $value): void
     {
-        //$this->ApplyChanges();
+        // JSON url anpassen
+        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
         switch($ident) {
             case "FetchRoomList":
@@ -170,7 +164,9 @@ class ContromeGateway extends IPSModuleStrict
             return json_encode(false);
         }
 
-        $this->ApplyChanges();
+        // JSON url anpassen
+        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
         switch ($data['Action']) {
             case ACTIONs::CHECK_CONNECTION:
