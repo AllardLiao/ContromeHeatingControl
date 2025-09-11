@@ -277,6 +277,14 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
+    public function getForm(): string
+    {
+        $jsonForm = json_decode(file_get_contents(__DIR__ . "/form.json"), true);
+
+        $this->SendDebug("CreateCentralControl",  "Output: " . print_r($jsonForm, true), 0);
+
+        return json_encode($jsonForm);
+    }
     // --- Hilfsfunktionen ---
     private function GetOrCreateCategory($ident, $name, $parentID)
     {

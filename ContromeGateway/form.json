@@ -135,9 +135,10 @@
                         {
                             "caption": "FlooID",
                             "name": "FloorID",
-                            "width": "50px",
+                            "width": "80px",
                             "save": true,
-                            "visible": true
+                            "visible": true,
+                            "onClick": ""
                         },
                         {
                             "caption": "Floor",
