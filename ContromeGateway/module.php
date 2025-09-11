@@ -118,6 +118,8 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
             return false;
         } else {
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_INACTIVE);
             $this->SendDebug("CheckConnection", "Check 1 - sufficient data available to try to connect.", 0);
         }
 
@@ -130,6 +132,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug("CheckConnection", "No connection to Controme MiniServer at $ip - please check IP!", 0);
             $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP!", KL_ERROR);
             $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
+            $this->SetStatus(NO_CONNECTION);
             return false;
         } else {
             $this->SendDebug("CheckConnection", "Check 2 - connection to Controme MiniServer at $ip established. (" . $currentData["name"] . "=" . $currentData["temperatur"] . ")", 0);
@@ -148,11 +151,13 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug("CheckConnection", "Success - connection established for user " . $user . "!");
             $this->LogMessage("Success - connection established for user " . $user . "!", KL_NOTIFY);
             $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
+            $this->SetStatus(IS_ACTIVE);
             return true;
         } else {
             $this->SendDebug('WriteSetpoint', $decoded['message'] . "!", 0);
             $this->LogMessage($decoded['message'] . "!", KL_NOTIFY);
             $this->UpdateFormField("Result", "caption", $decoded['message'] . "!");
+            $this->SetStatus(NO_CONNECTION);
             return false;
         }
     }
@@ -240,6 +245,8 @@ class ContromeGateway extends IPSModuleStrict
             }
             $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url\n" . $message, 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
 
@@ -247,6 +254,8 @@ class ContromeGateway extends IPSModuleStrict
         if ($data === null) {
             $this->SendDebug("FetchRoomList", "Fehler beim JSON-Decode", 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to decode data.");
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_BAD_JSON);
             return false;
         }
 
@@ -274,6 +283,8 @@ class ContromeGateway extends IPSModuleStrict
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
         $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
         $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
+        $this->SetStatus(IS_ACTIVE);
+
         return true;
     }
 
@@ -324,12 +335,16 @@ class ContromeGateway extends IPSModuleStrict
             }
             $this->SendDebug("GetRoomData", "Failed to fetch room data from $url\n" . $message, 0);
             $this->LogMessage("Failed to fetch room data from $url\n" . $message, KL_ERROR);
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
 
         $data = json_decode($response, true);
 
         if (!is_array($data)) {
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_NO_CONNECTION);
             $this->SendDebug("GetRoomData", "Invalid JSON response from $url", 0);
             $this->LogMessage("Invalid JSON response from $url", KL_ERROR);
             return false;
@@ -339,6 +354,10 @@ class ContromeGateway extends IPSModuleStrict
         if (isset($data[0]) && is_array($data[0])) {
             $data = $data[0];
         }
+
+        //Alle ist ok.
+        $this->SetStatus(IS_ACTIVE);
+
         return $data;
     }
 
@@ -357,6 +376,8 @@ class ContromeGateway extends IPSModuleStrict
         $pass = $this->ReadPropertyString('Password');
 
         if (empty($ip) || empty($user) || empty($pass)) {
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_NO_CONNECTION);
             $this->SendDebug('WriteSetpoint', 'Missing gateway credentials', 0);
             return json_encode(['success' => false, 'message' => 'Missing gateway credentials']);
         }
@@ -393,6 +414,8 @@ class ContromeGateway extends IPSModuleStrict
                 $message = "HTTP request failed and no response header available.";
             }
             $this->SendDebug('WriteSetpoint', 'Request failed: ' . $message, 0);
+            // Etwas stimmt nicht
+            $this->SetStatus(IS_NO_CONNECTION);
             return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);;
         }
 
@@ -412,6 +435,9 @@ class ContromeGateway extends IPSModuleStrict
         if (isset($json['success'])) {
             return ($json['success'] ? true : (isset($json['message']) ? $json['message'] : 'API returned failure'));
         }
+
+        //Alle ist ok.
+        $this->SetStatus(IS_ACTIVE);
 
         return json_encode(['success' => true, 'message' => 'Setpoint updated']);
 
@@ -438,7 +464,7 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
-    public function EnableDisableFormButtons() 
+    public function EnableDisableFormButtons()
     {
         $rooms = json_decode($this->ReadPropertyString("Rooms"));
 
