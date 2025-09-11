@@ -172,7 +172,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->LogMessage("Fetching Data: Room {$data['name']} found", KL_MESSAGE);
         } else {
             $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId data not valid!", 0);
-            $this->SendDebug("CheckConnection", "DATA: " . implode(", ", $data));
+            $this->SendDebug("CheckConnection", "DATA: " . $result);
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
             return false;
