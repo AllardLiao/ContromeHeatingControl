@@ -63,7 +63,7 @@ class ContromeGateway extends IPSModuleStrict
     public function ApplyChanges(): void
     {
         // Never delete this line!
-        parent::ApplyChanges();
+        //parent::ApplyChanges();
 
         // Variablenprofil für Betriebsart sicherstellen
         $profile = "Controme.Betriebsart";
@@ -89,7 +89,7 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function RequestAction(string $ident, mixed $value): void
     {
-        $this->ApplyChanges();
+        //$this->ApplyChanges();
 
         switch($ident) {
             case "FetchRoomList":
