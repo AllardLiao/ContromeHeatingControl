@@ -93,11 +93,14 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case "UpdateRoomData":
+            case ACTIONs::UPDATE_ROOM_DATA:
                 $this->UpdateRoomData();
                 break;
-            case "CheckConnection":
+            case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
+                break;
+            case ACTIONs::WRITE_SET_SETPOINT:
+                $this->WriteSetpoint(floatval($value));
                 break;
             default:
                 throw new Exception("Invalid ident");
@@ -216,7 +219,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
             return false;
         }
-$this->SendDebug("UpdateRoomData", "Decoded data: " . print_r($data, true), 0);
+
         // Variablen anlegen und updaten
         $this->saveDataToVariables($data);
 
@@ -247,5 +250,29 @@ $this->SendDebug("UpdateRoomData", "Decoded data: " . print_r($data, true), 0);
         }
 
         return true;
+    }
+
+    private function WriteSetpoint(float $value)
+    {
+        $roomId  = $this->ReadPropertyInteger("RoomID");
+        $floorId = $this->ReadPropertyInteger("FloorID");
+
+        $data = [
+            "DataID"   => GUIDs::DATAFLOW,
+            "Action"   => ACTIONs::WRITE_SET_SETPOINT,
+            "FloorID"  => $floorId,
+            "RoomID"   => $roomId,
+            "Setpoint" => $value
+        ];
+
+        $result = $this->SendDataToParent(json_encode($data));
+        $this->SendDebug('SendSetpointToParent', 'Response: ' . $result, 0);
+
+        if ($result) {
+            $this->SetValue("Setpoint", $value); // lokal auch aktualisieren
+            $this->SendDebug("WriteSetpoint", "Solltemperatur erfolgreich gesetzt: " . $value, 0);
+        } else {
+            $this->SendDebug("WriteSetpoint", "Fehler beim Setzen der Solltemperatur", 0);
+        }
     }
 }

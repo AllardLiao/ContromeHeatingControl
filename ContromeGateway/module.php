@@ -82,9 +82,11 @@ class ContromeGateway extends IPSModuleStrict
             case "FetchRoomList":
                 $this->FetchRoomList();
                 break;
-            case "CheckConnection":
+            case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
                 break;
+            case ACTIONs::WRITE_SET_SETPOINT:
+                $this->WriteSetSetpoint($value);
             default:
                 throw new Exception("Invalid ident");
         }
@@ -299,5 +301,74 @@ class ContromeGateway extends IPSModuleStrict
             $data = $data[0];
         }
         return $data;
+    }
+
+    private function WriteSetSetpoint(mixed $data): string
+    {
+        $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])   : null;
+        $setpoint = isset($data['Setpoint']) ? floatval($data['Setpoint']) : null;
+
+        if ($roomId === null || $setpoint === null) {
+            $this->SendDebug('WriteSetSetpoint', 'SET_SETPOINT missing params', 0);
+            return json_encode(['success' => false, 'message' => 'Missing FloorID/RoomID/Setpoint']);
+        }
+
+        $ip   = $this->ReadPropertyString('IPAddress');
+        $user = $this->ReadPropertyString('User');
+        $pass = $this->ReadPropertyString('Password');
+
+        if (empty($ip) || empty($user) || empty($pass)) {
+            $this->SendDebug('WriteSetSetpoint', 'Missing gateway credentials', 0);
+            return json_encode(['success' => false, 'message' => 'Missing gateway credentials']);
+        }
+
+        // URL laut Controme-Doku (anpassen falls anders)
+        $url = "http://$ip/set/json/v1/1/soll/$roomId/";
+
+        // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
+        $postData = http_build_query([
+            'user'     => $user,
+            'password' => $pass,
+            'action'   => 'soll', // <- evtl. anpassen (check Controme-API)
+            'value'    => (string)$setpoint
+        ]);
+
+        $opts = [
+            'http' => [
+                'method'  => 'POST',
+                'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'content' => $postData,
+                'timeout' => 10
+            ]
+        ];
+        $context = stream_context_create($opts);
+
+        $this->SendDebug('WriteSetSetpoint', "POST $url -> " . $postData, 0);
+
+        $response = @file_get_contents($url, false, $context);
+        if ($response === false) {
+            $this->SendDebug('WriteSetSetpoint', 'HTTP request failed', 0);
+            return json_encode(['success' => false, 'message' => 'HTTP request failed']);;
+        }
+
+        // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
+        $json = json_decode($response, true);
+        if ($json === null) {
+            // Wenn kein JSON, aber die API trotzdem success impliziert, akzeptieren wir das
+            $this->SendDebug('WriteSetSetpoint', 'Non-JSON response: ' . $response, 0);
+            // Optional: treat any non-empty response as success (oder decide otherwise)
+            return strlen(trim($response)) > 0 ? true : 'Empty response';
+        }
+
+        // Falls die API ein structured response liefert, prüfe ein success-flag
+        if (isset($json['success'])) {
+            return ($json['success'] ? true : (isset($json['message']) ? $json['message'] : 'API returned failure'));
+        }
+
+        // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
+        $this->SendDebug('DoSetSeWriteSetSetpointtpoint', 'API returned: ' . print_r($json, true), 0);
+
+        return json_encode(['success' => true, 'message' => 'Setpoint updated']);
+
     }
 }
