@@ -69,6 +69,7 @@ class ContromeGateway extends IPSModuleStrict
 
         // JSON url anpassen
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
     }
 
     /**
@@ -297,7 +298,7 @@ class ContromeGateway extends IPSModuleStrict
         $response = @file_get_contents($url);
 
         if ($response === false) {
-            $this->SendDebug("CONGW-GetRoomData", "Failed to fetch room data from $url", 0);
+            $this->SendDebug("GetRoomData", "Failed to fetch room data from $url", 0);
             $this->LogMessage("Failed to fetch room data from $url", KL_ERROR);
             return false;
         }
@@ -305,7 +306,7 @@ class ContromeGateway extends IPSModuleStrict
         $data = json_decode($response, true);
 
         if (!is_array($data)) {
-            $this->SendDebug("CONGW-GetRoomData", "Invalid JSON response from $url", 0);
+            $this->SendDebug("GetRoomData", "Invalid JSON response from $url", 0);
             $this->LogMessage("Invalid JSON response from $url", KL_ERROR);
             return false;
         }
@@ -324,7 +325,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($roomId === null || $setpoint === null) {
             $this->SendDebug('WriteSetpoint', 'SETPOINT missing params', 0);
-            return json_encode(['success' => false, 'message' => 'Missing FloorID/RoomID/Setpoint']);
+            return json_encode(['success' => false, 'message' => 'Missing p arameter RoomID or Setpoint']);
         }
 
         $ip   = $this->ReadPropertyString('IPAddress');
@@ -336,7 +337,7 @@ class ContromeGateway extends IPSModuleStrict
             return json_encode(['success' => false, 'message' => 'Missing gateway credentials']);
         }
 
-        // URL laut Controme-Doku (anpassen falls anders)
+        // URL laut Controme-Doku
         //$url = "http://$ip/set/json/v1/1/soll/$roomId/";
         $url = $this->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
