@@ -85,7 +85,7 @@ class ContromeGateway extends IPSModuleStrict
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
                 break;
-            case ACTIONs::WRITE_SET_SETPOINT:
+            case ACTIONs::WRITE_SETPOINT:
                 $this->WriteSetSetpoint($value);
             default:
                 throw new Exception("Invalid ident");

@@ -99,7 +99,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
                 break;
-            case ACTIONs::WRITE_SET_SETPOINT:
+            case ACTIONs::WRITE_SETPOINT:
                 $this->WriteSetpoint(floatval($value));
                 break;
             default:
@@ -259,7 +259,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $data = [
             "DataID"   => GUIDs::DATAFLOW,
-            "Action"   => ACTIONs::WRITE_SET_SETPOINT,
+            "Action"   => ACTIONs::WRITE_SETPOINT,
             "FloorID"  => $floorId,
             "RoomID"   => $roomId,
             "Setpoint" => $value
