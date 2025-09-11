@@ -40,12 +40,17 @@
         },
         {
             "type": "ExpansionPanel",
-            "caption": "House ID...",
+            "caption": "Expert Settings...",
             "expanded": false,
             "link": false,
             "visible": true,
             "width": "",
             "items": [
+                {
+                    "type": "Label",
+                    "caption": "Normally these settings do not need to be changed.",
+                    "bold": true
+                },
                 {
                     "type": "Label",
                     "caption": "Quote Controme: API returns nothing?\nIn this case, please first check whether you are using the correct house id. For various reasons, the id is sometimes \"2\" and not \"1\".",
@@ -66,6 +71,21 @@
                     "value": 1,
                     "visible": true,
                     "width": "300px"
+                },
+                {
+                    "type": "Label",
+                    "caption": "Quote Controme:\nDa wir auf dem Miniserver keine Zertifikate installiert haben, wäre es sinnvoll, wenn Sie /set/ Aufrufe nur im lokalen Netz abschicken.",
+                    "italic": true
+                },
+                {
+                    "type": "Label",
+                    "caption": "Sollte Controme in zukunft HTTPS unterstützen, kann dies hier einfach aktiviert werden.",
+                    "italic": true
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "UserHTTPS",
+                    "caption": "Use HTTPS (Mini server with certificates)"
                 }
             ]
         },

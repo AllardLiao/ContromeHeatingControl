@@ -8,21 +8,30 @@ IP-Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen
 
 Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart.
 
-Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen.
+Unterstützt Lesen und Schreiben über die Controme API.
+API Informatiaon can be found at https://support.controme.com/api/
 
-Das Module installiert eine Controme I/O-Instanz, den Controme Socket.
+Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Visualisierung.
+
+Das Module installiert eine Controme Gateway-Instanz, das Controme Gateway.
 Dieser stellt die Verbindung zum Controme Mini-Server her.
 Wenn die Verbindung steht können nach Abruf der Räume zwei weitere Typen von Kontroll-Geräten erstellt werden:
-eine Zentrale Steuereinheit und je Raum einen Raum-Thermostat.
+Zentrale Steuereinheit(en) und (je Raum) Raum-Thermostate.
 
-Controme I/O (type=2)
-  |
-  +-- Controme Central (type=3, child)
-  |
-  +-- Controme Room #1 (type=3, child)
-  |
-  +-- Controme Room #2 (type=3, child)
+Mehrere zentrale Steuereinheiten sind möglich - hierüber können End-User Steuerungen mit unterschiedlichen
+Berechtigungen erzeugt werden - wie z.B. das Umschalten zwischen Heiz- und Kühl-Betrieb in der einen Instanz
+möglich in der anderen nicht.
 
+Controme Gateway (type=2, parent)
+  |
+  +-- Controme Central Control (type=3, child)
+  |
+  +-- Controme Room Thermostat #1 (type=3, child)
+  |
+  +-- Controme Room Thermostat #2 (type=3, child)
+  .
+  .
+  .
 
 Hinweis:
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
@@ -50,7 +59,7 @@ This project is licensed under the [CC BY-NC-SA 4.0 License](https://creativecom
 This project was developed to integrate **Controme Smart Heating** systems into IP-Symcon.
 Special thanks to:
 
-- **Controme GmbH** ([controme.com](https://www.controme.com)) for review of the project.
+- **Controme GmbH** ([controme.com](https://www.controme.com)) for review of the project. API Informatiaon can be found at https://support.controme.com/api/
 - **Symcon GmbH** for IP-Symcon and the [StylePHP](https://github.com/symcon/StylePHP) project, which served as a basis for parts of this module.
 - **Heiko Wilknitz** ([wilkware.de](https://wilkware.de)) for providing open-source traits under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 

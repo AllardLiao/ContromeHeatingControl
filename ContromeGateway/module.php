@@ -33,6 +33,9 @@ class ContromeGateway extends IPSModuleStrict
     use FormatHelper;
     use WidgetHelper;
 
+    private string $JSON_GET = "http://127.0.0.1/get/json/v1/1/"; // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
+    private string $JSON_SET = "http://127.0.0.1/set/json/v1/1/";
+
     public function Create(): void
     {
         // Never delete this line!
@@ -43,6 +46,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
         $this->RegisterPropertyInteger("HouseID", 1);
+        $this->RegisterPropertyBoolean("UseHTTPS", false); 
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
     }
 
@@ -68,6 +72,9 @@ class ContromeGateway extends IPSModuleStrict
             IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
             IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
         }
+
+        // JSON url anpassen
+        $this->setJsonGet($this->ReadPropertyString("IPAdress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
     }
 
     /**
@@ -104,6 +111,7 @@ class ContromeGateway extends IPSModuleStrict
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
+        $houseID = $this->ReadPropertyString("HouseID");
 
         // 1. Test: Daten da?
         if (empty($ip) || empty($user) || empty($pass)) {
@@ -419,4 +427,41 @@ class ContromeGateway extends IPSModuleStrict
         }
 
     }
+
+    public function getJsonGet(): string
+    {
+        return $this->JSON_GET;
+    }
+
+    public function setJsonGet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
+    {
+        // IP prüfen (IPv4 oder Hostname)
+        if (!filter_var($ip, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9\-\.]+$/', $ip)) {
+            throw new InvalidArgumentException("Invalid IP address or hostname: $ip");
+        }
+        // houseID prüfen
+        if ($houseID <= 0) {
+            throw new InvalidArgumentException("House-ID must be greater than 0");
+        }
+        $this->JSON_GET = "http" . ($useHTTPS ? "s" : "") . "://$ip/get/json/v1/$houseID/";
+    }
+
+    public function getJsonSet(): string
+    {
+        return $this->JSON_SET;
+    }
+
+    public function setJsonSet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
+    {
+        // IP prüfen (IPv4 oder Hostname)
+        if (!filter_var($ip, FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9\-\.]+$/', $ip)) {
+            throw new InvalidArgumentException("Invalid IP address or hostname: $ip");
+        }
+        // houseID prüfen
+        if ($houseID <= 0) {
+            throw new InvalidArgumentException("House-ID must be greater than 0");
+        }
+        $this->JSON_SET = "http" . ($useHTTPS ? "s" : "") . "://$ip/set/json/v1/$houseID/";
+    }
+
 }
