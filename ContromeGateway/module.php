@@ -138,7 +138,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
             return true;
         } else {
-            $message = $this->CheckHttpReponseHeader();
+            $message = $this->CheckHttpReponseHeader($http_response_header);
             $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
             return false;
         }
@@ -353,7 +353,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
-            $message = $this->CheckHttpReponseHeader();
+            $message = $this->CheckHttpReponseHeader($http_response_header);
             $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
             return json_encode(['success' => false, 'message' => 'HTTP request failed ' . $message]);;
         }
@@ -379,7 +379,7 @@ class ContromeGateway extends IPSModuleStrict
 
     }
 
-    private function CheckHttpReponseHeader(): String
+    private function CheckHttpReponseHeader($http_response_header): String
     {
         if (isset($http_response_header) && is_array($http_response_header)) {
             // Erste Zeile enthält den HTTP-Status
