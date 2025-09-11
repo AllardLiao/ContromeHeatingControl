@@ -145,9 +145,9 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
             return true;
         } else {
-            $this->SendDebug('WriteSetpoint', 'Request failed: ' . $decoded['message'] . "!", 0);
-            $this->LogMessage("Request failed: " . $decoded['message'] . "!", KL_NOTIFY);
-            $this->UpdateFormField("Result", "caption", "Request failed: " . $decoded['message'] . "!");
+            $this->SendDebug('WriteSetpoint', $decoded['message'] . "!", 0);
+            $this->LogMessage($decoded['message'] . "!", KL_NOTIFY);
+            $this->UpdateFormField("Result", "caption", $decoded['message'] . "!");
             return false;
         }
     }
@@ -364,8 +364,8 @@ class ContromeGateway extends IPSModuleStrict
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
             $message = $this->CheckHttpReponseHeader($http_response_header);
-            $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
-            return json_encode(['success' => false, 'message' => 'HTTP request failed ' . $message]);;
+            $this->SendDebug('WriteSetpoint', 'Request failed: ' . $message, 0);
+            return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);;
         }
 
         // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
