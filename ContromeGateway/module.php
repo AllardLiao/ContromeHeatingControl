@@ -289,7 +289,6 @@ class ContromeGateway extends IPSModuleStrict
 
         //$url = "http://$ip/get/json/v1/1/temps/$roomId/";
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
-        $this->SendDebug("CONGW-GetRoomData", "Trying URL $url", 0);
 
         $response = @file_get_contents($url);
 
@@ -335,7 +334,7 @@ class ContromeGateway extends IPSModuleStrict
 
         // URL laut Controme-Doku (anpassen falls anders)
         //$url = "http://$ip/set/json/v1/1/soll/$roomId/";
-        $url = $thid->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
+        $url = $this->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
         $postData = json_encode([
