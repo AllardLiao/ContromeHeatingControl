@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+
 /**
  * Class UserFriendlyException
  *
@@ -10,10 +13,6 @@
  * Insbesondere in den Visualisierungen von IP-Symcon wird so eine klarere und verständlichere
  * Fehlermeldung angezeigt.
  */
-
-<?php
-
-declare(strict_types=1);
 
 class UserFriendlyException extends Exception
 {
