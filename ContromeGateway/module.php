@@ -50,10 +50,18 @@ class ContromeGateway extends IPSModuleStrict
         parent::Destroy();
     }
 
+    public function __construct()  {
+        parent::__construct();
+
+        // JSON url initialisieren
+        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+    }
+
     public function ApplyChanges(): void
     {
         // Never delete this line!
-        //parent::ApplyChanges();
+        parent::ApplyChanges();
 
         // Variablenprofil für Betriebsart sicherstellen
         $profile = "Controme.Betriebsart";
