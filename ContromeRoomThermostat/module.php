@@ -173,8 +173,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         } else {
             $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId data not valid!", 0);
             $this->SendDebug("CheckConnection", "DATA: " . print_r($result, true));
-            $this->SendDebug('CheckConnection', 'RAW var_dump: ' . var_export($result, true) .
-                                                'gettype: ' . gettype($result), 0) .
+            $this->SendDebug('CheckConnection', 'RAW var_dump: ' . var_export($result, true));
+            $this->SendDebug('CheckConnection', 'gettype: ' . gettype($result), 0) .
                                                 'strlen: ' . strlen((string)$result) .
                                                 'first chars: ' . substr((string)$result, 0, 4) .
                                                 'last chars: ' . substr((string)$result, -4);
