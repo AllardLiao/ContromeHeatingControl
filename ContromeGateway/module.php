@@ -46,7 +46,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
         $this->RegisterPropertyInteger("HouseID", 1);
-        $this->RegisterPropertyBoolean("UseHTTPS", false); 
+        $this->RegisterPropertyBoolean("UseHTTPS", false);
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
     }
 
@@ -74,7 +74,7 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         // JSON url anpassen
-        $this->setJsonGet($this->ReadPropertyString("IPAdress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
     }
 
     /**
