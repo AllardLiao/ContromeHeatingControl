@@ -12,6 +12,10 @@ declare(strict_types=1);
 
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
+// Bibliotheks-übergreifende Constanten einbinden
+use Controme\GUIDs;
+use Controme\ACTIONs;
+use Controme\CONTROME_API;
 
 class ContromeRoomThermostat extends IPSModuleStrict
 {
