@@ -234,16 +234,16 @@ $this->SendDebug("UpdateRoomData", "Decoded data: " . print_r($data, true), 0);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_STRING, "", 4, true);
 
         if (isset($data['temperatur'])) {
-            SetValue($this->GetIDForIdent("Temperature"), floatval($data['temperatur']));
+            $this->SetValue("Temperature", floatval($data['temperatur']));
         }
         if (isset($data['solltemperatur'])) {
-            SetValue($this->GetIDForIdent("Setpoint"), floatval($data['solltemperatur']));
+            $this->SetValue("Setpoint", floatval($data['solltemperatur']));
         }
         if (isset($data['luftfeuchte'])) {
-            SetValue($this->GetIDForIdent("Humidity"), floatval($data['luftfeuchte']));
+            $this->SetValue("Humidity", floatval($data['luftfeuchte']));
         }
         if (isset($data['betriebsart'])) {
-            SetValue($this->GetIDForIdent("Mode"), strval($data['betriebsart']));
+            $this->SetValue("Mode", strval($data['betriebsart']));
         }
 
         return true;
