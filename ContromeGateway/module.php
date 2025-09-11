@@ -232,7 +232,8 @@ class ContromeGateway extends IPSModuleStrict
         $json = @file_get_contents($url, false, $context);
 
         if ($json === FALSE) {
-            $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url", 0);
+            $message = $this->CheckHttpReponseHeader($http_response_header);
+            $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url\n" . $message, 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
             return false;
         }
