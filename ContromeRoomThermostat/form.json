@@ -34,7 +34,7 @@
                     "value": 0,
                     "minimum": 0,
                     "visible": false,
-                    "width": "100px",
+                    "width": "100px"
                 },
                 {
                     "type": "NumberSpinner",
