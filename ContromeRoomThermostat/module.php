@@ -151,7 +151,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // Anfrage ans Gateway schicken
         $result = $this->SendDataToParent(json_encode([
             "DataID"  => GUIDs::DATAFLOW, // die gemeinsame DataFlow-GUID
-            "Action"  => ACTIONs::GET_ROOM_DATA,
+            "Action"  => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
             "FloorID" => $floorId,
             "RoomID"  => $roomId
         ]));

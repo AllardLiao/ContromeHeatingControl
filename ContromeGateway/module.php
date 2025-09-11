@@ -166,7 +166,7 @@ class ContromeGateway extends IPSModuleStrict
                 $floorId = (int)$data['FloorID'];
                 $roomId  = (int)$data['RoomID'];
 
-                $roomData = $this->GetRoomData($floorId, $roomId);
+                $roomData = $this->GetTempDataForRoom($floorId, $roomId);
                 return json_encode($roomData);
 
             default:
@@ -272,7 +272,7 @@ class ContromeGateway extends IPSModuleStrict
         return $id;
     }
 
-    public function GetRoomData(int $floorId, int $roomId)
+    public function GetTempDataForRoom(int $floorId, int $roomId)
     {
         // Beispiel: Abfrage an Controme API bauen
         $ip = $this->ReadPropertyString("IPAddress");

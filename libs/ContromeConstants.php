@@ -14,15 +14,12 @@ class GUIDs
     public const CENTRAL_CONTROL      = '{A19ABE82-5AB1-7969-3851-E6446DECEBA9}';
     public const ROOM_THERMOSTAT      = '{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}';
 
-    // --- Falls du später weitere GUIDs für Profile / Variablen brauchst ---
+    // --- Weitere GUIDs ---
     public const PROFILE_BETRIEBSART  = '{16B16C23-64B7-26D3-6BE9-9B9E43AD491B}';
-
-    // public const VARIABLE = '{12345678-ABCD-....}';
 }
 
 class ACTIONs
 {
-    public const CHECK_CONNECTION = 'CheckConnection';
-    public const GET_ROOM_DATA    = 'GetRoomData';
-    // später beliebig erweiterbar
+    public const CHECK_CONNECTION           = 'CheckConnection';
+    public const GET_TEMP_DATA_FOR_ROOM     = 'GetTempDataForRoom';
 }
