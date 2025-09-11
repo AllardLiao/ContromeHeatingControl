@@ -359,7 +359,7 @@ class ContromeGateway extends IPSModuleStrict
         ];
         $context = stream_context_create($opts);
 
-        $this->SendDebug('WriteSetpoint', "POST $url -> " . $postData, 0);
+        $this->SendDebug('WriteSetpoint', "POST $url\nData: " . $postData . "\nContext: " . $context, 0);
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
