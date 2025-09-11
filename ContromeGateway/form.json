@@ -114,8 +114,10 @@
                 },
                 {
                     "type": "Button",
+                    "name": "ButtonCreateCentralInstance",
                     "caption": "Create Instance for central control",
-                    "onClick": "echo('TO BE IMPLEMENTED');"
+                    "onClick": "CreateCentralControl",
+                    "enabled": false
                 },
                 {
                     "type": "List",
@@ -175,8 +177,10 @@
                 },
                 {
                     "type": "Button",
+                    "name": "ButtonCreateRoomInstance"
                     "caption": "Create instance for selected room",
-                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));"
+                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));",
+                    "enabled": false
                 }
             ]
         }

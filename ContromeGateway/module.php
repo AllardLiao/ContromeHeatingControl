@@ -92,6 +92,10 @@ class ContromeGateway extends IPSModuleStrict
                 break;
             case ACTIONs::WRITE_SETPOINT:
                 $this->WriteSetpoint($value);
+                break;
+            case ACTIONs::CREATE_CENTRAL_CONTROL_INSTANCE:
+                $this->CreateCentralControlInstance();
+                break;
             default:
                 throw new Exception("Invalid ident");
         }
@@ -262,7 +266,8 @@ class ContromeGateway extends IPSModuleStrict
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
-        $this->ReloadForm();
+        $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
+        $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
         return true;
     }
 
@@ -393,6 +398,27 @@ class ContromeGateway extends IPSModuleStrict
 
         return json_encode(['success' => true, 'message' => 'Setpoint updated']);
 
+    }
+
+    public function CreateCentralControlInstance(): bool
+    {
+        $parentId = $this->ReadPropertyInteger("TargetParent"); // Gewählter Parent
+        $instanceName = $this->ReadPropertyString("InstanceName"); // Gewählter Name
+
+        if (!$parentId || !$instanceName) {
+            $this->SendDebug("CreateCentralControl", "Parent or name not set!", 0);
+            return false;
+        }
+
+        // Neue Central Control Instanz erstellen
+        $newId = IPS_CreateInstance('{A19ABE82-5AB1-7969-3851-E6446DECEBA9}');
+        IPS_SetParent($newId, $parentId);
+        IPS_SetName($newId, $instanceName);
+        IPS_ApplyChanges($newId);
+
+        $this->SendDebug("CreateCentralControl", "Central Control created under parent $parentId with name '$instanceName', ID $newId", 0);
+
+        return true;
     }
 
     private function CheckHttpReponseHeader($http_response_header): String

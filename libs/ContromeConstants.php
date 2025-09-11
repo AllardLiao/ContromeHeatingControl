@@ -20,11 +20,13 @@ class GUIDs
 
 class ACTIONs
 {
-    public const CHECK_CONNECTION           = 'CheckConnection';
-    public const GET_TEMP_DATA_FOR_ROOM     = 'GetTempDataForRoom';
-    public const WRITE_SETPOINT             = 'Setpoint';
-    public const UPDATE_ROOM_DATA           = 'UpdateRoomData';
-    public const FETCH_ROOM_LIST            = "FetchRoomList";
+    public const CHECK_CONNECTION                   = 'CheckConnection';
+    public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
+    public const WRITE_SETPOINT                     = 'Setpoint';
+    public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
+    public const FETCH_ROOM_LIST                    = "FetchRoomList";
+    public const CREATE_CENTRAL_CONTROL_INSTANCE    = "CreateCentralControlInstance";
+    public const CREATE_ROOM_THERMOSTAT_INSTANCE    = "CreateRoomThermostatInstance";
 }
 
 // Unterstützte API Befehle
