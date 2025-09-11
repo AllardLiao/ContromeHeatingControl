@@ -270,6 +270,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         if ($result !== false) {
             $decoded = json_decode($result, true);
+            if (is_string($decoded)) {
+                $decoded = json_decode($decoded, true);
+            }
             $this->SendDebug("WriteSetpoint", "Decoded result: " . print_r($decoded, true), 0);
             if (isset($decoded['success']) && $decoded['success'] === true) {
                 $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
