@@ -50,16 +50,6 @@ class ContromeGateway extends IPSModuleStrict
         parent::Destroy();
     }
 
-    public function __construct($InstanceID)
-    {
-        // Diese Zeile nicht löschen
-        parent::__construct($InstanceID);
-
-        // JSON url anpassen
-        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-    }
-
     public function ApplyChanges(): void
     {
         // Never delete this line!
