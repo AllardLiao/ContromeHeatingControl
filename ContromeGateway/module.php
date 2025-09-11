@@ -101,7 +101,7 @@ class ContromeGateway extends IPSModuleStrict
      */
     public function CheckConnection(): bool
     {
-        $this->ApplyChanges();
+        //$this->ApplyChanges();
 
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
@@ -127,7 +127,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
             return false;
         } else {
-            $this->SendDebug("CheckConnection", "Check 2 - connection to Controme MiniServer at $ip established.", 0);
+            $this->SendDebug("CheckConnection", "Check 2 - connection to Controme MiniServer at $ip established. (" . $currentData["name"] . "=" . $currentData["temperatur"] . ")", 0);
         }
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
