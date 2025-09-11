@@ -42,6 +42,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("IPAddress", "");
         $this->RegisterPropertyString("User", "");
         $this->RegisterPropertyString("Password", "");
+        $this->RegisterPropertyInteger("HouseID", 1);
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
     }
 
