@@ -17,7 +17,7 @@
         },
         {
             "type": "Label",
-            "caption": "In most cases, no changes are required here. Only modify these settings if you are sure of what you are doing.\n\nIf you leave the floor and room names empty, they will be updated automatically with the next data update. If you enter individual here, those will be used for the corresponding instances withing IPS. "
+            "caption": "In most cases, no changes are required here. Only modify the room number if you are sure of what you are doing.\n\nIf you leave the floor and room names empty, they will be updated automatically with the next data update. If you enter individual here, those will be used for the corresponding instances withing IPS. "
         },
         {
             "type": "RowLayout",
