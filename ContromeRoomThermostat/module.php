@@ -178,7 +178,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
             return false;
         }
 
-        return true;
+        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
+        return $this->saveDataToVariables($data);
     }
 
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
@@ -207,7 +208,17 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
             return false;
         }
+$this->SendDebug("UpdateRoomData", "Decoded data: " . print_r($data, true), 0);
+        // Variablen anlegen und updaten
+        $this->saveDataToVariables($data);
 
+        $this->SendDebug("UpdateRoomData", "Room data updated", 0);
+
+        return true;
+    }
+
+    private function saveDataToVariables($data): bool
+    {
         // Variablen anlegen und updaten
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 2, true);
@@ -226,8 +237,6 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (isset($data['betriebsart'])) {
             SetValue($this->GetIDForIdent("Mode"), strval($data['betriebsart']));
         }
-
-        $this->SendDebug("UpdateRoomData", "Room data updated", 0);
 
         return true;
     }
