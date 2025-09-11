@@ -138,8 +138,9 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
             return true;
         } else {
-            $message = $this->CheckHttpReponseHeader($http_response_header);
-            $this->SendDebug('WriteSetpoint', 'HTTP request failed: ' . $message, 0);
+            $this->SendDebug('WriteSetpoint', 'Request failed: ' . $decoded['message'] . "!", 0);
+            $this->LogMessage("Request failed: " . $decoded['message'] . "!", KL_NOTIFY);
+            $this->UpdateFormField("Result", "caption", "Request failed: " . $decoded['message'] . "!");
             return false;
         }
     }
