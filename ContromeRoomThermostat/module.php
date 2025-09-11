@@ -20,7 +20,6 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
 }
 
 // Bibliotheks-übergreifende Constanten einbinden
-require_once __DIR__ . '/../libs/ContromeConstants.php';
 use Controme\GUIDs;
 use Controme\ACTIONs;
 
@@ -283,7 +282,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->LogMessage("Setpoint-Fehler: " . $msg, KL_ERROR);
                 // Optional: User Feedback ins Frontend
                 $this->UpdateFormField("Result", "caption", "Fehler: " . $msg);
-                throw new Exception($decoded['message']);
+                throw new UserFriendlyException($decoded['message']);
             }
         } else {
             $this->SendDebug("WriteSetpoint", "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);

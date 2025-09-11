@@ -20,7 +20,6 @@ if (substr(__DIR__,0, 10) == "/Users/kai") {
 }
 
 // Bibliotheks-übergreifende Constanten einbinden
-require_once __DIR__ . '/../libs/ContromeConstants.php';
 use Controme\GUIDs;
 use Controme\ACTIONs;
 

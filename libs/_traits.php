@@ -187,3 +187,5 @@ require_once __DIR__ . '/../libs/WebhookHelper.php';
 require_once __DIR__ . '/../libs/WidgetHelper.php';
 require_once __DIR__ . '/../libs/EventHelper.php';
 require_once __DIR__ . '/../libs/VersionHelper.php';
+require_once __DIR__ . '/../libs/UserFriendlyException.php';
+require_once __DIR__ . '/../libs/ContromeConstants.php';
