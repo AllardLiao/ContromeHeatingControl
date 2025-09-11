@@ -294,6 +294,10 @@ class ContromeGateway extends IPSModuleStrict
             return false;
         }
 
+        // Wenn ein Array mit Objekten kommt, das erste nehmen - das macht Controme i.d.R.
+        if (isset($data[0]) && is_array($data[0])) {
+            $data = $data[0];
+        }
         return $data;
     }
 }
