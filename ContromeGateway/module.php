@@ -86,7 +86,7 @@ class ContromeGateway extends IPSModuleStrict
                 $this->CheckConnection();
                 break;
             case ACTIONs::WRITE_SETPOINT:
-                $this->WriteSetSetpoint($value);
+                $this->WriteSetpoint($value);
             default:
                 throw new Exception("Invalid ident");
         }
@@ -166,12 +166,11 @@ class ContromeGateway extends IPSModuleStrict
                 }
 
                 $roomId  = (int)$data['RoomID'];
-
                 $roomData = $this->GetTempDataForRoom($roomId);
                 return json_encode($roomData);
 
             case ACTIONs::WRITE_SETPOINT:
-                $this->WriteSetSetpoint($JSONString);
+                return json_encode($this->WriteSetpoint($data));
 
             default:
                 $this->SendDebug("ForwardData", "Unknown action: " . $data['Action'], 0);
@@ -306,13 +305,13 @@ class ContromeGateway extends IPSModuleStrict
         return $data;
     }
 
-    private function WriteSetSetpoint(mixed $data): string
+    private function WriteSetpoint(mixed $data): string
     {
         $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])   : null;
         $setpoint = isset($data['Setpoint']) ? floatval($data['Setpoint']) : null;
 
         if ($roomId === null || $setpoint === null) {
-            $this->SendDebug('WriteSetSetpoint', 'SET_SETPOINT missing params', 0);
+            $this->SendDebug('WriteSetpoint', 'SETPOINT missing params', 0);
             return json_encode(['success' => false, 'message' => 'Missing FloorID/RoomID/Setpoint']);
         }
 
@@ -321,7 +320,7 @@ class ContromeGateway extends IPSModuleStrict
         $pass = $this->ReadPropertyString('Password');
 
         if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug('WriteSetSetpoint', 'Missing gateway credentials', 0);
+            $this->SendDebug('WriteSetpoint', 'Missing gateway credentials', 0);
             return json_encode(['success' => false, 'message' => 'Missing gateway credentials']);
         }
 
@@ -346,11 +345,11 @@ class ContromeGateway extends IPSModuleStrict
         ];
         $context = stream_context_create($opts);
 
-        $this->SendDebug('WriteSetSetpoint', "POST $url -> " . $postData, 0);
+        $this->SendDebug('WriteSetpoint', "POST $url -> " . $postData, 0);
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
-            $this->SendDebug('WriteSetSetpoint', 'HTTP request failed', 0);
+            $this->SendDebug('WriteSetpoint', 'HTTP request failed', 0);
             return json_encode(['success' => false, 'message' => 'HTTP request failed']);;
         }
 
@@ -358,7 +357,7 @@ class ContromeGateway extends IPSModuleStrict
         $json = json_decode($response, true);
         if ($json === null) {
             // Wenn kein JSON, aber die API trotzdem success impliziert, akzeptieren wir das
-            $this->SendDebug('WriteSetSetpoint', 'Non-JSON response: ' . $response, 0);
+            $this->SendDebug('WriteSetpoint', 'Non-JSON response: ' . $response, 0);
             // Optional: treat any non-empty response as success (oder decide otherwise)
             return strlen(trim($response)) > 0 ? true : 'Empty response';
         }
