@@ -199,5 +199,5 @@ use Controme\CONTROME_API;
 // IPS-Stubs nur in der Entwicklungsumgebung laden
 if (substr(__DIR__,0, 10) == "/Users/kai") {
     // Development
-    include_once __DIR__ . '/../.ips_stubs/autoload.php';
+    include_once __DIR__ . '/.ips_stubs/autoload.php';
 }
