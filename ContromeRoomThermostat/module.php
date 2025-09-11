@@ -85,7 +85,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case "UpdateRommData":
+            case "UpdateRoomData":
                 $this->UpdateRoomData();
                 break;
             case "CheckConnection":
