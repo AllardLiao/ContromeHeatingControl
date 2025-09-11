@@ -232,7 +232,12 @@ class ContromeGateway extends IPSModuleStrict
         $json = @file_get_contents($url, false, $context);
 
         if ($json === FALSE) {
-            $message = $this->CheckHttpReponseHeader($http_response_header);
+            if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+                $message = $this->CheckHttpReponseHeader($http_response_header);
+            }
+            else {
+                $message = "HTTP request failed and no response header available.";
+            }
             $this->SendDebug("FetchRoomList", "Fehler beim Abrufen von $url\n" . $message, 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
             return false;
@@ -311,8 +316,14 @@ class ContromeGateway extends IPSModuleStrict
         $response = @file_get_contents($url);
 
         if ($response === false) {
-            $this->SendDebug("GetRoomData", "Failed to fetch room data from $url", 0);
-            $this->LogMessage("Failed to fetch room data from $url", KL_ERROR);
+            if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+                $message = $this->CheckHttpReponseHeader($http_response_header);
+            }
+            else {
+                $message = "HTTP request failed and no response header available.";
+            }
+            $this->SendDebug("GetRoomData", "Failed to fetch room data from $url\n" . $message, 0);
+            $this->LogMessage("Failed to fetch room data from $url\n" . $message, KL_ERROR);
             return false;
         }
 
@@ -375,7 +386,12 @@ class ContromeGateway extends IPSModuleStrict
 
         $response = @file_get_contents($url, false, $context);
         if ($response === false) {
-            $message = $this->CheckHttpReponseHeader($http_response_header);
+            if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+                $message = $this->CheckHttpReponseHeader($http_response_header);
+            }
+            else {
+                $message = "HTTP request failed and no response header available.";
+            }
             $this->SendDebug('WriteSetpoint', 'Request failed: ' . $message, 0);
             return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);;
         }
@@ -424,41 +440,35 @@ class ContromeGateway extends IPSModuleStrict
 
     private function CheckHttpReponseHeader($http_response_header): String
     {
-        if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
-            // Erste Zeile enthält den HTTP-Status
-            $statusLine = $http_response_header[0];
-            $message = $statusLine;
+        // Erste Zeile enthält den HTTP-Status
+        $statusLine = $http_response_header[0];
+        $message = $statusLine;
 
-            // Wenn es einen genaueren Status gibt, extrahieren
-            if (preg_match('{HTTP/\S+ (\d{3}) (.*)}', $statusLine, $matches)) {
-                $statusCode = (int)$matches[1];
-                $statusText = $matches[2];
-                $message = "HTTP $statusCode $statusText";
+        // Wenn es einen genaueren Status gibt, extrahieren
+        if (preg_match('{HTTP/\S+ (\d{3}) (.*)}', $statusLine, $matches)) {
+            $statusCode = (int)$matches[1];
+            $statusText = $matches[2];
+            $message = "HTTP $statusCode $statusText";
 
-                switch ($statusCode) {
-                    case 401:
-                        $message .= ' - Unauthorized (check username/password)';
-                        break;
-                    case 403:
-                        $message .= ' - Forbidden (check permissions)';
-                        break;
-                    case 404:
-                        $message .= ' - Not Found (wrong URL)';
-                        break;
-                    case 500:
-                        $message .= ' - Server error / bad message';
-                        break;
-                    // Weitere Fälle nach Bedarf
-                    default:
-                        $message .= ' - Unhandeled error.';
-                }
+            switch ($statusCode) {
+                case 401:
+                    $message .= ' - Unauthorized (check username/password)';
+                    break;
+                case 403:
+                    $message .= ' - Forbidden (check permissions)';
+                    break;
+                case 404:
+                    $message .= ' - Not Found (wrong URL)';
+                    break;
+                case 500:
+                    $message .= ' - Server error / bad message';
+                    break;
+                // Weitere Fälle nach Bedarf
+                default:
+                    $message .= ' - Unhandeled error.';
             }
-            return $message;
         }
-        else {
-            return "HTTP request failed and no response header available.";
-        }
-
+        return $message;
     }
 
     private function getJsonGet(): string
