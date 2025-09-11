@@ -25,3 +25,23 @@ class ACTIONs
     public const WRITE_SETPOINT             = 'Setpoint';
     public const UPDATE_ROOM_DATA           = 'UpdateRoomData';
 }
+
+// Unterstützte API Befehle
+// Dies sind die ergänzenden Zugriffspfade für die in der API implementierten Methoden
+// und werden bei Datenabfragen in der url hinten angehängt.
+// https://support.controme.com/api/
+class CONTROME_API
+{
+    public const GET_ROOMS          = "rooms/";
+    public const GET_INFO           = "info/";
+    public const GET_TEMPERATURS    = "temps/";
+    public const GET_TIMER          = "timer/";
+    public const GET_WEATHER        = "wetter_pro/";
+    //public const GET_       = "/";
+
+    public const SET_SETPOINT       = "soll/";
+    public const SET_SETPOINT_TEMP  = "ziel/";
+    public const SET_OPERATION_MODE = "rooms/";
+    //public const SET_       = "/";
+
+}

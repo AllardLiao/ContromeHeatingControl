@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use Controme\CONTROME_API;
+
 /**
  * Controme Heating Control Module for IP-Symcon
  * Copyright (c) 2025 Kai J. Oey
@@ -12,16 +14,6 @@ declare(strict_types=1);
 
 // General functions
 require_once __DIR__ . '/../libs/_traits.php';
-
-// IPS-Stubs nur in der Entwicklungsumgebung laden
-if (substr(__DIR__,0, 10) == "/Users/kai") {
-    // Development
-    include_once __DIR__ . '/../.ips_stubs/autoload.php';
-}
-
-// Bibliotheks-übergreifende Constanten einbinden
-use Controme\GUIDs;
-use Controme\ACTIONs;
 
 class ContromeGateway extends IPSModuleStrict
 {
@@ -111,7 +103,6 @@ class ContromeGateway extends IPSModuleStrict
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
-        $houseID = $this->ReadPropertyString("HouseID");
 
         // 1. Test: Daten da?
         if (empty($ip) || empty($user) || empty($pass)) {
@@ -215,7 +206,7 @@ class ContromeGateway extends IPSModuleStrict
             return false;
         }
 
-        $url = "http://$ip/get/json/v1/1/rooms/";
+        $url = $this->getJsonGet() . CONTROME_API::GET_ROOMS;
         $opts = [
             "http" => [
                 "header" => "Authorization: Basic " . base64_encode("$user:$pass")
@@ -294,7 +285,8 @@ class ContromeGateway extends IPSModuleStrict
         // Beispiel: Abfrage an Controme API bauen
         $ip = $this->ReadPropertyString("IPAddress");
 
-        $url = "http://$ip/get/json/v1/1/temps/$roomId/";
+        //$url = "http://$ip/get/json/v1/1/temps/$roomId/";
+        $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
 
         $response = @file_get_contents($url);
 
@@ -339,7 +331,8 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         // URL laut Controme-Doku (anpassen falls anders)
-        $url = "http://$ip/set/json/v1/1/soll/$roomId/";
+        //$url = "http://$ip/set/json/v1/1/soll/$roomId/";
+        $url = $thid->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
         $postData = json_encode([

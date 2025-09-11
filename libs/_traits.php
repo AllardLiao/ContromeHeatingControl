@@ -189,3 +189,15 @@ require_once __DIR__ . '/../libs/EventHelper.php';
 require_once __DIR__ . '/../libs/VersionHelper.php';
 require_once __DIR__ . '/../libs/UserFriendlyException.php';
 require_once __DIR__ . '/../libs/ContromeConstants.php';
+
+// Bibliotheks-übergreifende Constanten einbinden
+use Controme\GUIDs;
+use Controme\ACTIONs;
+use Controme\CONTROME_API;
+
+
+// IPS-Stubs nur in der Entwicklungsumgebung laden
+if (substr(__DIR__,0, 10) == "/Users/kai") {
+    // Development
+    include_once __DIR__ . '/../.ips_stubs/autoload.php';
+}
