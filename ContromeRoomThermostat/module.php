@@ -54,7 +54,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyBoolean("VisuXYZ", true);
 
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeDataRoomID" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateData", true);');
+        $this->RegisterTimer("UpdateContromeDataRoomID" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateRoomData", true);');
 
     }
 
@@ -85,8 +85,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case "UpdateData":
-//                $this->UpdateData();
+            case "UpdateRommData":
+                $this->UpdateRoomData();
                 break;
             case "CheckConnection":
                 $this->CheckConnection();
@@ -167,7 +167,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $data = json_decode($result, true);
         if (isset($data['name'])) {
             $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $outputText .= "Fetching Data: Room $roomId found and data seems valid. (Returned room name: )" . $data['name'] . " with temperature " . $data['temperatur'] . " °C.";
+            $outputText .= "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room $roomId found and data seems valid.", KL_MESSAGE);
         } else {
@@ -181,4 +181,54 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return true;
     }
 
+    // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
+    private function UpdateRoomData(): bool
+    {
+        $roomId   = $this->ReadPropertyInteger("RoomID");
+        $floorId  = $this->ReadPropertyInteger("FloorID");
+
+        // Daten vom Gateway holen
+        $result = $this->SendDataToParent(json_encode([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
+            "RoomID" => $roomId,
+            "FloorID"=> $floorId
+        ]));
+
+        if ($result === false) {
+            $this->SendDebug("UpdateRoomData", "No data received!", 0);
+            $this->LogMessage("Fetching Data for Room $roomId returned no data!", KL_ERROR);
+            return false;
+        }
+
+        $data = json_decode($result, true);
+        if (!is_array($data)) {
+            $this->SendDebug("UpdateRoomData", "Invalid data received: " . $result, 0);
+            $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
+            return false;
+        }
+
+        // Variablen anlegen und updaten
+        $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
+        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 2, true);
+        $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
+        $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_STRING, "", 4, true);
+
+        if (isset($data['temperatur'])) {
+            SetValue($this->GetIDForIdent("Temperature"), floatval($data['temperatur']));
+        }
+        if (isset($data['solltemperatur'])) {
+            SetValue($this->GetIDForIdent("Setpoint"), floatval($data['solltemperatur']));
+        }
+        if (isset($data['luftfeuchte'])) {
+            SetValue($this->GetIDForIdent("Humidity"), floatval($data['luftfeuchte']));
+        }
+        if (isset($data['betriebsart'])) {
+            SetValue($this->GetIDForIdent("Mode"), strval($data['betriebsart']));
+        }
+
+        $this->SendDebug("UpdateRoomData", "Room data updated", 0);
+
+        return true;
+    }
 }
