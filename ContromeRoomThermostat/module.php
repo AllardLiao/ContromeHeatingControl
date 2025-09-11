@@ -49,6 +49,14 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
 
+        // Variablen definieren - read-only, kommt von Controme
+        $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
+        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", "~Temperature.Room", 2);
+        $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
+        $this->RegisterVariableString("Mode", "Betriebsart", "", 4);
+
+        // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
+        $this->EnableAction("Setpoint");
 
         // Konfigurationselemente der Tile-Visualisierung
         $this->RegisterPropertyBoolean("VisuXYZ", true);
