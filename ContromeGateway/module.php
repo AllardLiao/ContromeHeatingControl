@@ -360,13 +360,13 @@ class ContromeGateway extends IPSModuleStrict
             return strlen(trim($response)) > 0 ? true : 'Empty response';
         }
 
+        // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
+        $this->SendDebug('WriteSetpoint', 'API returned: ' . print_r($json, true), 0);
+
         // Falls die API ein structured response liefert, prüfe ein success-flag
         if (isset($json['success'])) {
             return ($json['success'] ? true : (isset($json['message']) ? $json['message'] : 'API returned failure'));
         }
-
-        // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
-        $this->SendDebug('DoSetSeWriteSetSetpointtpoint', 'API returned: ' . print_r($json, true), 0);
 
         return json_encode(['success' => true, 'message' => 'Setpoint updated']);
 
