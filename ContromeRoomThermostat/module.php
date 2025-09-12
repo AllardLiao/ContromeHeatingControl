@@ -308,23 +308,52 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     public function GetVisualizationTile(): string
     {
-        $step = $this->ReadPropertyFloat('StepSize');
+    // Schrittweite / Titel etc.
+    $step = $this->ReadPropertyFloat('StepSize');
+    $title = $this->ReadPropertyString('Room') ?: $this->ReadPropertyString('Name') ?: 'Thermostat';
+    $subtitle = 'Raum ' . $this->ReadPropertyInteger('RoomID');
 
-        $tile = [
-            'title'   => $this->ReadPropertyString('Room'),
-            'state'   => $this->GetValue('Setpoint') . ' °C',
-            'actions' => [
-                    [
-                        'caption' => '+' . $step,
-                        'action'  => 'inc'
-                    ],
-                    [
-                        'caption' => '-' . $step,
-                        'action'  => 'dec'
-                    ]
-                ]
-        ];
+    // Werte (sicher holen)
+    $setpoint    = $this->GetValue('Setpoint');
+    $temperature = $this->GetValue('Temperature');
 
-        return json_encode($tile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    // Lade module.html falls vorhanden (sonst leer string)
+    $moduleHTML = '';
+    $moduleFile = __DIR__ . '/module.html';
+    if (file_exists($moduleFile)) {
+        $moduleHTML = file_get_contents($moduleFile);
+        if ($moduleHTML === false) {
+            $moduleHTML = '';
+        }
     }
+
+    // Tile-Array — wichtig: 'type' und 'actions' mit 'name'
+    $tile = [
+        'type'       => 'CustomTile', // zwingend
+        'title'      => $title,
+        'subtitle'   => $subtitle,
+        'state'      => number_format($setpoint, 1) . ' °C',
+        'icon'       => 'Temperature', // optional
+        'actions'    => [
+            ['name' => 'inc', 'caption' => '+' . rtrim(rtrim((string)$step, '0'), '.'), 'icon' => 'ArrowUp',   'primary' => true],
+            ['name' => 'dec', 'caption' => '-' . rtrim(rtrim((string)$step, '0'), '.'), 'icon' => 'ArrowDown']
+        ],
+        // moduleHTML und variables helfen bei Template-Ersetzung in module.html
+        'moduleHTML' => $moduleHTML,
+        'variables'  => [
+            ['ident' => 'Setpoint',    'type' => 'float', 'value' => $setpoint],
+            ['ident' => 'Temperature', 'type' => 'float', 'value' => $temperature]
+        ]
+    ];
+
+    // Debug: falls etwas schiefgeht, in Log schreiben (optional)
+    $json = json_encode($tile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($json === false) {
+        $this->SendDebug('GetVisualizationTile', 'json_encode failed: ' . json_last_error_msg(), 0);
+        // Rückfall: mindestens einen leeren string liefern (IPS erwartet string)
+        return '{}';
+    }
+
+    $this->SendDebug('GetVisualizationTile', $json, 0);
+    return $json;    }
 }
