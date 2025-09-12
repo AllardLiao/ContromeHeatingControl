@@ -16,7 +16,7 @@
         },
         {
             "type": "Label",
-            "caption": "\nSystem & Credentials.",
+            "caption": "\nConfiguration",
             "bold": true
         },
         {
@@ -62,7 +62,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Quote Controme: API returns nothing?\nIn this case, please first check whether you are using the correct house id. For various reasons, the id is sometimes \"2\" and not \"1\".",
+                    "caption": "Controme note: API returns nothing?\nIn this case, please first check whether you are using the correct house id. For various reasons, the id is sometimes '2' and not '1'.",
                     "italic": true
                 },
                 {
@@ -83,12 +83,12 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nSollte Controme in Zukunft HTTPS unterstützen, ist der Plan, dass dies hier aktiviert werden kann.",
+                    "caption": "If Controme supports HTTPS in the future, the plan is to enable it here.",
                     "italic": true
                 },
                 {
                     "type": "Label",
-                    "caption": "Quote Controme:\nDa wir auf dem Miniserver keine Zertifikate installiert haben, wäre es sinnvoll, wenn Sie /set/ Aufrufe nur im lokalen Netz abschicken.",
+                    "caption": "Controme note:\nSince there are no certificates installed on the miniserver, it is recommended to send /set/ requests only within the local network.",
                     "italic": true
                 },
                 {
@@ -109,15 +109,14 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "If not done: please read the configuration of the Controme MiniServer first (Button \"Fetch Room List\").",
+                    "caption": "If not done already: please import the configuration of the Controme Mini-Server first (use the button within \"Execute action...\" section below).",
                     "bold": true
                 },
                 {
                     "type": "Button",
                     "name": "ButtonCreateCentralInstance",
                     "caption": "Create Instance for central control",
-                    "onClick": "CreateCentralControl",
-                    "enabled": false
+                    "onClick": "CreateCentralControl"
                 },
                 {
                     "type": "List",
@@ -177,7 +176,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "Note: You can rename floors and rooms here for better clarity in IP-Symcon. However, if you use the \"Fetch Room List\" button, your changes will be overwritten with the names from the Controme MiniServer. The Controme Room Thermostat and Central Control modules use the floor and room IDs as unique identifiers to receive data. Changing names in IP-Symcon does not affect the connection, as long as the IDs remain unchanged."
+                    "caption": "Note: You can rename floors and rooms here for better clarity in the IP-Symcon-Admin area. However, if you use the 'Read configuration from Controme Mini-Server' button, your changes will be overwritten with the names given by the Controme Mini-Server. The Controme Room Thermostat and Central Control modules only use the >>room IDs<< as unique identifiers, so changing names in IP-Symcon does not affect the connection, as long as the IDs remain unchanged. The names used for Symcon visualizations will be taken from the \"Controme Central Control\" respectivly \"Controme RoomThermostat\" instances - you can change them there and they will not be overwritten."
                 },
                 {
                     "type": "Button",
@@ -220,15 +219,11 @@
                     "caption": "\nTo create IPS Controme Central Control and Room Thermostat instances, you must first read the configuration from the Controme MiniServer."
                 },
                 {
-                    "type": "Label",
-                    "caption": "Please execute this step:\n1) When setting up the module for the first time, and\n2) Whenever the floor or room IDs in your Controme MiniServer configuration change.\nThis ensures that the central control and room thermostat instances have the correct information."
-                },
-                {
                     "type": "RowLayout",
                     "items": [
                         {
                             "type": "Button",
-                            "caption": "Fetch Room List",
+                            "caption": "Read configuration from Controme Mini-Server",
                             "onClick": "IPS_RequestAction($id,'FetchRoomList',true);",
                             "enabled": true
                         },
@@ -273,7 +268,7 @@
                             "items": [
                                 {
                                     "type": "Image",
-                                    "_image_de": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNzEuMjUiIGhlaWdodD0iMjgiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iUEFZUEFMOiBTUEVOREVOIj48dGl0bGU+UEFZUEFMOiBTUEVOREVOPC90aXRsZT48ZyBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiPjxyZWN0IHdpZHRoPSI4NS41IiBoZWlnaHQ9IjI4IiBmaWxsPSIjNTU1Ii8+PHJlY3QgeD0iODUuNSIgd2lkdGg9Ijg1Ljc1IiBoZWlnaHQ9IjI4IiBmaWxsPSIjMDA0NTdjIi8+PC9nPjxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJWZXJkYW5hLEdlbmV2YSxEZWphVnUgU2FucyxzYW5zLXNlcmlmIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmb250LXNpemU9IjEwMCI+PGltYWdlIHg9IjkiIHk9IjciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgaHJlZj0iZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCbWFXeHNQU0ozYUdsMFpYTnRiMnRsSWlCeWIyeGxQU0pwYldjaUlIWnBaWGRDYjNnOUlqQWdNQ0F5TkNBeU5DSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhkR2wwYkdVK1VHRjVVR0ZzUEM5MGFYUnNaVDQ4Y0dGMGFDQmtQU0pOTVRVdU5qQTNJRFF1TmpVelNEZ3VPVFF4VERZdU5qUTFJREU1TGpJMU1VZ3hMamd5VERRdU9EWXlJREJvTnk0NU9UVmpNeTQzTlRRZ01DQTJMak0zTlNBeUxqSTVOQ0EyTGpRM015QTFMalV4TXkwdU5qUTRMUzQwTnpndE1pNHhNRFV0TGpnMkxUTXVOekl5TFM0NE5tMDJMalUzSURVdU5UUTJZekFnTXk0ME1TMHpMakF4SURZdU9EVXpMVFl1T1RVNElEWXVPRFV6YUMweUxqUTVNMHd4TVM0MU9UVWdNalJJTmk0M05Hd3hMamcwTlMweE1TNDFNemhvTXk0MU9USmpOQzR5TURnZ01DQTNMak0wTmkwekxqWXpOQ0EzTGpFMU15MDJMamswT1dFMUxqSTBJRFV1TWpRZ01DQXdJREVnTWk0NE5EZ2dOQzQyT0RaTk9TNDJOVE1nTlM0MU5EWm9OaTQwTURoakxqa3dOeUF3SURFdU9UUXlMakl5TWlBeUxqTTJNeTQxTkRFdExqRTVOU0F5TGpjME1TMHlMalkxTlNBMUxqUTRNeTAyTGpRME1TQTFMalE0TTBnNExqY3hORm9pTHo0OEwzTjJaejQ9Ii8+PHRleHQgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHg9IjUxMi41IiB5PSIxNzUiIHRleHRMZW5ndGg9IjQ0NSIgZmlsbD0iI2ZmZiI+UEFZUEFMPC90ZXh0Pjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSIxMjgzLjc1IiB5PSIxNzUiIHRleHRMZW5ndGg9IjYxNy41IiBmaWxsPSIjZmZmIiBmb250LXdlaWdodD0iYm9sZCI+U1BFTkRFTjwvdGV4dD48L2c+Cjx0aXRsZSB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPlBBWVBBTDogU1BFTkRFTjwvdGl0bGU+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB3aWR0aD0iODUuNSIgaGVpZ2h0PSIyOCIgZmlsbD0iIzU1NSIvPjxyZWN0IHg9Ijg1LjUiIHdpZHRoPSI4NS43NSIgaGVpZ2h0PSIyOCIgZmlsbD0iIzAwNDU3YyIvPjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iVmVyZGFuYSxHZW5ldmEsRGVqYVZ1IFNhbnMsc2Fucy1zZXJpZiIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgZm9udC1zaXplPSIxMDAiPjxpbWFnZSB4PSI5IiB5PSI3IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIGhyZWY9ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5Qm1hV3hzUFNKM2FHbDBaWE50YjJ0bElpQnliMnhsUFNKcGJXY2lJSFpwWlhkQ2IzZzlJakFnTUNBeU5DQXlOQ0lnZUcxc2JuTTlJbWgwZEhBNkx5OTNkM2N1ZHpNdWIzSm5Mekl3TURBdmMzWm5JajQ4ZEdsMGJHVStVR0Y1VUdGc1BDOTBhWFJzWlQ0OGNHRjBhQ0JrUFNKTk1UVXVOakEzSURRdU5qVXpTRGd1T1RReFREWXVOalExSURFNUxqSTFNVWd4TGpneVREUXVPRFl5SURCb055NDVPVFZqTXk0M05UUWdNQ0EyTGpNM05TQXlMakk1TkNBMkxqUTNNeUExTGpVeE15MHVOalE0TFM0ME56Z3RNaTR4TURVdExqZzJMVE11TnpJeUxTNDRObTAyTGpVM0lEVXVOVFEyWXpBZ015NDBNUzB6TGpBeElEWXVPRFV6TFRZdU9UVTRJRFl1T0RVemFDMHlMalE1TTB3eE1TNDFPVFVnTWpSSU5pNDNOR3d4TGpnME5TMHhNUzQxTXpob015NDFPVEpqTkM0eU1EZ2dNQ0EzTGpNME5pMHpMall6TkNBM0xqRTFNeTAyTGprME9XRTFMakkwSURVdU1qUWdNQ0F3SURFZ01pNDRORGdnTkM0Mk9EWk5PUzQyTlRNZ05TNDFORFpvTmk0ME1EaGpMamt3TnlBd0lERXVPVFF5TGpJeU1pQXlMak0yTXk0MU5ERXRMakU1TlNBeUxqYzBNUzB5TGpZMU5TQTFMalE0TXkwMkxqUTBNU0ExTGpRNE0wZzRMamN4TkZvaUx6NDhMM04yWno0PSIvPjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSI1MTIuNSIgeT0iMTc1IiB0ZXh0TGVuZ3RoPSI0NDUiIGZpbGw9IiNmZmYiPlBBWVBBTDwvdGV4dD48dGV4dCB0cmFuc2Zvcm09InNjYWxlKC4xKSIgeD0iMTI4My43NSIgeT0iMTc1IiB0ZXh0TGVuZ3RoPSI2MTcuNSIgZmlsbD0iI2ZmZiIgZm9udC13ZWlnaHQ9ImJvbGQiPlNQRU5ERU48L3RleHQ+PC9nPgo8L3N2Zz4=",
+                                    "_image_de": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNzEuMjUiIGhlaWdodD0iMjgiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iUEFZUEFMOiBTUEVOREVOIj48dGl0bGU+UEFZUEFMOiBTUEVOREVOPC90aXRsZT48ZyBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiPjxyZWN0IHdpZHRoPSI4NS41IiBoZWlnaHQ9IjI4IiBmaWxsPSIjNTU1Ii8+PHJlY3QgeD0iODUuNSIgd2lkdGg9Ijg1Ljc1IiBoZWlnaHQ9IjI4IiBmaWxsPSIjMDA0NTdjIi8+PC9nPjxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJWZXJkYW5hLEdlbmV2YSxEZWphVnUgU2FucyxzYW5zLXNlcmlmIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmb250LXNpemU9IjEwMCI+PGltYWdlIHg9IjkiIHk9IjciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgaHJlZj0iZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCbWFXeHNQU0ozYUdsMFpYTnRiMnRsSWlCeWIyeGxQU0pwYldjaUlIWnBaWGRDYjNnOUlqQWdNQ0F5TkNBeU5DSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhkR2wwYkdVK1VHRjVVR0ZzUEM5MGFYUnNaVDQ4Y0dGMGFDQmtQU0pOTVRVdU5qQTNJRFF1TmpVelNEZ3VPVFF4VERZdU5qUTFJREU1TGpJMU1VZ3hMamd5VERRdU9EWXlJREJvTnk0NU9UVmpNeTQzTlRRZ01DQTJMak0zTlNBeUxqSTVOQ0EyTGpRM015QTFMalV4TXkwdU5qUTRMUzQwTnpndE1pNHhNRFV0TGpnMkxUTXVOekl5TFM0NE5tMDJMalUzSURVdU5UUTJZekFnTXk0ME1TMHpMakF4SURZdU9EVXpMVFl1T1RVNElEWXVPRFV6YUMweUxqUTVNMHd4TVM0MU9UVWdNalJJTmk0M05Hd3hMamcwTlMweE1TNDFNemhvTXk0MU9USmpOQzR5TURnZ01DQTNMak0wTmkwekxqWXpOQ0EzTGpFMU15MDJMamswT1dFMUxqSTBJRFV1TWpRZ01DQXdJREVnTWk0NE5EZ2dOQzQyT0RaTk9TNDJOVE1nTlM0MU5EWm9OaTQwTURoakxqa3dOeUF3SURFdU9UUXlMakl5TWlBeUxqTTJNeTQxTkRFdExqRTVOU0F5TGpjME1TMHlMalkxTlNBMUxqUTRNeTAyTGpRME1TQTFMalE0TTBnNExqY3hORm9pTHo0OEwzTjJaejQ9Ii8+PHRleHQgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHg9IjUxMi41IiB5PSIxNzUiIHRleHRMZW5ndGg9IjQ0NSIgZmlsbD0iI2ZmZiI+UEFZUEFMPC90ZXh0Pjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSIxMjgzLjc1IiB5PSIxNzUiIHRleHRMZW5ndGg9IjYxNy41IiBmaWxsPSIjZmZmIiBmb250LXdlaWdodD0iYm9sZCI+U1BFTkRFTjwvdGV4dD48L2c+Cjx0aXRsZSB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPlBBWVBBTDogU1BFTkRFTjwvdGl0bGU+CjxnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB3aWR0aD0iODUuNSIgaGVpZ2h0PSIyOCIgZmlsbD0iIzU1NSIvPjxyZWN0IHg9Ijg1LjUiIHdpZHRoPSI4NS43NSIgaGVpZ2h0PSIyOCIgZmlsbD0iIzAwNDU3YyIvPjwvZz4KPGcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iVmVyZGFuYSxHZW5ldmEsRGVqYVZ1IFNhbnMsc2Fucy1zZXJpZiIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgZm9udC1zaXplPSIxMDAiPjxpbWFnZSB4PSI5IiB5PSI3IiB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIGhyZWY9ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5Qm1hV3hzUFNKM2FHbDBaWE50YjJ0bElpQnliMnhsUFNKcGJXY2lJSFpwWlhkQ2IzZzlJakFnTUNBeU5DQXlOQ0lnZUcxc2JuTTlJbWgwZEhBNkx5OTNkM2N1ZHpNdWIzSm5Mekl3TURBdmMzWm5JajQ4ZEdsMGJHVStVR0Y1VUdGc1BDOTBhWFJzWlQ0OGNHRjBhQ0JrUFNKTk1UVXNOakEzSURRdU5qVXpTRGd1T1RReFREWXVOalExSURFNUxqSTFNVWd4TGpneVREUXVPRFl5SURCb055NDVPVFZqTXk0M05UUWdNQ0EyTGpNM05TQXlMakk1TkNBMkxqUTNNeUExTGpVeE15MHVOalE0TFM0ME56Z3RNaTR4TURVdExqZzJMVE11TnpJeUxTNDRObTAyTGpVM0lEVXVOVFEyWXpBZ015NDBNUzB6TGpBeElEWXVPRFV6TFRZdU9UVTRJRFl1T0RVemFDMHlMalE1TTB3eE1TNDFPVFVnTWpSSU5pNDNOR3d4TGpnME5TMHhNUzQxTXpob015NDFPVEpqTkM0eU1EZ2dNQ0EzTGpNME5pMHpMall6TkNBM0xqRTFNeTAyTGprME9XRTFMakkwSURVdU1qUWdNQ0F3SURFZ01pNDRORGdnTkM0Mk9EWk5PUzQyTlRNZ05TNDFORFpvTmk0ME1EaGpMamt3TnlBd0lERXVPVFF5TGpJeU1pQXlMak0yTXk0MU5ERXRMakU1TlNBeUxqYzBNUzB5TGpZMU5TQTFMalE0TXkwMkxqUTBNU0ExTGpRNE0wZzRMamN4TkZvaUx6NDhMM04yWno0PSIvPjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSI1MTIuNSIgeT0iMTc1IiB0ZXh0TGVuZ3RoPSI0NDUiIGZpbGw9IiNmZmYiPlBBWVBBTDwvdGV4dD48dGV4dCB0cmFuc2Zvcm09InNjYWxlKC4xKSIgeD0iMTI4My43NSIgeT0iMTc1IiB0ZXh0TGVuZ3RoPSI2MTcuNSIgZmlsbD0iI2ZmZiIgZm9udC13ZWlnaHQ9ImJvbGQiPlNQRU5ERU48L3RleHQ+PC9nPgo8L3N2Zz4=",
                                     "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNzEuMjUiIGhlaWdodD0iMjgiIHJvbGU9ImltZyIgYXJpYS1sYWJlbD0iUEFZUEFMOiBTUEVOREVOIj48dGl0bGU+UEFZUEFMOiBTUEVOREVOPC90aXRsZT48ZyBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiPjxyZWN0IHdpZHRoPSI4NS41IiBoZWlnaHQ9IjI4IiBmaWxsPSIjNTU1Ii8+PHJlY3QgeD0iODUuNSIgd2lkdGg9Ijg1Ljc1IiBoZWlnaHQ9IjI4IiBmaWxsPSIjMDA0NTdjIi8+PC9nPjxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJWZXJkYW5hLEdlbmV2YSxEZWphVnUgU2FucyxzYW5zLXNlcmlmIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmb250LXNpemU9IjEwMCI+PGltYWdlIHg9IjkiIHk9IjciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxNCIgaHJlZj0iZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCbWFXeHNQU0ozYUdsMFpYTnRiMnRsSWlCeWIyeGxQU0pwYldjaUlIWnBaWGRDYjNnOUlqQWdNQ0F5TkNBeU5DSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhkR2wwYkdVK1VHRjVVR0ZzUEM5MGFYUnNaVDQ4Y0dGMGFDQmtQU0pOTVRVdU5qQTNJRFF1TmpVelNEZ3VPVFF4VERZdU5qUTFJREU1TGpJMU1VZ3hMamd5VERRdU9EWXlJREJvTnk0NU9UVmpNeTQzTlRRZ01DQTJMak0zTlNBeUxqSTVOQ0EyTGpRM015QTFMalV4TXkwdU5qUTRMUzQwTnpndE1pNHhNRFV0TGpnMkxUTXVOekl5TFM0NE5tMDJMalUzSURVdU5UUTJZekFnTXk0ME1TMHpMakF4SURZdU9EVXpMVFl1T1RVNElEWXVPRFV6YUMweUxqUTVNMHd4TVM0MU9UVWdNalJJTmk0M05Hd3hMamcwTlMweE1TNDFNemhvTXk0MU9USmpOQzR5TURnZ01DQTNMak0wTmkwekxqWXpOQ0EzTGpFMU15MDJMamswT1dFMUxqSTBJRFV1TWpRZ01DQXdJREVnTWk0NE5EZ2dOQzQyT0RaTk9TNDJOVE1nTlM0MU5EWm9OaTQwTURoakxqa3dOeUF3SURFdU9UUXlMakl5TWlBeUxqTTJNeTQxTkRFdExqRTVOU0F5TGpjME1TMHlMalkxTlNBMUxqUTRNeTAyTGpRME1TQTFMalE0TTBnNExqY3hORm9pTHo0OEwzTjJaejQ9Ii8+PHRleHQgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHg9IjUxMi41IiB5PSIxNzUiIHRleHRMZW5ndGg9IjQ0NSIgZmlsbD0iI2ZmZiI+UEFZUEFMPC90ZXh0Pjx0ZXh0IHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB4PSIxMjgzLjc1IiB5PSIxNzUiIHRleHRMZW5ndGg9IjYxNy41IiBmaWxsPSIjZmZmIiBmb250LXdlaWdodD0iYm9sZCI+RE9OQVRFPC90ZXh0PjwvZz48L3N2Zz4=",
                                     "onClick": "echo 'https://www.paypal.com/paypalme/KaiOey';"
                                 }
@@ -334,9 +329,9 @@
     ],
     "status": [
         {
-            "code": 201,
+            "code": 104,
             "icon": "inactive",
-            "caption": "Object linking incorrect"
+            "caption": "Gateway created - interface inactive"
         }
     ]
 }
