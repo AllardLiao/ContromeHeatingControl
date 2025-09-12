@@ -354,4 +354,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // WICHTIG: als STRING zurückgeben (HTML)
         return $html;
     }
+
+    public function getVisu(): String
+    {
+        return $this->GetVisualizationTile();
+    }
 }
