@@ -311,7 +311,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     $step = $this->ReadPropertyFloat('StepSize');
 
     $tile = [
-        'title'   => $this->ReadPropertyString('room'),
+        'title'   => $this->ReadPropertyString('Room'),
         'state'   => $this->GetValue('Setpoint') . ' °C',
         'actions' => [
                 [
@@ -324,7 +324,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 ]
             ]
         ];
-        
+
         return json_encode($tile);
     }
 }
