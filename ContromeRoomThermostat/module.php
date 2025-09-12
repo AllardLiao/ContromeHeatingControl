@@ -105,9 +105,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 break;
             case 'inc':
                 $this->WriteSetpoint($this->GetValue('Setpoint') + $this->GetValue('StepSize'));
+                $this->UpdateVisualizationValue(json_encode($value));
                 break;
             case 'dec':
                 $this->WriteSetpoint($this->GetValue('Setpoint') - $this->GetValue('StepSize'));
+                $this->UpdateVisualizationValue(json_encode($value));
                 break;
             default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
@@ -310,7 +312,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     {
     // Schrittweite / Titel etc.
     $step = $this->ReadPropertyFloat('StepSize');
-    $title = $this->ReadPropertyString('Room') ?: $this->ReadPropertyString('Name') ?: 'Thermostat';
+    $title = $this->ReadPropertyString('Room') ?: $this->ReadPropertyString('Floor') ?: 'Thermostat';
     $subtitle = 'Raum ' . $this->ReadPropertyInteger('RoomID');
 
     // Werte (sicher holen)
@@ -355,5 +357,5 @@ class ContromeRoomThermostat extends IPSModuleStrict
     }
 
     $this->SendDebug('GetVisualizationTile', $json, 0);
-    return $json;    }
+    return $moduleHTML;    }
 }

@@ -1,7 +1,13 @@
-<div style="display:flex; flex-direction:column; align-items:center; font-family:sans-serif;">
+<script>
+    function handleMessage(Data){
+        document.getElementById('SetPoint').nodeValue = JSON.parse(Data);
+    }
+</script>
+
+<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; font-family:sans-serif;">
   <div style="width:180px; height:180px; border-radius:50%; background:linear-gradient(145deg,#4eacff,#214972); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow:inset 0 0 10px rgba(0,0,0,0.3);">
     <div style="font-size:18px;">Soll</div>
-    <div style="font-size:42px; font-weight:bold;">{{ Setpoint }}°C</div>
-    <div style="margin-top:8px; font-size:14px;">Ist: {{ Temperature }}°C</div>
+    <div id = "SetPoint" style="font-size:42px; font-weight:bold;">{{ Setpoint }}°C</div>
+    <div id = "Temperature" style="margin-top:8px; font-size:14px;">Ist: {{ Temperature }}°C</div>
   </div>
 </div>
