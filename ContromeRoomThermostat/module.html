@@ -1,13 +1,100 @@
-<script>
-    function handleMessage(Data){
-        document.getElementById('SetPoint').nodeValue = JSON.parse(Data);
-    }
-</script>
+<style>
+.ct-wrap { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; font-family:sans-serif; gap:12px; padding:8px; box-sizing:border-box;}
+.ct-circle { width:180px; height:180px; border-radius:50%; background:linear-gradient(145deg,#4eacff,#214972); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow:inset 0 0 10px rgba(0,0,0,0.3); }
+.ct-set { font-size:42px; font-weight:bold; }
+.ct-actual { margin-top:8px; font-size:14px; }
+.ct-controls { display:flex; gap:8px; margin-top:6px; }
+.ct-btn { padding:6px 12px; font-weight:600; cursor:pointer; border-radius:6px; border:none; background:#fff; color:#214972; }
+.ct-input { width:80px; text-align:center; font-size:16px; padding:4px; border-radius:6px; }
+.small { font-size:12px; color:#eee; margin-top:6px; }
+</style>
 
-<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; font-family:sans-serif;">
-  <div style="width:180px; height:180px; border-radius:50%; background:linear-gradient(145deg,#4eacff,#214972); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow:inset 0 0 10px rgba(0,0,0,0.3);">
-    <div style="font-size:18px;">Soll</div>
-    <div id = "SetPoint" style="font-size:42px; font-weight:bold;">{{ Setpoint }}°C</div>
-    <div id = "Temperature" style="margin-top:8px; font-size:14px;">Ist: {{ Temperature }}°C</div>
+<div class="ct-wrap">
+  <div style="text-align:center; width:100%;"><strong>{{Title}}</strong></div>
+
+  <div class="ct-circle">
+    <div style="font-size:16px;">Soll</div>
+    <div id="SetPoint" class="ct-set">{{Setpoint}}°C</div>
+    <div id="Temperature" class="ct-actual">Ist: {{Temperature}}°C</div>
+    <div id="Humidity" class="small">Luftfeuchte: {{Humidity}} %</div>
+    <div id="Mode" class="small">Modus: {{Mode}}</div>
   </div>
+
+  <div class="ct-controls">
+    <button id="btnDec" class="ct-btn">-{{Step}}</button>
+    <input id="inputSetpoint" class="ct-input" value="{{Setpoint}}" />
+    <button id="btnInc" class="ct-btn">+{{Step}}</button>
+  </div>
+
+  <div style="font-size:12px;color:#666;">Only Setpoint is editable. Other values are read-only from Controme.</div>
 </div>
+
+<script>
+/*
+ handleMessage(Data) wird von Symcon aufgerufen, wenn PHP $this->UpdateVisualizationValue(json) sendet.
+ Data ist ein JSON-String.
+*/
+function handleMessage(Data) {
+    try {
+        var obj = JSON.parse(Data);
+
+        if ('Setpoint' in obj) {
+            var sp = parseFloat(obj.Setpoint);
+            document.getElementById('SetPoint').textContent = sp.toFixed(1) + "°C";
+            var inp = document.getElementById('inputSetpoint');
+            if (inp) inp.value = sp.toFixed(1);
+        }
+        if ('Temperature' in obj) {
+            var t = parseFloat(obj.Temperature);
+            document.getElementById('Temperature').textContent = "Ist: " + t.toFixed(1) + "°C";
+        }
+        if ('Humidity' in obj) {
+            var h = parseFloat(obj.Humidity);
+            document.getElementById('Humidity').textContent = "Luftfeuchte: " + h.toFixed(1) + " %";
+        }
+        if ('Mode' in obj) {
+            document.getElementById('Mode').textContent = "Modus: " + obj.Mode;
+        }
+    } catch (e) {
+        console.error("handleMessage parse error", e, Data);
+    }
+}
+
+// ---- Aktionen an das Modul schicken ----
+// Instance ID wird beim PHP-Template ersetzt: {{InstanceID}}
+var instanceId = {{InstanceID}};
+
+// Helper: ruft IPS_RequestAction(instanceId, ident, value)
+function sendAction(ident, value) {
+    if (typeof IPS_RequestAction === 'function') {
+        IPS_RequestAction(instanceId, ident, value);
+    } else {
+        // Fallback: es kann in manchen Umgebungen anders heißen - debug
+        console.warn('IPS_RequestAction not available in this context', ident, value);
+    }
+}
+
+// Buttons / Input Hookups
+document.getElementById('btnInc').addEventListener('click', function(){
+    // Add step (Step ist im Button-Text, aber wir lassen die Logik serverseitig)
+    sendAction('inc', true);
+});
+document.getElementById('btnDec').addEventListener('click', function(){
+    sendAction('dec', true);
+});
+
+// Direktes Setzen per Input (Enter oder focusout)
+var inp = document.getElementById('inputSetpoint');
+inp.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') {
+        var v = parseFloat(this.value);
+        if (!isNaN(v)) sendAction('Setpoint', v);
+    }
+});
+inp.addEventListener('focusout', function(){
+    var v = parseFloat(this.value);
+    if (!isNaN(v)) sendAction('Setpoint', v);
+});
+
+// done
+</script>
