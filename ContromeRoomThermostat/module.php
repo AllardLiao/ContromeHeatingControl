@@ -308,23 +308,23 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     public function GetVisualizationTile(): string
     {
-    $step = $this->ReadPropertyFloat('StepSize');
+        $step = $this->ReadPropertyFloat('StepSize');
 
-    $tile = [
-        'title'   => $this->ReadPropertyString('Room'),
-        'state'   => $this->GetValue('Setpoint') . ' °C',
-        'actions' => [
-                [
-                    'caption' => '+' . $step,
-                    'action'  => 'inc'
-                ],
-                [
-                    'caption' => '-' . $step,
-                    'action'  => 'dec'
+        $tile = [
+            'title'   => $this->ReadPropertyString('Room'),
+            'state'   => $this->GetValue('Setpoint') . ' °C',
+            'actions' => [
+                    [
+                        'caption' => '+' . $step,
+                        'action'  => 'inc'
+                    ],
+                    [
+                        'caption' => '-' . $step,
+                        'action'  => 'dec'
+                    ]
                 ]
-            ]
         ];
 
-        return json_encode($tile);
+        return json_encode($tile, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }
