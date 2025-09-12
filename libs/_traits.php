@@ -148,7 +148,7 @@ if (!defined('IPS_TIMERMESSAGE')) {
     define('TM_UPDATE', IPS_TIMERMESSAGE + 4);
     define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
 }
-if (!defined('IS_ACTIVE')) {
+if (!defined('IS_NO_CONNECTION')) {
     // --- IPS-STATUS (IS) CODES gem. https://www.symcon.de/de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/module/setstatus/
     define('IS_SBASE', 100);
     define('IS_CREATING', IS_SBASE + 1);                        // Module is being created
