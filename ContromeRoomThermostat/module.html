@@ -1,53 +1,151 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/roundSlider/1.6.1/roundslider.min.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+      width: 100%;
+      height: 100%;
+    }
 
-<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; font-family:sans-serif;">
-  <div id="thermostat"></div>
+    .thermostat-card {
+      width: 260px;
+      padding: 20px;
+      border-radius: 20px;
+      background: #1e1e2f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
 
-  <div style="margin-top:12px; text-align:center; font-size:14px;">
-    <div id="temperature">Ist: {{ Temperature }} °C</div>
-    <div id="humidity">Luftfeuchte: {{ Humidity }} %</div>
-    <div id="mode">Modus: {{ Mode }}</div>
+    .round-slider {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+
+    #setpoint-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 42px;
+      font-weight: bold;
+    }
+
+    #details {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #aaa;
+      text-align: center;
+    }
+
+    .modes {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #4eacff;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
+</head>
+<body>
+  <div class="thermostat-card">
+    <div class="round-slider" id="slider"></div>
+    <div id="setpoint-display">21.0°C</div>
+    <div id="details">
+      Ist: <span id="temperature">20.5</span>°C ·
+      Feuchte: <span id="humidity">45</span>%<br/>
+      Modus: <span id="mode">Auto</span>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" onclick="setMode('off')">Off</button>
+      <button class="mode-btn active" onclick="setMode('auto')">Auto</button>
+      <button class="mode-btn" onclick="setMode('heat')">Heat</button>
+    </div>
   </div>
-</div>
 
-<script>
-  // Initialisieren mit Solltemperatur
-  $("#thermostat").roundSlider({
-    radius: 90,
-    width: 15,
-    min: 10,
-    max: 30,
-    step: 0.5,
-    value: {{ Setpoint }},
-    circleShape: "pie",
-    startAngle: 315,
-    sliderType: "min-range",
-    change: function (args) {
-      sendToSymcon(JSON.stringify({ Setpoint: args.value }));
-    }
-  });
+  <script>
+    // RoundSlider initialisieren
+    $("#slider").roundSlider({
+      radius: 90,
+      width: 16,
+      handleSize: "+20",
+      sliderType: "min-range",
+      value: 21,
+      min: 5,
+      max: 30,
+      step: 0.5,
+      startAngle: 315,
+      editableTooltip: false,
+      tooltipFormat: val => val + "°C",
+      drag: e => updateSetpoint(e.value),
+      change: e => sendSetpoint(e.value)
+    });
 
-  // Dynamische Updates aus PHP
-  function handleMessage(data) {
-    var obj = JSON.parse(data);
-    if (obj.Setpoint !== undefined) {
-      $("#thermostat").data("roundSlider").setValue(obj.Setpoint);
+    function updateSetpoint(val) {
+      document.getElementById("setpoint-display").innerText = val.toFixed(1) + "°C";
     }
-    if (obj.Temperature !== undefined) {
-      document.getElementById("temperature").innerText = "Ist: " + obj.Temperature + " °C";
-    }
-    if (obj.Humidity !== undefined) {
-      document.getElementById("humidity").innerText = "Luftfeuchte: " + obj.Humidity + " %";
-    }
-    if (obj.Mode !== undefined) {
-      document.getElementById("mode").innerText = "Modus: " + obj.Mode;
-    }
-  }
 
-  function sendToSymcon(message) {
-    if (typeof window.external !== "undefined" && "send" in window.external) {
-      window.external.send(message);
+    function sendSetpoint(val) {
+      if (typeof window.submitAction === "function") {
+        window.submitAction("setpoint", val);
+      }
     }
-  }
-</script>
+
+    function setMode(mode) {
+      document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelector(`.mode-btn[onclick*="${mode}"]`).classList.add("active");
+      document.getElementById("mode").innerText = mode;
+      if (typeof window.submitAction === "function") {
+        window.submitAction("mode", mode);
+      }
+    }
+
+    // IPS Handler für dynamische Updates
+    function handleMessage(data) {
+      let obj = {};
+      try {
+        obj = JSON.parse(data);
+      } catch(e) { return; }
+
+      if (obj.Setpoint !== undefined) {
+        $("#slider").roundSlider("setValue", obj.Setpoint);
+        updateSetpoint(obj.Setpoint);
+      }
+      if (obj.Temperature !== undefined) {
+        document.getElementById("temperature").innerText = obj.Temperature.toFixed(1);
+      }
+      if (obj.Humidity !== undefined) {
+        document.getElementById("humidity").innerText = obj.Humidity.toFixed(0);
+      }
+      if (obj.Mode !== undefined) {
+        setMode(obj.Mode);
+      }
+    }
+  </script>
+</body>
+</html>
