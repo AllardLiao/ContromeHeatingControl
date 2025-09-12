@@ -157,10 +157,10 @@ if (!defined('IS_ACTIVE')) {
     define('IS_INACTIVE', IS_SBASE + 4);                        // Module is not beeing used
     define('IS_NOT_CREATED', IS_SBASE + 5);                     // Module is not created
     define('IS_STANDBY', IS_SBASE + 6);                         // Module is in standby
-
-if (!defined('IS_NO_CONNECTION')) {
-    // --- ERROR CODES
     define('IS_EBASE', 200);                                    // Default errorcode
+}
+if (!defined('IS_NO_CONNECTION')) {                             // Individual error codes
+    // --- ERROR CODES
     define('IS_NO_CONNECTION', IS_EBASE + 1);                   //
     define('IS_WRONG_CREDENTIALS', IS_EBASE + 2);               //
     define('IS_BAD_JSON', IS_EBASE + 3);                        //
