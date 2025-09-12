@@ -318,7 +318,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return true;
     }
 
-    public function GetVisualizationTile(): string
+    public function GetVisualizationTileCustom(): string
     {
         // sichere Werte holen
         $step        = $this->ReadPropertyFloat('StepSize');
