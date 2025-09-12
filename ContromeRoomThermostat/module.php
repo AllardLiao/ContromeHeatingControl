@@ -306,27 +306,25 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return true;
     }
 
-    public function GetVisualizationTile(): array
+    public function GetVisualizationTile(): string
     {
-        return [
-            'type'        => 'CustomTile',
-            'title'       => $this->ReadPropertyString('room') ?: 'Controme Thermostat',
-            'subtitle'    => 'Floor ' . $this->ReadPropertyInteger('Floor') . ' / Room ' . $this->ReadPropertyInteger('Room'),
-            'state'       => $this->GetValue('Setpoint') . ' °C',
-            'actions'     => [
+    $step = $this->ReadPropertyFloat('StepSize');
+
+    $tile = [
+        'title'   => $this->ReadPropertyString('room'),
+        'state'   => $this->GetValue('Setpoint') . ' °C',
+        'actions' => [
                 [
-                    'name'     => 'inc',
-                    'caption'  => '+',
-                    'icon'     => 'ArrowUp',
-                    'primary'  => true
+                    'caption' => '+' . $step,
+                    'action'  => 'inc'
                 ],
                 [
-                    'name'     => 'dec',
-                    'caption'  => '-',
-                    'icon'     => 'ArrowDown'
+                    'caption' => '-' . $step,
+                    'action'  => 'dec'
                 ]
-            ],
-            'moduleHTML'  => file_get_contents(__DIR__ . '/module.html')
+            ]
         ];
+        
+        return json_encode($tile);
     }
 }
