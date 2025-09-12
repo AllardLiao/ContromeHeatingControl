@@ -148,7 +148,7 @@ if (!defined('IPS_TIMERMESSAGE')) {
     define('TM_UPDATE', IPS_TIMERMESSAGE + 4);
     define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
 }
-if (!defined('IS_NO_CONNECTION')) {
+if (!defined('IS_ACTIVE')) {
     // --- IPS-STATUS (IS) CODES gem. https://www.symcon.de/de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/module/setstatus/
     define('IS_SBASE', 100);
     define('IS_CREATING', IS_SBASE + 1);                        // Module is being created
@@ -157,11 +157,13 @@ if (!defined('IS_NO_CONNECTION')) {
     define('IS_INACTIVE', IS_SBASE + 4);                        // Module is not beeing used
     define('IS_NOT_CREATED', IS_SBASE + 5);                     // Module is not created
     define('IS_STANDBY', IS_SBASE + 6);                         // Module is in standby
+
+if (!defined('IS_NO_CONNECTION')) {
     // --- ERROR CODES
     define('IS_EBASE', 200);                                    // Default errorcode
-    define('IS_NO_CONNECTION', IS_EBASE + 1);                      //
-    define('IS_WRONG_CREDENTIALS', IS_EBASE + 2);                  //
-    define('IS_BAD_JSON', IS_EBASE + 3);                      //
+    define('IS_NO_CONNECTION', IS_EBASE + 1);                   //
+    define('IS_WRONG_CREDENTIALS', IS_EBASE + 2);               //
+    define('IS_BAD_JSON', IS_EBASE + 3);                        //
 }
 
 /**
