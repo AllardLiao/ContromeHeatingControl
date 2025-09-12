@@ -132,7 +132,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug("CheckConnection", "No connection to Controme MiniServer at $ip - please check IP!", 0);
             $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP!", KL_ERROR);
             $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
-            $this->SetStatus(NO_CONNECTION);
+            $this->SetStatus(IS_NO_CONNECTION);
             return false;
         } else {
             $this->SendDebug("CheckConnection", "Check 2 - connection to Controme MiniServer at $ip established. (" . $currentData["name"] . "=" . $currentData["temperatur"] . ")", 0);
@@ -157,7 +157,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug('WriteSetpoint', $decoded['message'] . "!", 0);
             $this->LogMessage($decoded['message'] . "!", KL_NOTIFY);
             $this->UpdateFormField("Result", "caption", $decoded['message'] . "!");
-            $this->SetStatus(NO_CONNECTION);
+            $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
     }
@@ -384,7 +384,7 @@ class ContromeGateway extends IPSModuleStrict
 
         // URL laut Controme-Doku
         //$url = "http://$ip/set/json/v1/1/soll/$roomId/";
-        $url = $this->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
+        $url = $this->getJsonGet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
         $postData = json_encode([
