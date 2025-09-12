@@ -1,151 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: sans-serif;
-      width: 100%;
-      height: 100%;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Controme Thermostat Tile</title>
 
-    .thermostat-card {
-      width: 260px;
-      padding: 20px;
-      border-radius: 20px;
-      background: #1e1e2f;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    }
+<!-- roundSlider CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css"/>
 
-    .round-slider {
-      position: relative;
-      width: 200px;
-      height: 200px;
-    }
+<style>
+  html,body { height:100%; margin:0; padding:0; font-family: "Helvetica Neue", Arial, sans-serif; }
+  .card {
+    width:100%; height:100%;
+    display:flex; justify-content:center; align-items:center;
+    box-sizing:border-box; padding:12px;
+  }
+  .thermostat-card {
+    width:260px;
+    background: linear-gradient(180deg,#22232b,#17171c);
+    border-radius:16px;
+    padding:18px;
+    color:#fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    display:flex; flex-direction:column; align-items:center;
+  }
 
-    #setpoint-display {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 42px;
-      font-weight: bold;
-    }
+  /* Position for slider and central label */
+  .slider-wrapper { position:relative; width:200px; height:200px; }
+  #setpoint-display {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    font-size:40px; font-weight:700; pointer-events:none;
+  }
 
-    #details {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #aaa;
-      text-align: center;
-    }
+  #details {
+    margin-top:12px; font-size:13px; color:#cfcfd3; text-align:center;
+    line-height:1.4;
+  }
 
-    .modes {
-      margin-top: 16px;
-      display: flex;
-      gap: 10px;
-    }
+  /* small caption for mode (read-only) */
+  .mode {
+    margin-top:8px; color:#bfbfc3; font-size:13px;
+  }
 
-    .mode-btn {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 8px;
-      background: #333;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .mode-btn.active {
-      background: #4eacff;
-    }
-  </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
+  /* small visual accent under card */
+  .mode-pill {
+    display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px;
+    background: rgba(255,255,255,0.04); color:#e8eef5;
+  }
+</style>
 </head>
 <body>
-  <div class="thermostat-card">
-    <div class="round-slider" id="slider"></div>
-    <div id="setpoint-display">21.0°C</div>
-    <div id="details">
-      Ist: <span id="temperature">20.5</span>°C ·
-      Feuchte: <span id="humidity">45</span>%<br/>
-      Modus: <span id="mode">Auto</span>
+<div class="card">
+  <div class="thermostat-card" role="region" aria-label="Thermostat Tile">
+    <div class="slider-wrapper">
+      <div id="slider"></div>
+      <div id="setpoint-display">--°C</div>
     </div>
-    <div class="modes">
-      <button class="mode-btn" onclick="setMode('off')">Off</button>
-      <button class="mode-btn active" onclick="setMode('auto')">Auto</button>
-      <button class="mode-btn" onclick="setMode('heat')">Heat</button>
+
+    <div id="details">
+      <div>Ist: <span id="temperature">--</span>°C · Feuchte: <span id="humidity">--</span>%</div>
+      <div class="mode">Modus: <span id="mode" class="mode-pill">--</span></div>
     </div>
   </div>
+</div>
 
-  <script>
-    // RoundSlider initialisieren
+<!-- jQuery (falls noch nicht vorhanden im Visualisierungs-iframe) -->
+<script>
+(function(){
+  // If jQuery is present and version >=3 we can continue, otherwise inject it.
+  function loadScript(src, cb){
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = cb;
+    s.onerror = function(){ console.error("Failed loading", src); cb && cb(); };
+    document.head.appendChild(s);
+  }
+
+  function loadRoundSlider(cb){
+    // roundSlider depends on jQuery, but provides its own global method
+    loadScript("https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js", cb);
+  }
+
+  function ensureJQuery(next){
+    if (window.jQuery && typeof window.jQuery === 'function') {
+      next();
+    } else {
+      loadScript("https://code.jquery.com/jquery-3.6.0.min.js", function(){
+        // small safety - ensure $ is set to jQuery
+        if (!window.jQuery) {
+          console.warn("jQuery did not load from CDN");
+        }
+        next();
+      });
+    }
+  }
+
+  // init after jQuery & roundSlider loaded
+  function initWidget(){
+    var $ = window.jQuery;
+    if (!$ || typeof $.fn === 'undefined' || typeof $.fn.roundSlider === 'undefined') {
+      // try again shortly if plugin not yet ready
+      return setTimeout(initWidget, 100);
+    }
+
+    // defaults
+    var min = 5, max = 30, step = 0.5;
+
+    // if the tile already received an initial value via placeholders, use it
+    var initial = 21.0;
+    // try to read a data-initial on setpoint-display (if present)
+    var spText = document.getElementById('setpoint-display').textContent || "";
+    var m = spText.match(/(-?\d+(?:[.,]\d+)?)/);
+    if (m) initial = parseFloat(m[1].replace(',', '.'));
+
+    // create roundSlider
     $("#slider").roundSlider({
       radius: 90,
       width: 16,
       handleSize: "+20",
       sliderType: "min-range",
-      value: 21,
-      min: 5,
-      max: 30,
-      step: 0.5,
+      value: initial,
+      min: min,
+      max: max,
+      step: step,
       startAngle: 315,
       editableTooltip: false,
-      tooltipFormat: val => val + "°C",
-      drag: e => updateSetpoint(e.value),
-      change: e => sendSetpoint(e.value)
+      tooltipFormat: function(args){ return args.value.toFixed(1) + "°C"; },
+      drag: function(evt){
+        // update center display live while dragging
+        updateSetpointDisplay(evt.value);
+      },
+      change: function(evt){
+        // User has finished changing value — send to Symcon
+        sendToSymcon(JSON.stringify({ action: "Setpoint", value: Number(evt.value) }));
+      }
     });
 
-    function updateSetpoint(val) {
-      document.getElementById("setpoint-display").innerText = val.toFixed(1) + "°C";
+    // helper to update center label
+    function updateSetpointDisplay(val){
+      document.getElementById('setpoint-display').innerText = Number(val).toFixed(1) + "°C";
     }
 
-    function sendSetpoint(val) {
-      if (typeof window.submitAction === "function") {
-        window.submitAction("setpoint", val);
+    // Expose to global for handleMessage usage if needed
+    window._contromeUpdate = {
+      updateSetpoint: function(val){
+        if (typeof val !== 'number') val = Number(val);
+        try {
+          $("#slider").roundSlider("setValue", val);
+        } catch(e){
+          // fallback: just update label
+          updateSetpointDisplay(val);
+        }
+      }
+    };
+
+    // init center label properly
+    updateSetpointDisplay(initial);
+  } // initWidget
+
+  // start loading chain
+  ensureJQuery(function(){
+    loadRoundSlider(function(){
+      // wait a beat and init
+      setTimeout(initWidget, 50);
+    });
+  });
+
+  // --- Bridge to Symcon: send data back to PHP/module ---
+  function sendToSymcon(message) {
+    // Symcon visualization bridge — typical: window.external.send
+    try {
+      if (window.external && typeof window.external.send === 'function') {
+        window.external.send(message);
+        return;
+      }
+    } catch(e){/*ignore*/}
+    // Some environments provide submitAction / postMessage alternatives
+    if (typeof window.submitAction === 'function') {
+      window.submitAction(message);
+      return;
+    }
+    if (window.parent && window.parent.postMessage) {
+      // best-effort fallback (won't reach PHP normally)
+      window.parent.postMessage(message, "*");
+      return;
+    }
+    console.log("sendToSymcon fallback (no bridge):", message);
+  }
+
+  // expose sendToSymcon globally for debug if needed
+  window.sendToSymcon = sendToSymcon;
+
+  // --- handleMessage(entry) gets called by Symcon when you call UpdateVisualizationValue(...) ---
+  window.handleMessage = function(data){
+    var obj;
+    try { obj = JSON.parse(data); } catch(e){ console.warn("handleMessage: invalid json", data); return; }
+
+    // Setpoint (update slider)
+    if (obj.Setpoint !== undefined) {
+      var val = Number(obj.Setpoint);
+      if (!isNaN(val)) {
+        if (window._contromeUpdate && typeof window._contromeUpdate.updateSetpoint === 'function') {
+          window._contromeUpdate.updateSetpoint(val);
+        } else {
+          // label fallback
+          document.getElementById('setpoint-display').innerText = val.toFixed(1) + "°C";
+        }
       }
     }
 
-    function setMode(mode) {
-      document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.remove("active"));
-      document.querySelector(`.mode-btn[onclick*="${mode}"]`).classList.add("active");
-      document.getElementById("mode").innerText = mode;
-      if (typeof window.submitAction === "function") {
-        window.submitAction("mode", mode);
-      }
+    // Ist-Temp
+    if (obj.Temperature !== undefined) {
+      var t = Number(obj.Temperature);
+      if (!isNaN(t)) document.getElementById('temperature').innerText = t.toFixed(1);
     }
 
-    // IPS Handler für dynamische Updates
-    function handleMessage(data) {
-      let obj = {};
-      try {
-        obj = JSON.parse(data);
-      } catch(e) { return; }
-
-      if (obj.Setpoint !== undefined) {
-        $("#slider").roundSlider("setValue", obj.Setpoint);
-        updateSetpoint(obj.Setpoint);
-      }
-      if (obj.Temperature !== undefined) {
-        document.getElementById("temperature").innerText = obj.Temperature.toFixed(1);
-      }
-      if (obj.Humidity !== undefined) {
-        document.getElementById("humidity").innerText = obj.Humidity.toFixed(0);
-      }
-      if (obj.Mode !== undefined) {
-        setMode(obj.Mode);
-      }
+    // Humidity
+    if (obj.Humidity !== undefined) {
+      var h = Number(obj.Humidity);
+      if (!isNaN(h)) document.getElementById('humidity').innerText = Math.round(h);
     }
-  </script>
+
+    // Mode (read-only)
+    if (obj.Mode !== undefined) {
+      // show as text (not editable)
+      document.getElementById('mode').innerText = String(obj.Mode);
+    }
+  };
+
+})(); // IIFE
+</script>
 </body>
 </html>
