@@ -54,8 +54,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
         $this->EnableAction("Setpoint");
-        $this->EnableAction('inc');
-        $this->EnableAction('dec');
+        //$this->EnableAction('inc');
+        //$this->EnableAction('dec');
 
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
@@ -300,9 +300,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
     {
         // Variablen anlegen und updaten
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
-        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 2, true);
+        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature", 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
+        $this->EnableAction("Setpoint");
 
         if (isset($data['temperatur'])) {
             $this->SetValue("Temperature", floatval($data['temperatur']));
