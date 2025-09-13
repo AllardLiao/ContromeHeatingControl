@@ -1,0 +1,143 @@
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Controme Thermostat Tile</title>
+
+<!-- roundSlider CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.css"/>
+
+<style>
+  html,body { height:100%; margin:0; padding:0; font-family: "Helvetica Neue", Arial, sans-serif; }
+  .card {
+    width:100%; height:100%;
+    display:flex; justify-content:center; align-items:center;
+    box-sizing:border-box; padding:12px;
+  }
+  .thermostat-card {
+    width:260px;
+    background: linear-gradient(180deg,#22232b,#17171c);
+    border-radius:16px;
+    padding:18px;
+    color:#fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  .slider-wrapper { position:relative; width:200px; height:200px; }
+  #setpoint-display {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    font-size:40px; font-weight:700; pointer-events:none;
+  }
+
+  /* roundSlider inner area dunkel einfärben */
+  .rs-control .rs-bg-color {
+    fill: #17171c !important; /* passt zum Hintergrund */
+  }
+
+  #details {
+    margin-top:12px; font-size:13px; color:#cfcfd3; text-align:center;
+    line-height:1.4;
+  }
+
+  .mode {
+    margin-top:8px; color:#bfbfc3; font-size:13px;
+  }
+
+  .mode-pill {
+    display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px;
+    background: rgba(255,255,255,0.04); color:#e8eef5;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="thermostat-card" role="region" aria-label="Thermostat Tile">
+    <div class="slider-wrapper">
+      <div id="slider" data-initial="{{Setpoint}}"></div>
+      <div id="setpoint-display">{{Setpoint}}°C</div>
+    </div>
+
+    <div id="details">
+      <div>{{Titel}}</div>
+      <div>Ist: <span id="temperature">{{Temperature}}</span>°C · Feuchte: <span id="humidity">{{Humidity}}</span>%</div>
+      <div class="mode">Modus: <span id="mode" class="mode-pill">{{Mode}}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery + roundSlider via CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/round-slider@1.6.1/dist/roundslider.min.js"></script>
+
+<script>
+(function(){
+  function initWidget(){
+    var $ = window.jQuery;
+
+    var initial = parseFloat(document.getElementById('slider').dataset.initial) || 21.0;
+
+    $("#slider").roundSlider({
+      radius: 90,
+      width: 16,
+      handleSize: "+20",
+      sliderType: "min-range",
+      value: initial,
+      min: 5,
+      max: 30,
+      step: 0.5,
+      startAngle: 315,
+      editableTooltip: false,
+      tooltipFormat: function(args){ return args.value.toFixed(1) + " °C"; },
+      drag: function(evt){
+        updateSetpointDisplay(evt.value);
+      },
+      change: function(evt){
+        sendToSymcon(JSON.stringify({ action: "visu_setpoint", value: Number(evt.value) }));
+      }
+    });
+
+    function updateSetpointDisplay(val){
+      document.getElementById('setpoint-display').innerText = Number(val).toFixed(1) + " °C";
+    }
+
+    window._contromeUpdate = {
+      updateSetpoint: function(val){
+        $("#slider").roundSlider("setValue", val);
+        updateSetpointDisplay(val);
+      }
+    };
+
+    updateSetpointDisplay(initial);
+  }
+
+  function sendToSymcon(message) {
+    try {
+      if (window.external && typeof window.external.send === 'function') {
+        window.external.send(message);
+        return;
+      }
+    } catch(e){}
+    if (typeof window.submitAction === 'function') {
+      window.submitAction(message);
+      return;
+    }
+    if (window.parent && window.parent.postMessage) {
+      window.parent.postMessage(message, "*");
+    }
+  }
+  window.sendToSymcon = sendToSymcon;
+
+  window.handleMessage = function(data){
+    var obj;
+    try { obj = JSON.parse(data); } catch(e){ return; }
+
+    if (obj.Setpoint !== undefined) window._contromeUpdate.updateSetpoint(obj.Setpoint);
+    if (obj.Temperature !== undefined) document.getElementById('temperature').innerText = Number(obj.Temperature).toFixed(1);
+    if (obj.Humidity !== undefined) document.getElementById('humidity').innerText = Math.round(obj.Humidity);
+    if (obj.Mode !== undefined) document.getElementById('mode').innerText = String(obj.Mode);
+    if (obj.Titel !== undefined) {
+      document.querySelector('#details div').innerText = obj.Titel;
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", initWidget);
+})();
+</script>

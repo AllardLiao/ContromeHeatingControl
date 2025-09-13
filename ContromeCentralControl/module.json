@@ -1,0 +1,18 @@
+{
+    "id": "{A19ABE82-5AB1-7969-3851-E6446DECEBA9}",
+    "name": "ContromeCentralControl",
+    "type": 3,
+    "vendor": "Controme GmbH",
+    "aliases": [
+        "Controme Zentraleinheit"
+    ],
+    "parentRequirements": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "prefix": "CONCC",
+    "url": ""
+}

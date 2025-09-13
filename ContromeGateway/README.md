@@ -1,4 +1,4 @@
-# Controme Heating Control
+# ContromeSocket
 Beschreibung des Moduls.
 
 ### Inhaltsverzeichnis
@@ -10,6 +10,7 @@ Beschreibung des Moduls.
 5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
 6. [WebFront](#6-webfront)
 7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
+8. [Lizenz](#8-lizenz)
 
 ### 1. Funktionsumfang
 
@@ -21,12 +22,12 @@ Beschreibung des Moduls.
 
 ### 3. Software-Installation
 
-* Über den Module Store das 'Controme Heating Control'-Modul installieren.
+* Über den Module Store das 'ContromeSocket'-Modul installieren.
 * Alternativ über das Module Control folgende URL hinzufügen
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'Controme Heating Control'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'ContromeSocket'-Modul mithilfe des Schnellfilters gefunden werden.
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
@@ -60,8 +61,13 @@ Die Funktionalität, die das Modul in der Visualisierung bietet.
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean CONTROMEHC_BeispielFunktion(integer $InstanzID);`
+`boolean CONHC_BeispielFunktion(integer $InstanzID);`
 Erklärung der Funktion.
 
 Beispiel:
-`CONTROMEHC_BeispielFunktion(12345);`
+`CONHC_BeispielFunktion(12345);`
+
+### 8. Lizenz
+
+This project is licensed under the
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).

@@ -1,55 +1,79 @@
 {
     "elements": [
         {
-            "type": "RowLayout",
-            "items": [
-                {
-                    "type": "Label",
-                    "caption": "\nControme Heating Control\n ",
-                    "link": false,
-                    "bold": true
-                }
-            ]
+            "type": "Label",
+            "caption": "Controme Heating Control - Room Thermostat\n ",
+            "link": false,
+            "bold": true
         },
         {
             "type": "Label",
-            "caption": "Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen. Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart. Unterstützt Lesen und Schreiben über die Controme API. Vollständig in IPS integrierbar mit Timer und Variablenprofilen."
+            "caption": "Symcon module for individual room temperature control.\n\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface."
         },
         {
-            "type": "ExpansionPanel",
-            "caption": "Connection ...",
+            "type": "Label",
+            "caption": "\nRoom Assignment\n ",
+            "bold": true
+        },
+        {
+            "type": "Label",
+            "caption": "Only modify the room number if you are sure of what you are doing.\n\nThe floor and room name are used for Symcon visualization - you can change them as you like."
+        },
+        {
+            "type": "RowLayout",
+            "name": "Room",
+            "visible": true,
             "items": [
                 {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "ValidationTextBox",
-                            "name": "User",
-                            "caption": "Username (Super-Admin from your Controme App)",
-                            "width": "300px"
-                        },
-                        {
-                            "type": "PasswordTextBox",
-                            "caption": "Password",
-                            "enabled": true,
-                            "name": "Password",
-                            "onChange": "",
-                            "validate": "",
-                            "value": "",
-                            "visible": true,
-                            "width": "300px"
-                        }
-                    ]
+                    "type": "NumberSpinner",
+                    "caption": "Floor-ID",
+                    "enabled": true,
+                    "name": "FloorID",
+                    "onChange": "",
+                    "validate": "",
+                    "value": 0,
+                    "minimum": 0,
+                    "visible": true,
+                    "width": "100px"
+                },
+                {
+                    "type": "NumberSpinner",
+                    "caption": "Room-ID",
+                    "enabled": true,
+                    "name": "RoomID",
+                    "onChange": "",
+                    "validate": "",
+                    "value": 0,
+                    "minimum": 0,
+                    "visible": true,
+                    "width": "100px"
                 },
                 {
                     "type": "ValidationTextBox",
-                    "name": "IPAddress",
-                    "caption": "Device IP (local, e.g. 192.168.1.101)",
-                    "width": "300px"
+                    "caption": "Floor name",
+                    "enabled": true,
+                    "multiline": false,
+                    "name": "Floor",
+                    "onChange": "",
+                    "validate": "",
+                    "value": "n/a",
+                    "visible": true,
+                    "width": "200px"
+                },
+                {
+                    "type": "ValidationTextBox",
+                    "caption": "Room name",
+                    "enabled": true,
+                    "multiline": false,
+                    "name": "Room",
+                    "onChange": "",
+                    "validate": "",
+                    "value": "n/a",
+                    "visible": true,
+                    "width": "200px"
                 }
             ]
         },
-
         {
             "type": "ExpansionPanel",
             "caption": "Visualisation ...",
@@ -77,9 +101,15 @@
                     "caption": "Show navigation bar (Prev, Back, Next)?"
                 },
                 {
-                    "type": "CheckBox",
-                    "name": "VisuActionBar",
-                    "caption": "Show action bar (Clear pages, Reload pages, Sync, Reboot)?"
+                    "type": "NumberSpinner",
+                    "name": "StepSize",
+                    "caption": "Step size when changing the setpoint temperature",
+                    "minimum": 0.1,
+                    "maximum": 2,
+                    "moreDigits": false,
+                    "value":    0.1,
+                    "digits":  1,
+                    "suffix":  "°C"
                 }
             ]
         },
@@ -89,33 +119,56 @@
             "items": [
                 {
                     "type": "CheckBox",
-                    "name": "whatever",
-                    "caption": "Automatically do something!"
+                    "name": "AutoUpdate",
+                    "caption": "Automatically update values"
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "UpdateInterval",
+                    "caption": "Update interval",
+                    "suffix": "minutes"
                 }
             ]
         }
     ],
     "actions": [
         {
-            "type": "ExpansionPanel",
-            "caption": "Execute action ...",
-            "expanded": true,
+            "type": "Label",
+            "caption": "\nCheck connection to Controme I/O-Socket and Controme Mini-Server."
+        },
+        {
+            "type": "RowLayout",
             "items": [
                 {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "Button",
-                            "caption": "Check connection",
-                            "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
-                            "enabled": true
-                        },
-                        {
-                            "type": "Label",
-                            "name": "Result",
-                            "caption": "..."
-                        }
-                    ]
+                    "type": "Button",
+                    "caption": "Check connection",
+                    "onClick": "IPS_RequestAction($id, \"CheckConnection\", 0);",
+                    "enabled": true
+                },
+                {
+                    "type": "Label",
+                    "name": "Result",
+                    "caption": " "
+                }
+            ]
+        },
+        {
+            "type": "Label",
+            "caption": "\nTest-read data for room from Controme Mini-Server."
+        },
+        {
+            "type": "RowLayout",
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "Read data",
+                    "onClick": "IPS_RequestAction($id, \"TestReadRoomData\", 0);",
+                    "enabled": true
+                },
+                {
+                    "type": "Label",
+                    "name": "ResultTestRead",
+                    "caption": " "
                 }
             ]
         },
@@ -154,6 +207,24 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "type": "Label",
+                    "caption": "\nLicense ",
+                    "link": false,
+                    "bold": true
+                },
+                {
+                    "type": "Label",
+                    "caption": "Copyright (c) 2025 Kai J. Oey aka AllardLiao"
+                },
+                {
+                    "type": "Label",
+                    "caption": "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License."
+                },
+                {
+                    "type": "Label",
+                    "caption": "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details."
                 }
             ]
         },

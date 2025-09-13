@@ -24,14 +24,14 @@ trait VersionHelper
      *
      * @var string
      */
-    private static $GUID_TILE_VISU = '{B5B875BB-9B76-45FD-4E67-2607E45B3AC4}';
+    private static $GUID_TILE_VISU = '{}';
 
     /**
      * Modul GUID "WebFront Visualisation"
      *
      * @var string
      */
-    private static $GUID_WEBFRONT_VISU = '{3565B1F2-8F7B-4311-A4B6-1BF1D868F39E}';
+    private static $GUID_WEBFRONT_VISU = '{}';
 
     /**
      * IsTileVisuSupported.

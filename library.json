@@ -1,5 +1,5 @@
 {
-    "id": "{E0BE2963-D034-4010-DFFE-C03FC0E9F9F2}",
+    "id": "{89077CE1-F783-DE03-9291-0EEF49585535}",
     "name": "Controme Heating Control",
     "author": "Kai J. Oey",
     "url": "https://github.com/AllardLiao/ContromeHeatingControl",
@@ -8,5 +8,6 @@
     },
     "version": "1.0",
     "build": 0,
-    "date": 0
+    "date": 0,
+    "license": "CC-BY-NC-SA-4.0"
 }

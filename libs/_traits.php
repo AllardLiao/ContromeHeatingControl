@@ -113,22 +113,6 @@ if (!defined('IPS_EVENTMESSAGE')) {
     define('EM_CHANGECYCLICTIMEFROM', IPS_EVENTMESSAGE + 13);
     define('EM_CHANGECYCLICTIMETO', IPS_EVENTMESSAGE + 14);
 }
-if (!defined('IPS_MEDIAMESSAGE')) {
-    // --- MEDIA MANAGER
-    define('IPS_MEDIAMESSAGE', IPS_BASE + 900);                 // Media Manager Message
-    define('MM_CREATE', IPS_MEDIAMESSAGE + 1);                  // On Media Create
-    define('MM_DELETE', IPS_MEDIAMESSAGE + 2);                  // On Media Delete
-    define('MM_CHANGEFILE', IPS_MEDIAMESSAGE + 3);              // On Media File changed
-    define('MM_AVAILABLE', IPS_MEDIAMESSAGE + 4);               // Media Available Status changed
-    define('MM_UPDATE', IPS_MEDIAMESSAGE + 5);
-}
-if (!defined('IPS_LINKMESSAGE')) {
-    // --- LINK MANAGER
-    define('IPS_LINKMESSAGE', IPS_BASE + 1000);                 // Link Manager Message
-    define('LM_CREATE', IPS_LINKMESSAGE + 1);                   // On Link Create
-    define('LM_DELETE', IPS_LINKMESSAGE + 2);                   // On Link Delete
-    define('LM_CHANGETARGET', IPS_LINKMESSAGE + 3);             // On Link TargetID change
-}
 if (!defined('IPS_FLOWMESSAGE')) {
     // --- DATA HANDLER
     define('IPS_FLOWMESSAGE', IPS_BASE + 1100);                 // Data Handler Message
@@ -165,15 +149,21 @@ if (!defined('IPS_TIMERMESSAGE')) {
     define('TM_RUNNING', IPS_TIMERMESSAGE + 5);
 }
 if (!defined('IS_ACTIVE')) {
-    // --- STATUS CODES
+    // --- IPS-STATUS (IS) CODES gem. https://www.symcon.de/de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/module/setstatus/
     define('IS_SBASE', 100);
     define('IS_CREATING', IS_SBASE + 1);                        // Module is being created
     define('IS_ACTIVE', IS_SBASE + 2);                          // Module created and running
     define('IS_DELETING', IS_SBASE + 3);                        // Module us being deleted
     define('IS_INACTIVE', IS_SBASE + 4);                        // Module is not beeing used
-    // --- ERROR CODES
+    define('IS_NOT_CREATED', IS_SBASE + 5);                     // Module is not created
+    define('IS_STANDBY', IS_SBASE + 6);                         // Module is in standby
     define('IS_EBASE', 200);                                    // Default errorcode
-    define('IS_NOTCREATED', IS_EBASE + 1);                      // Instance could not be created
+}
+if (!defined('IS_NO_CONNECTION')) {                             // Individual error codes
+    // --- ERROR CODES
+    define('IS_NO_CONNECTION', IS_EBASE + 1);                   //
+    define('IS_WRONG_CREDENTIALS', IS_EBASE + 2);               //
+    define('IS_BAD_JSON', IS_EBASE + 3);                        //
 }
 
 /**
@@ -187,3 +177,11 @@ require_once __DIR__ . '/../libs/WebhookHelper.php';
 require_once __DIR__ . '/../libs/WidgetHelper.php';
 require_once __DIR__ . '/../libs/EventHelper.php';
 require_once __DIR__ . '/../libs/VersionHelper.php';
+require_once __DIR__ . '/../libs/UserFriendlyException.php';
+require_once __DIR__ . '/../libs/ContromeConstants.php';
+
+// IPS-Stubs nur in der Entwicklungsumgebung laden
+if (substr(__DIR__,0, 10) == "/Users/kai") {
+    // Development
+    include_once __DIR__ . '/.ips_stubs/autoload.php';
+}

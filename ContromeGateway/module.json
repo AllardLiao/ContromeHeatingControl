@@ -1,0 +1,18 @@
+{
+    "id": "{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}",
+    "name": "ContromeGateway",
+    "type": 2,
+    "vendor": "Controme GmbH",
+    "aliases": [
+        "Controme Gateway"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "implemented": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "prefix": "CONGW",
+    "url": ""
+}
