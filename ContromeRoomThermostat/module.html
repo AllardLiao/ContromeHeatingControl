@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Controme Thermostat Tile</title>
 
@@ -89,17 +85,17 @@
       step: 0.5,
       startAngle: 315,
       editableTooltip: false,
-      tooltipFormat: function(args){ return args.value.toFixed(1) + "°C"; },
+      tooltipFormat: function(args){ return args.value.toFixed(1) + " °C"; },
       drag: function(evt){
         updateSetpointDisplay(evt.value);
       },
       change: function(evt){
-        sendToSymcon(JSON.stringify({ action: "Setpoint", value: Number(evt.value) }));
+        sendToSymcon(JSON.stringify({ action: "visu_setpoint", value: Number(evt.value) }));
       }
     });
 
     function updateSetpointDisplay(val){
-      document.getElementById('setpoint-display').innerText = Number(val).toFixed(1) + "°C";
+      document.getElementById('setpoint-display').innerText = Number(val).toFixed(1) + " °C";
     }
 
     window._contromeUpdate = {
@@ -145,5 +141,3 @@
   document.addEventListener("DOMContentLoaded", initWidget);
 })();
 </script>
-</body>
-</html>

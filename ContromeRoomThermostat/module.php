@@ -103,21 +103,28 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case ACTIONs::WRITE_SETPOINT:
                 $result = $this->WriteSetpoint(floatval($value));
                 break;
-            case 'inc':
+            case 'visu_inc':
                 $new = $this->GetValue('Setpoint') + $this->ReadPropertyFloat('StepSize');
                 $this->WriteSetpoint($new);
+                $this->updateVisualization();
                 break;
-            case 'dec':
+            case 'visu_dec':
                 $new = $this->GetValue('Setpoint') - $this->ReadPropertyFloat('StepSize');
                 $this->WriteSetpoint($new);
+                $this->updateVisualization();
                 break;
-            case 'setpoint':
+            case 'visu_setpoint':
                 $this->WriteSetpoint((float)$value);
+                $this->updateVisualization();
                 break;
         default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
         }
-        // Immer aktuellen Status zurücksenden
+    }
+
+    private function updateVisualization(): void
+    {
+        // Daten für die Visualisierung aktualisieren
         $this->UpdateVisualizationValue(json_encode([
             'Setpoint'    => floatval($this->GetValue('Setpoint')),
             'Temperature' => floatval($this->GetValue('Temperature')),
@@ -355,9 +362,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return $html;
     }
 
-    public function getVisu(): String
+    public function GetVisualizationTile(): String
     {
-        $this->SendDebug("HTML:", $this->GetVisualizationTile(), 0);
-        return $this->GetVisualizationTile();
+        $this->SendDebug("HTML:", $this->GetVisualizationTileCustom(), 0);
+        return $this->GetVisualizationTileCustom();
     }
 }
