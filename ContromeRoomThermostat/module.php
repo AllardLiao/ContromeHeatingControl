@@ -48,7 +48,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         // Variablen definieren - read-only, kommt von Controme
         $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
-        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", "~Temperature", 2);
+        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
         $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
         $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
 
@@ -287,20 +287,17 @@ class ContromeRoomThermostat extends IPSModuleStrict
             return false;
         }
 
-        // Variablen anlegen und updaten
-        $this->saveDataToVariables($data);
-
         $this->SendDebug("UpdateRoomData", "Room data updated", 0);
         $this->SetStatus(IS_ACTIVE);
 
-        return true;
+        return $this->saveDataToVariables($data);
     }
 
     private function saveDataToVariables($data): bool
     {
         // Variablen anlegen und updaten
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
-        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature", 2, true);
+        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
         $this->EnableAction("Setpoint");

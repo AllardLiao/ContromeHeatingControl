@@ -59,6 +59,19 @@ class CONTROME_PROFILES
         3 => "Dauer-Ein"
     ];
 
+    public const SETPOINT = 'Controme.Setpoint';
+    private static String $setPointPresentation = "[
+        'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
+        'SUFFIX' => '°C',
+        'MIN' => 15.0,
+        'MAX' => 28.0,
+        'STEP_SIZE' => 0.5,
+        'GRADIENT_TYPE' => 1, //Temperatur
+        'USAGE_TYPE' => 0, // Standard
+        'DIGITS' => 1,
+        'ICON' => 'Temperature'
+    ]";
+
     public static function registerProfile(string $profile)
     {
         switch ($profile)
@@ -72,6 +85,11 @@ class CONTROME_PROFILES
                     }
                 }
         }
+    }
+
+    public static function getSetPointPresentation(): string
+    {
+        return self::$setPointPresentation;
     }
 
     public static function getLabelBetriebsart(int $value): string
