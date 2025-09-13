@@ -364,7 +364,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     public function GetVisualizationTile(): String
     {
-        $this->SendDebug("HTML:", $this->GetVisualizationTileCustom(), 0);
-        return $this->GetVisualizationTileCustom();
+        //$this->SendDebug("HTML:", $this->GetVisualizationTileCustom(), 0);
+        return parent::GetVisualizationTile();
     }
 }
