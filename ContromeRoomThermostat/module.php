@@ -302,7 +302,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
-        $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_STRING, "", 4, true);
+        $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
 
         if (isset($data['temperatur'])) {
             $this->SetValue("Temperature", floatval($data['temperatur']));
@@ -314,7 +314,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             $this->SetValue("Humidity", floatval($data['luftfeuchte']));
         }
         if (isset($data['betriebsart'])) {
-            $this->SetValue("Mode", strval($data['betriebsart']));
+            $this->SetValue("Mode", CONTROME_PROFILES::getValueBetriebsart($data['betriebsart']));
         }
 
         return true;

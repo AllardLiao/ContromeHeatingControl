@@ -52,20 +52,40 @@ class CONTROME_API
 class CONTROME_PROFILES
 {
     public const BETRIEBSART = 'Controme.Betriebsart';
+    private static array $betriebsartMap = [
+        0 => "Kühlen (Auto)",
+        1 => "Dauer-Aus",
+        2 => "Heizen (Auto)",
+        3 => "Dauer-Ein"
+    ];
 
     public static function registerProfile(string $profile)
     {
         switch ($profile)
         {
-            case CONTROME_PROFILES::BETRIEBSART:
+            case self::BETRIEBSART:
                 if (!IPS_VariableProfileExists($profile)) {
                     IPS_CreateVariableProfile($profile, 1); // 1 = Integer
                     IPS_SetVariableProfileIcon($profile, "Gear");
-                    IPS_SetVariableProfileAssociation($profile, 0, "Kühlen (Auto)", "", -1);
-                    IPS_SetVariableProfileAssociation($profile, 1, "Dauer-Aus", "", -1);
-                    IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
-                    IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
+                    foreach (self::$betriebsartMap as $val => $text) {
+                        IPS_SetVariableProfileAssociation($profile, $val, $text, "", -1);
+                    }
                 }
         }
     }
+
+    public static function getLabelBetriebsart(int $value): string
+    {
+        if (array_key_exists($value, self::$betriebsartMap)) {
+            return self::$betriebsartMap[$value];
+        }
+        return "Unbekannt ($value)";
+    }
+
+    public static function getValueBetriebsart(string $label): ?int
+    {
+        $index = array_search($label, self::$betriebsartMap, true);
+        return ($index !== false) ? $index : null;
+    }
+
 }
