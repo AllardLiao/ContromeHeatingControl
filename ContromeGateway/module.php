@@ -16,6 +16,7 @@ require_once __DIR__ . '/../libs/_traits.php';
 use Controme\GUIDs;
 use Controme\ACTIONs;
 use Controme\CONTROME_API;
+use Controme\CONTROME_PROFILES;
 
 class ContromeGateway extends IPSModuleStrict
 {
@@ -42,6 +43,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyInteger("HouseID", 1);
         $this->RegisterPropertyBoolean("UseHTTPS", false);
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
+        $this->RegisterPropertyInteger("Mode", 0);
     }
 
     public function Destroy(): void
@@ -56,15 +58,8 @@ class ContromeGateway extends IPSModuleStrict
         parent::ApplyChanges();
 
         // Variablenprofil für Betriebsart sicherstellen
-        $profile = "Controme.Betriebsart";
-        if (!IPS_VariableProfileExists($profile)) {
-            IPS_CreateVariableProfile($profile, 1); // 1 = Integer
-            IPS_SetVariableProfileIcon($profile, "Gear");
-            IPS_SetVariableProfileAssociation($profile, 0, "Kühlen (Auto)", "", -1);
-            IPS_SetVariableProfileAssociation($profile, 1, "Dauer-Aus", "", -1);
-            IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
-            IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
-        }
+        $profile = CONTROME_PROFILES::BETRIEBSART;
+        CONTROME_PROFILES::registerProfile($profile);
 
         // JSON url anpassen
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
@@ -275,8 +270,8 @@ class ContromeGateway extends IPSModuleStrict
         }
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
 
-        // Räume Speichern
-        //$this->WriteAttributeString("Rooms", $json);
+        // Räume Speichern - erfolgt automatisch durch das Form.
+        // $this->WriteAttributeString("Rooms", $formListJson);
 
         $this->SendDebug("FetchRoomList", "Updated Controme Heating Data.", 0);
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");

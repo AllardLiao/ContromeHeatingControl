@@ -16,6 +16,7 @@ require_once __DIR__ . '/../libs/_traits.php';
 use Controme\GUIDs;
 use Controme\ACTIONs;
 use Controme\CONTROME_API;
+use Controme\CONTROME_PROFILES;
 
 class ContromeRoomThermostat extends IPSModuleStrict
 {
@@ -45,11 +46,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // Schrittweite für Setpoint-Änderung (Default: 0.5)
         $this->RegisterPropertyFloat('StepSize', 0.5);
 
-    // Variablen definieren - read-only, kommt von Controme
+        // Variablen definieren - read-only, kommt von Controme
         $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
         $this->RegisterVariableFloat("Setpoint", "Solltemperatur", "~Temperature", 2);
         $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
-        $this->RegisterVariableString("Mode", "Betriebsart", "", 4);
+        $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
         $this->EnableAction("Setpoint");

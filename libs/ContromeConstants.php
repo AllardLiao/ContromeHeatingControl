@@ -47,5 +47,25 @@ class CONTROME_API
     public const SET_SETPOINT_TEMP  = "ziel/";
     public const SET_OPERATION_MODE = "rooms/";
     //public const SET_       = "/";
+}
 
+class CONTROME_PROFILES
+{
+    public const BETRIEBSART = 'Controme.Betriebsart';
+
+    public static function registerProfile(string $profile)
+    {
+        switch ($profile)
+        {
+            case CONTROME_PROFILES::BETRIEBSART:
+                if (!IPS_VariableProfileExists($profile)) {
+                    IPS_CreateVariableProfile($profile, 1); // 1 = Integer
+                    IPS_SetVariableProfileIcon($profile, "Gear");
+                    IPS_SetVariableProfileAssociation($profile, 0, "Kühlen (Auto)", "", -1);
+                    IPS_SetVariableProfileAssociation($profile, 1, "Dauer-Aus", "", -1);
+                    IPS_SetVariableProfileAssociation($profile, 2, "Heizen (Auto)", "", -1);
+                    IPS_SetVariableProfileAssociation($profile, 3, "Dauer-Ein", "", -1);
+                }
+        }
+    }
 }
