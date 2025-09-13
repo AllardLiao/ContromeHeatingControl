@@ -27,13 +27,13 @@
                 {
                     "type": "NumberSpinner",
                     "caption": "Floor-ID",
-                    "enabled": false,
+                    "enabled": true,
                     "name": "FloorID",
                     "onChange": "",
                     "validate": "",
                     "value": 0,
                     "minimum": 0,
-                    "visible": false,
+                    "visible": true,
                     "width": "100px"
                 },
                 {
@@ -103,13 +103,13 @@
                 {
                     "type": "NumberSpinner",
                     "name": "StepSize",
-                    "caption": "Schrittweite",
+                    "caption": "Step size when changing the setpoint temperature",
                     "minimum": 0.1,
                     "maximum": 2,
                     "moreDigits": false,
                     "value":    0.1,
                     "digits":  1,
-                    "suffix":  " °C"
+                    "suffix":  "°C"
                 }
             ]
         },
