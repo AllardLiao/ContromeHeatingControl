@@ -103,6 +103,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case ACTIONs::WRITE_SETPOINT:
                 $result = $this->WriteSetpoint(floatval($value));
                 break;
+            case ACTIONs::TEST_READ_ROOM_DATA:
+                $this->TestReadRoomData();
+                break;
             case 'visu_inc':
                 $new = $this->GetValue('Setpoint') + $this->ReadPropertyFloat('StepSize');
                 $this->WriteSetpoint($new);
@@ -141,9 +144,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function CheckConnection(): bool
     {
         $floorID = $this->ReadPropertyInteger("FloorID");
-        $floor = $this->ReadPropertyString("Floor");
         $roomID = $this->ReadPropertyInteger("RoomID");
-        $room = $this->ReadPropertyString("Room");
 
         // Der Output kann unter Umständen die Ergebnisse von zwei Prüfschritten enthalten, deswegen eine Merker-Variable
         $outputText = "";
@@ -218,6 +219,44 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return $this->saveDataToVariables($data);
     }
 
+    public function TestReadRoomData(): bool
+    {
+        $floorId = $this->ReadPropertyInteger("FloorID");
+        $roomId  = $this->ReadPropertyInteger("RoomID");
+
+        // Anfrage ans Gateway schicken
+        $result = $this->SendDataToParent(json_encode([
+            "DataID"  => GUIDs::DATAFLOW, // die gemeinsame DataFlow-GUID
+            "Action"  => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
+            "FloorID" => $floorId,
+            "RoomID"  => $roomId
+        ]));
+
+        if ($result === false) {
+            $this->SendDebug("TestReadRoomData", "Fetching Data: no response from gateway!", 0);
+            $this->LogMessage("TestReadRoomData: Fetching Data: no response from gateway", KL_ERROR);
+            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: no response from gateway");
+            $this->SetStatus(IS_NO_CONNECTION);
+            return false;
+        }
+
+        $data = json_decode($result, true);
+        if (isset($data['name'])) {
+            $this->SendDebug("TestReadRoomData", "Fetching Data: Room $roomId found and data seems valid.", 0);
+            $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.", KL_MESSAGE);
+            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.");
+        } else {
+            $this->SendDebug("TestReadRoomData", "Fetching Data ok, but room $roomId data not valid!", 0);
+            $this->LogMessage("TestReadRoomData: Fetching Data ok, but room data not valid!", KL_ERROR);
+            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data ok, but room data not valid");
+            $this->SetStatus(IS_BAD_JSON);
+            return false;
+        }
+
+        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
+        $this->SetStatus(IS_ACTIVE);
+        return $this->saveDataToVariables($data);
+    }
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
     private function UpdateRoomData(): bool
     {

@@ -27,6 +27,7 @@ class ACTIONs
     public const FETCH_ROOM_LIST                    = "FetchRoomList";
     public const CREATE_CENTRAL_CONTROL_INSTANCE    = "CreateCentralControlInstance";
     public const CREATE_ROOM_THERMOSTAT_INSTANCE    = "CreateRoomThermostatInstance";
+    public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
 }
 
 // Unterstützte API Befehle

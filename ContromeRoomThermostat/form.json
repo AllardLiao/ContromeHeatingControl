@@ -153,6 +153,26 @@
             ]
         },
         {
+            "type": "Label",
+            "caption": "\nTest-read data for room from Controme Mini-Server."
+        },
+        {
+            "type": "RowLayout",
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "Read data",
+                    "onClick": "IPS_RequestAction($id, \"TestReadRoomData\", 0);",
+                    "enabled": true
+                },
+                {
+                    "type": "Label",
+                    "name": "ResultTestRead",
+                    "caption": " "
+                }
+            ]
+        },
+        {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",
             "expanded": true,
