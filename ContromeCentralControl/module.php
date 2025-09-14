@@ -232,7 +232,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
         $data = [
             'DataID'   => GUIDs::DATAFLOW,
-            'Function' => ACTIONs::GET_IP_ADDRESS
+            'Action' => ACTIONs::GET_IP_ADDRESS
         ];
 
         $result = $this->SendDataToParent(json_encode($data));
