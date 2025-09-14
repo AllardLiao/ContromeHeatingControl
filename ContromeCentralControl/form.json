@@ -8,47 +8,7 @@
         },
         {
             "type": "Label",
-            "caption": "Symcon module for central heating system management.\n\nThis module displays the current system status, temperature, humidity, and operating mode. You can also adjust global setpoints and monitor the overall system from this interface."
-        },
-        {
-            "type": "Label",
-            "caption": "\nSystem Assignment\n ",
-            "bold": true
-        },
-        {
-            "type": "Label",
-            "caption": "In most cases, no changes are required here. Only modify these settings if you are sure of what you are doing.\n\nIf you leave the system name empty, it will be updated automatically with the next data update. If you enter a name here, it will be used for the corresponding central system ID within IPS."
-        },
-        {
-            "type": "RowLayout",
-            "name": "System",
-            "visible": true,
-            "items": [
-                {
-                    "type": "ValidationTextBox",
-                    "caption": "System-ID",
-                    "enabled": true,
-                    "multiline": false,
-                    "name": "System-ID",
-                    "onChange": "",
-                    "validate": "",
-                    "value": "0",
-                    "visible": true,
-                    "width": "100px"
-                },
-                {
-                    "type": "ValidationTextBox",
-                    "caption": "System name",
-                    "enabled": true,
-                    "multiline": false,
-                    "name": "System-Name",
-                    "onChange": "",
-                    "validate": "",
-                    "value": "n/a",
-                    "visible": true,
-                    "width": "200px"
-                }
-            ]
+            "caption": "Symcon module for central heating system management.\n\nThis module displays the current system status, temperature, humidity, and operating mode for every room. You can also adjust global setpoints and monitor the overall system from this interface."
         },
         {
             "type": "ExpansionPanel",
@@ -104,14 +64,14 @@
     "actions": [
         {
             "type": "Label",
-            "caption": "\nCheck connection to Controme I/O-Socket and Controme Central Server."
+            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server."
         },
         {
             "type": "RowLayout",
             "items": [
                 {
                     "type": "Button",
-                    "caption": "Check central system connection",
+                    "caption": "Check connection",
                     "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
                     "enabled": true
                 },
@@ -122,6 +82,59 @@
                 }
             ]
         },
+
+        {
+            "type": "ExpansionPanel",
+            "caption": "Test Controme data delivery...",
+            "expanded": true,
+            "items": [
+                {
+                    "type": "Label",
+                    "caption": "You can test data connection to Controme by setting a room id and try to fetch the data for that room from Controme Mini-Server."
+                },
+                {
+                    "type": "NumberSpinner",
+                    "caption": "Floor-ID",
+                    "enabled": true,
+                    "name": "FloorID",
+                    "onChange": "",
+                    "validate": "",
+                    "value": 0,
+                    "minimum": 0,
+                    "visible": false,
+                    "width": "100px"
+                },
+                {
+                    "type": "NumberSpinner",
+                    "caption": "Room-ID",
+                    "enabled": true,
+                    "name": "RoomID",
+                    "onChange": "",
+                    "validate": "",
+                    "value": 0,
+                    "minimum": 0,
+                    "visible": true,
+                    "width": "100px"
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "caption": "Test read room data",
+                            "onClick": "IPS_RequestAction($id,'TestReadRoomData',true);",
+                            "enabled": true
+                        },
+                        {
+                            "type": "Label",
+                            "name": "ResultTestRead",
+                            "caption": " "
+                        }
+                    ]
+                }
+            ]
+        },
+
         {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",

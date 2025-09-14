@@ -48,11 +48,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         // Variablen definieren - read-only, kommt von Controme
         $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
-        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
         $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
         $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
+        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
         $this->EnableAction("Setpoint");
         //$this->EnableAction('inc');
         //$this->EnableAction('dec');
