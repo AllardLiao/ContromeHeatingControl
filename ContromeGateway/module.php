@@ -197,7 +197,7 @@ class ContromeGateway extends IPSModuleStrict
                 return $this->ReadPropertyString("IPAddress");
 
             case ACTIONs::CHECK_CONNECTION:
-                $ok = $this->CheckConnection(); // <- deine bestehende Funktion
+                $ok = $this->CheckConnection($data); // <- deine bestehende Funktion
                 return json_encode([
                     "success" => $ok,
                     "message" => $ok ? "Connected" : "Connection failed"
