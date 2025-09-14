@@ -48,11 +48,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         // Variablen definieren - read-only, kommt von Controme
         $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
-        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", "~Temperature", 2);
         $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
         $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
+        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
         $this->EnableAction("Setpoint");
         //$this->EnableAction('inc');
         //$this->EnableAction('dec');
@@ -144,44 +144,43 @@ class ContromeRoomThermostat extends IPSModuleStrict
      */
     public function CheckConnection(): bool
     {
-        $floorID = $this->ReadPropertyInteger("FloorID");
-        $roomID = $this->ReadPropertyInteger("RoomID");
-
-        // Der Output kann unter Umständen die Ergebnisse von zwei Prüfschritten enthalten, deswegen eine Merker-Variable
         $outputText = "";
+        // Wenn das lesen und schreiben klappt, liefern wir dem User noch Daten für den hier angelegten Raum
+        $floorId = $this->ReadPropertyInteger("FloorID");
+        $roomId  = $this->ReadPropertyInteger("RoomID");
 
-        if (empty($floorID) || empty($roomID)) {
-            $this->SendDebug("CheckConnection", "Please configure Floor-ID and Room-ID!", 0);
-            $outputText .= "Please set all parameters floor-ID and room-ID).\n";
-            $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("CheckConnection: floor-ID and/or room-ID missing!", KL_NOTIFY);
-            $this->SetStatus(IS_INACTIVE);
+        // Validierung: Floor und Room müssen > 0 sein
+        if ($floorId <= 0 || $roomId <= 0) {
+            $this->SendDebug(__FUNCTION__, "Invalid floor id ($floorId) or room id ($roomId)", 0);
+            $this->LogMessage("CHECK_CONNECTION fehlgeschlagen: FloorID=$floorId, RoomID=$roomId", KL_ERROR);
+            $this->UpdateFormField("Result", "caption", "Ungültige Konfiguration (Floor/Room nicht gesetzt)");
+            $this->SetStatus(IS_NOT_CREATED);
             return false;
         }
 
+        // Einfache Abfrage über Gateway - das Gateway versucht 1 Daten zu bekommen und zu schreiben.
         $response = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
-            "Action" => ACTIONs::CHECK_CONNECTION
+            "Action" => ACTIONs::CHECK_CONNECTION,
+            "FloorID" => $floorId,
+            "RoomID"  => $roomId
         ]));
 
         $result = json_decode($response, true);
 
         if ($result['success']) {
-            $this->SendDebug("CheckConnection", "Connection to Gateway and Controme Mini-Server is working!", 0);
+            $this->SendDebug(__FUNCTION__, "Connection to Gateway and Controme Mini-Server is working!", 0);
             $outputText .= "Connection to Gateway and Controme Mini-Server is working!\n";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
         } else {
-            $this->SendDebug("CheckConnection", "Connection failed!", 0);
+            $this->SendDebug(__FUNCTION__, "Connection failed!", 0);
             $outputText .= "Connection failed!\n";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Connection failed!", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
-
-        $floorId = $this->ReadPropertyInteger("FloorID");
-        $roomId  = $this->ReadPropertyInteger("RoomID");
 
         // Anfrage ans Gateway schicken
         $result = $this->SendDataToParent(json_encode([
@@ -192,7 +191,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         ]));
 
         if ($result === false) {
-            $this->SendDebug("CheckConnection", "Fetching Data: no response from gateway!", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
             $outputText .= "Fetching Data: no response from gateway!\n";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: no response from gateway", KL_ERROR);
@@ -202,12 +201,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $data = json_decode($result, true);
         if (isset($data['name'])) {
-            $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId found and data seems valid.", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
             $outputText .= "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room $roomId found and data seems valid.", KL_MESSAGE);
         } else {
-            $this->SendDebug("CheckConnection", "Fetching Data: Room $roomId data not valid!", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId data not valid!", 0);
             $outputText .= "Fetching Data: Room $roomId data not valid!";
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
@@ -287,20 +286,17 @@ class ContromeRoomThermostat extends IPSModuleStrict
             return false;
         }
 
-        // Variablen anlegen und updaten
-        $this->saveDataToVariables($data);
-
         $this->SendDebug("UpdateRoomData", "Room data updated", 0);
         $this->SetStatus(IS_ACTIVE);
 
-        return true;
+        return $this->saveDataToVariables($data);
     }
 
     private function saveDataToVariables($data): bool
     {
         // Variablen anlegen und updaten
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
-        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, "~Temperature", 2, true);
+        $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
         $this->EnableAction("Setpoint");

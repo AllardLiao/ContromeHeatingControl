@@ -20,14 +20,27 @@ class GUIDs
 
 class ACTIONs
 {
+    // Implementierte Actions (alle Module)
     public const CHECK_CONNECTION                   = 'CheckConnection';
     public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
+    public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
     public const WRITE_SETPOINT                     = 'Setpoint';
+    public const UPDATE_DATA                        = 'UpdateData';
     public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
     public const FETCH_ROOM_LIST                    = "FetchRoomList";
     public const CREATE_CENTRAL_CONTROL_INSTANCE    = "CreateCentralControlInstance";
     public const CREATE_ROOM_THERMOSTAT_INSTANCE    = "CreateRoomThermostatInstance";
     public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
+    public const GET_IP_ADDRESS                     = "GetIPAddress";
+
+    // Abzufragende Daten vom Gateway
+    public const DATA_SYSTEM_INFO   = 'info';
+    public const DATA_ROOMS         = 'rooms';
+    public const DATA_ROOM_OFFSETS  = 'roomoffsets';
+    public const DATA_TEMPERATURS   = 'temps';
+    public const DATA_VTR           = 'vtr';
+    public const DATA_TIMER         = 'timer';
+    public const DATA_CALENDAR      = 'calendar';
 }
 
 // Unterstützte API Befehle
@@ -36,17 +49,17 @@ class ACTIONs
 // https://support.controme.com/api/
 class CONTROME_API
 {
+    public const GET_SYSTEM_INFO    = "info/";
     public const GET_ROOMS          = "rooms/";
-    public const GET_INFO           = "info/";
+    public const GET_ROOM_OFFSETS   = "roomoffsets/";
     public const GET_TEMPERATURS    = "temps/";
+    public const GET_VTR            = "vtr/";
     public const GET_TIMER          = "timer/";
-    public const GET_WEATHER        = "wetter_pro/";
-    //public const GET_       = "/";
+    public const GET_CALENDAR       = "jahreskalender/";
 
     public const SET_SETPOINT       = "soll/";
     public const SET_SETPOINT_TEMP  = "ziel/";
     public const SET_OPERATION_MODE = "rooms/";
-    //public const SET_       = "/";
 }
 
 class CONTROME_PROFILES
@@ -58,6 +71,19 @@ class CONTROME_PROFILES
         2 => "Heizen (Auto)",
         3 => "Dauer-Ein"
     ];
+
+    public const SETPOINT = 'Controme.Setpoint';
+    private static String $setPointPresentation = "[
+        'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
+        'SUFFIX' => '°C',
+        'MIN' => 15.0,
+        'MAX' => 28.0,
+        'STEP_SIZE' => 0.5,
+        'GRADIENT_TYPE' => 1, //Temperatur
+        'USAGE_TYPE' => 0, // Standard
+        'DIGITS' => 1,
+        'ICON' => 'Temperature'
+    ]";
 
     public static function registerProfile(string $profile)
     {
@@ -72,6 +98,11 @@ class CONTROME_PROFILES
                     }
                 }
         }
+    }
+
+    public static function getSetPointPresentation(): string
+    {
+        return self::$setPointPresentation;
     }
 
     public static function getLabelBetriebsart(int $value): string
