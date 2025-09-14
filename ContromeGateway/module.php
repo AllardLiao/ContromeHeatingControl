@@ -57,7 +57,7 @@ class ContromeGateway extends IPSModuleStrict
         // Never delete this line!
         parent::ApplyChanges();
 
-        $this->SetStatus(IS_CREATING);
+        $this->SetStatus(IS_INACTIVE);
 
         // Variablenprofil für Betriebsart sicherstellen
         $profile = CONTROME_PROFILES::BETRIEBSART;
