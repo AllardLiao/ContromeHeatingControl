@@ -45,6 +45,9 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
 
+        // Konfigurationselemente für Testabfragen
+        $this->RegisterpropertyInteger("RoomID", 1);
+
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
 
@@ -135,14 +138,12 @@ class ContromeCentralControl extends IPSModuleStrict
 
     public function TestReadRoomData(): bool
     {
-        $floorId = $this->ReadPropertyInteger("FloorID");
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
         // Anfrage ans Gateway schicken
         $result = $this->SendDataToParent(json_encode([
             "DataID"  => GUIDs::DATAFLOW, // die gemeinsame DataFlow-GUID
             "Action"  => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
-            "FloorID" => $floorId,
             "RoomID"  => $roomId
         ]));
 
@@ -171,12 +172,9 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->SetStatus(IS_ACTIVE);
         return true;
     }
-    // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
+    // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Systems aktualisiert
     private function UpdateData(): bool
     {
-        $roomId   = $this->ReadPropertyInteger("RoomID");
-        $floorId  = $this->ReadPropertyInteger("FloorID");
-
         // Daten vom Gateway holen
         $result = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,

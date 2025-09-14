@@ -436,7 +436,7 @@ class ContromeGateway extends IPSModuleStrict
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
 
-        return $data;
+        return json_encode($data);
     }
 
     private function WriteSetpoint(mixed $data): string
