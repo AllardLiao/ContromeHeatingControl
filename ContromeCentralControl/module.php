@@ -50,6 +50,14 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
         $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateRoomData", true);');
+
+        // Link zum Controme Gateway anpassen
+        $ip = $this->RequestGatewayIPAddress();
+        if ($ip !== null) {
+            $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
+        } else {
+            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
+        }
     }
 
     public function Destroy(): void
@@ -68,7 +76,7 @@ class ContromeCentralControl extends IPSModuleStrict
         if ($ip !== null) {
             $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
         } else {
-            $this->UpdateFormField("ContromeIP", "caption", "Gateway not connected.");
+            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
         }
 
         // Sicherstellen, dass die Variablen registriert sind
@@ -232,7 +240,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
         $data = [
             'DataID'   => GUIDs::DATAFLOW,
-            'Action' => ACTIONs::GET_IP_ADDRESS
+            'Action'   => ACTIONs::GET_IP_ADDRESS
         ];
 
         $result = $this->SendDataToParent(json_encode($data));
