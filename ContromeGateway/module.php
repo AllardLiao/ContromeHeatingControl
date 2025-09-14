@@ -112,6 +112,65 @@ class ContromeGateway extends IPSModuleStrict
         }
     }
 
+    //
+    public function ForwardData($JSONString): string
+    {
+        // Auswertung für Aufrufe von Child-Instanzen
+        $data = json_decode($JSONString, true);
+
+        if (!is_array($data) || ($data['DataID'] ?? '') !== GUIDs::DATAFLOW) {
+            $this->SendDebug(__FUNCTION__, 'Ungültiger Payload', 0);
+            return json_encode(false); // oder false je nach Pattern
+        }
+
+        // JSON url anpassen
+        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+
+        switch ($data['Action']) {
+            case ACTIONs::GET_IP_ADDRESS:
+                return $this->ReadPropertyString("IPAddress");
+
+            case ACTIONs::CHECK_CONNECTION:
+                $ok = $this->CheckConnection($data); // <- deine bestehende Funktion
+                return json_encode([
+                    "success" => $ok,
+                    "message" => $ok ? "Connected" : "Connection failed"
+                ]);
+
+            case ACTIONs::GET_TEMP_DATA_FOR_ROOM:
+                if (!isset($data['RoomID'])) {
+                    $this->SendDebug(__FUNCTION__, "Missing FloorID or RoomID", 0);
+                    return json_encode(false);
+                }
+
+                $roomId  = (int)$data['RoomID'];
+                $roomData = $this->GetTempDataForRoom($roomId);
+                return json_encode($roomData);
+
+            case ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL:
+                // Wird von Child-Instanzen genutzt, aufruf ohne Parameter.
+                $result = [];
+                if (!empty($data[ACTIONs::DATA_SYSTEM_INFO])) {    $result[ACTIONs::DATA_SYSTEM_INFO] = $this->fetchSystemInfo();}
+                //if (!empty($data[ACTIONs::DATA_ROOMS])) {          $result[ACTIONs::DATA_ROOMS] = $this->fetchRooms();}
+                return json_encode($result);
+                break;
+
+            case ACTIONs::WRITE_SETPOINT:
+                return json_encode($this->WriteSetpoint($data));
+
+            default:
+                $this->SendDebug(__FUNCTION__, "Unknown action: " . $data['Action'], 0);
+                return json_encode(false);
+
+        }
+
+        return json_encode([
+            "success" => false,
+            "message" => "Unknown action"
+        ]);
+    }
+
     /**
      * Is called by pressing the button "Check Connection" from the instance configuration
      *
@@ -175,65 +234,6 @@ class ContromeGateway extends IPSModuleStrict
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
-    }
-
-    //
-    public function ForwardData($JSONString): string
-    {
-        // Auswertung für Aufrufe von Child-Instanzen
-        $data = json_decode($JSONString, true);
-
-        if (!is_array($data) || ($data['DataID'] ?? '') !== GUIDs::DATAFLOW) {
-            $this->SendDebug(__FUNCTION__, 'Ungültiger Payload', 0);
-            return json_encode(false); // oder false je nach Pattern
-        }
-
-        // JSON url anpassen
-        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-
-        switch ($data['Action']) {
-            case ACTIONs::GET_IP_ADDRESS:
-                return $this->ReadPropertyString("IPAddress");
-
-            case ACTIONs::CHECK_CONNECTION:
-                $ok = $this->CheckConnection($data); // <- deine bestehende Funktion
-                return json_encode([
-                    "success" => $ok,
-                    "message" => $ok ? "Connected" : "Connection failed"
-                ]);
-
-            case ACTIONs::GET_TEMP_DATA_FOR_ROOM:
-                if (!isset($data['FloorID']) || !isset($data['RoomID'])) {
-                    $this->SendDebug(__FUNCTION__, "Missing FloorID or RoomID", 0);
-                    return json_encode(false);
-                }
-
-                $roomId  = (int)$data['RoomID'];
-                $roomData = $this->GetTempDataForRoom($roomId);
-                return json_encode($roomData);
-
-            case ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL:
-                // Wird von Child-Instanzen genutzt, aufruf ohne Parameter.
-                $result = [];
-                if (!empty($data[ACTIONs::DATA_SYSTEM_INFO])) {    $result[ACTIONs::DATA_SYSTEM_INFO] = $this->fetchSystemInfo();}
-                //if (!empty($data[ACTIONs::DATA_ROOMS])) {          $result[ACTIONs::DATA_ROOMS] = $this->fetchRooms();}
-                return json_encode($result);
-                break;
-
-            case ACTIONs::WRITE_SETPOINT:
-                return json_encode($this->WriteSetpoint($data));
-
-            default:
-                $this->SendDebug(__FUNCTION__, "Unknown action: " . $data['Action'], 0);
-                return json_encode(false);
-
-        }
-
-        return json_encode([
-            "success" => false,
-            "message" => "Unknown action"
-        ]);
     }
 
     /**
@@ -396,9 +396,6 @@ class ContromeGateway extends IPSModuleStrict
 
     public function GetTempDataForRoom(int $roomId)
     {
-        // Beispiel: Abfrage an Controme API bauen
-        $ip = $this->ReadPropertyString("IPAddress");
-
         //$url = "http://$ip/get/json/v1/1/temps/$roomId/";
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
 
