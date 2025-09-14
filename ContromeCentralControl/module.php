@@ -32,6 +32,15 @@ class ContromeCentralControl extends IPSModuleStrict
         //Never delete this line!
         parent::Create();
 
+        // Properties für die Konfiguration des Moduls
+        $this->RegisterPropertyBoolean("ShowSystemInfo", true);
+        $this->RegisterPropertyBoolean("ShowRooms", true);
+        $this->RegisterPropertyBoolean("ShowRoomData", true);
+        $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
+        $this->RegisterPropertyBoolean("ShowVTR", false);
+        $this->RegisterPropertyBoolean("ShowTimer", false);
+        $this->RegisterPropertyBoolean("ShowCalendar", false);
+
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
@@ -54,6 +63,20 @@ class ContromeCentralControl extends IPSModuleStrict
         //Never delete this line!
         parent::ApplyChanges();
 
+        // Link zum Controme Gateway anpassen
+        $ip = $this->RequestGatewayIPAddress();
+        if ($ip !== null) {
+            $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
+        } else {
+            $this->UpdateFormField("ContromeIP", "caption", "Gateway not connected.");
+        }
+
+        // Sicherstellen, dass die Variablen registriert sind
+        if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
+            $this->registerSystemInfoVariables();
+        }
+
+        // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
             $this->SetTimerInterval("UpdateContromeDataCentralControl" . $this->InstanceID, $this->ReadPropertyInteger("UpdateInterval") * 60 * 1000);
         } else {
@@ -70,8 +93,8 @@ class ContromeCentralControl extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case ACTIONs::UPDATE_ROOM_DATA:
-                $this->UpdateRoomData();
+            case ACTIONs::UPDATE_DATA:
+                $this->UpdateData();
                 break;
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
@@ -116,7 +139,7 @@ class ContromeCentralControl extends IPSModuleStrict
         ]));
 
         if ($result === false) {
-            $this->SendDebug("TestReadRoomData", "Fetching Data: no response from gateway!", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
             $this->LogMessage("TestReadRoomData: Fetching Data: no response from gateway", KL_ERROR);
             $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: no response from gateway");
             $this->SetStatus(IS_NO_CONNECTION);
@@ -125,11 +148,11 @@ class ContromeCentralControl extends IPSModuleStrict
 
         $data = json_decode($result, true);
         if (isset($data['name'])) {
-            $this->SendDebug("TestReadRoomData", "Fetching Data: Room $roomId found and data seems valid.", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
             $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.", KL_MESSAGE);
             $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.");
         } else {
-            $this->SendDebug("TestReadRoomData", "Fetching Data ok, but room $roomId data not valid!", 0);
+            $this->SendDebug(__FUNCTION__, "Fetching Data ok, but room $roomId data not valid!", 0);
             $this->LogMessage("TestReadRoomData: Fetching Data ok, but room data not valid!", KL_ERROR);
             $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data ok, but room data not valid");
             $this->SetStatus(IS_BAD_JSON);
@@ -141,7 +164,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return true;
     }
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
-    private function UpdateRoomData(): bool
+    private function UpdateData(): bool
     {
         $roomId   = $this->ReadPropertyInteger("RoomID");
         $floorId  = $this->ReadPropertyInteger("FloorID");
@@ -149,30 +172,124 @@ class ContromeCentralControl extends IPSModuleStrict
         // Daten vom Gateway holen
         $result = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
-            "Action" => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
-            "RoomID" => $roomId,
-            "FloorID"=> $floorId
+            "Action" => ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL,
+            ACTIONs::DATA_SYSTEM_INFO => $this->ReadPropertyBoolean("ShowSystemInfo"),
+            ACTIONs::DATA_ROOMS       => $this->ReadPropertyBoolean("ShowRooms"),
+            ACTIONs::DATA_ROOM_OFFSETS=> $this->ReadPropertyBoolean("ShowRoomOffsets"),
+            ACTIONs::DATA_TEMPERATURS => $this->ReadPropertyBoolean("ShowRoomData"),
+            ACTIONs::DATA_VTR         => $this->ReadPropertyBoolean("ShowVTR"),
+            ACTIONs::DATA_TIMER       => $this->ReadPropertyBoolean("ShowTimer"),
+            ACTIONs::DATA_CALENDAR    => $this->ReadPropertyBoolean("ShowCalendar")
         ]));
 
         if ($result === false) {
-            $this->SendDebug("UpdateRoomData", "No data received!", 0);
-            $this->LogMessage("Fetching Data for Room $roomId returned no data!", KL_ERROR);
+            $this->SendDebug(__FUNCTION__, "No data received!", 0);
+            $this->LogMessage("Fetching Data returned no data!", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
 
         $data = json_decode($result, true);
         if (!is_array($data)) {
-            $this->SendDebug("UpdateRoomData", "Invalid data received: " . $result, 0);
-            $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
+            $this->SendDebug(__FUNCTION__, "Invalid data received: " . $result, 0);
+            $this->LogMessage("Fetching Data returned invalid data!", KL_ERROR);
             $this->SetStatus(IS_BAD_JSON);
             return false;
         }
 
-        $this->SendDebug("UpdateRoomData", "Room data updated", 0);
+        $this->SendDebug(__FUNCTION__, "Room data updated", 0);
         $this->SetStatus(IS_ACTIVE);
 
         return $this->saveDataToVariables($data);
+    }
+
+    private function saveDataToVariables($data): bool
+    {
+        // System Info
+        if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
+            $info = $data[ACTIONs::DATA_SYSTEM_INFO];
+            $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
+            $this->SetValue("SysInfo_SWDate",       $info['sw-date'] ?? "");
+            $this->SetValue("SysInfo_Branch",       $info['branch'] ?? "");
+            $this->SetValue("SysInfo_OS",           $info['os'] ?? "");
+            $this->SetValue("SysInfo_FBI",          $info['fbi'] ?? "");
+            $this->SetValue("SysInfo_AppCompat",    $info['app-compatibility'] ?? false);
+            $this->SendDebug("saveDataToVariables", "SystemInfo updated", 0);
+        }
+        return true;
+    }
+
+    private function RequestGatewayIPAddress(): ?string
+    {
+        // Check, ob Gateway eingerichtet ist.
+        $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($parentID == 0) {
+            $this->SendDebug(__FUNCTION__, "Kein Gateway verbunden", 0);
+            $this->LogMessage("Kein Gateway verbunden", KL_NOTIFY);
+            $this->UpdateFormField("ContromeIP", "caption", "Kein Gateway verbunden...");
+            return null;
+        }
+
+        $data = [
+            'DataID'   => GUIDs::DATAFLOW,
+            'Function' => ACTIONs::GET_IP_ADDRESS
+        ];
+
+        $result = $this->SendDataToParent(json_encode($data));
+
+        if (!is_string($result) || empty($result)) {
+            $this->SendDebug(__FUNCTION__, "Keine IP-Adresse vom Gateway erhalten", 0);
+            $this->LogMessage("Fehler: Gateway hat keine IP-Adresse geliefert", KL_NOTIFY);
+            $this->UpdateFormField("ContromeIP", "caption", "IP konnte nicht abgerufen werden");
+            return null;
+        }
+
+        $this->SendDebug(__FUNCTION__, "IP-Adresse vom Gateway: " . $result, 0);
+        $this->LogMessage("Gateway-IP: " . $result, KL_MESSAGE);
+
+        return $result;
+    }
+
+    private function registerSystemInfoVariables(): void
+    {
+        $this->RegisterVariableString("SysInfo_HW", "Hardware", "", 10);
+        $this->RegisterVariableString("SysInfo_SWDate", "Software Datum", "", 11);
+        $this->RegisterVariableString("SysInfo_Branch", "Branch", "", 12);
+        $this->RegisterVariableString("SysInfo_OS", "Betriebssystem", "", 13);
+        $this->RegisterVariableString("SysInfo_FBI", "Filesystem Build", "", 14);
+        $this->RegisterVariableBoolean("SysInfo_AppCompat", "App kompatibel", "~Switch", 15);
+    }
+
+    /**
+     * Is called by pressing the button "Check Connection" from the instance configuration
+     *
+     * @return boolean
+     */
+    public function CheckConnection(): bool
+    {
+        // Einfache Abfrage über Gateway - das Gateway versucht für Raum 1 Daten zu bekommen und zu schreiben.
+        $response = $this->SendDataToParent(json_encode([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::CHECK_CONNECTION
+        ]));
+
+        $result = json_decode($response, true);
+
+        if ($result['success']) {
+            $this->SendDebug(__FUNCTION__, "Connection to Gateway and Controme Mini-Server is working!", 0);
+            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!\n");
+            $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
+        } else {
+            $this->SendDebug(__FUNCTION__, "Connection failed!", 0);
+            $this->UpdateFormField("Result", "caption", "Connection failed!\n");
+            $this->LogMessage("Connection failed!", KL_ERROR);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return false;
+        }
+
+        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
+        $this->SetStatus(IS_ACTIVE);
+        return true;
     }
 
 }

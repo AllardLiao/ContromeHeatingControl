@@ -134,7 +134,7 @@
     "actions": [
         {
             "type": "Label",
-            "caption": "\nCheck connection to Controme I/O-Socket and Controme Mini-Server."
+            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server.\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work!\n"
         },
         {
             "type": "RowLayout",

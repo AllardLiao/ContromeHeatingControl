@@ -11,6 +11,16 @@
             "caption": "Symcon module for central heating system management.\n\nThis module displays the current system status, temperature, humidity, and operating mode for every room. You can also adjust global setpoints and monitor the overall system from this interface."
         },
         {
+            "type": "Label",
+            "caption": "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:"
+        },
+        {
+            "type": "Label",
+            "name": "ContromeIP",
+            "link": true,
+            "caption": "ip-address-of-your-controme-gateway/raumregelung-pro/"
+        },
+        {
             "type": "ExpansionPanel",
             "caption": "Visualisation ...",
             "items": [
@@ -33,13 +43,45 @@
                 },
                 {
                     "type": "CheckBox",
-                    "name": "VisuNaviBar",
-                    "caption": "Show navigation bar (Prev, Back, Next)?"
+                    "name": "ShowSystemInfo",
+                    "caption": "Show system information (Controme hardware & software)",
+                    "value": true
                 },
                 {
                     "type": "CheckBox",
-                    "name": "VisuActionBar",
-                    "caption": "Show action bar (Clear pages, Reload pages, Sync, Reboot)?"
+                    "name": "ShowRooms",
+                    "caption": "Show room information (name, floor)",
+                    "value": true
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "ShowRoomData",
+                    "caption": "Show room data (temperature, humidity, setpoint, mode)",
+                    "value": true
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "ShowRoomOffsets",
+                    "caption": "Show room offset information (weather, timer, etc.",
+                    "value": false
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "ShowVTR",
+                    "caption": "Show flow temperature (actual, setpoint, termperature details)",
+                    "value": false
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "ShowTimer",
+                    "caption": "Show Controme timer (planned heating periods)",
+                    "value": false
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "ShowCalendar",
+                    "caption": "Show Controme calendar (entries from installed/linked calendars)",
+                    "value": false
                 }
             ]
         },
@@ -64,7 +106,7 @@
     "actions": [
         {
             "type": "Label",
-            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server."
+            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server.\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work!\n"
         },
         {
             "type": "RowLayout",
