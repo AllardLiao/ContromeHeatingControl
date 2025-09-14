@@ -52,7 +52,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
-        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
+        //$this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
+        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", "~Temperature", 2);
         $this->EnableAction("Setpoint");
         //$this->EnableAction('inc');
         //$this->EnableAction('dec');

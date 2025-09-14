@@ -140,7 +140,7 @@ class ContromeGateway extends IPSModuleStrict
 
             case ACTIONs::GET_TEMP_DATA_FOR_ROOM:
                 if (!isset($data['RoomID'])) {
-                    $this->SendDebug(__FUNCTION__, "Missing FloorID or RoomID", 0);
+                    $this->SendDebug(__FUNCTION__, "Missing room id", 0);
                     return json_encode(false);
                 }
 
@@ -396,7 +396,6 @@ class ContromeGateway extends IPSModuleStrict
 
     public function GetTempDataForRoom(int $roomId)
     {
-        //$url = "http://$ip/get/json/v1/1/temps/$roomId/";
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
 
         $response = @file_get_contents($url);
@@ -432,8 +431,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
-
-        return json_encode($data);
+        return ($data);
     }
 
     private function WriteSetpoint(mixed $data): string
