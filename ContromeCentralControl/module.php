@@ -251,7 +251,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // ======================
         if (isset($data[ACTIONs::DATA_ROOMS])) {
             //Existienz der VAriablen sicherstellen
-            $this->registerSystemInfoVariables();
+            $this->registerRoomCategory();
 
             $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
 
@@ -273,33 +273,62 @@ class ContromeCentralControl extends IPSModuleStrict
                 foreach ($rooms as $floor) {
                     if (!isset($floor['raeume']) || !is_array($floor['raeume'])) continue;
 
+                    $floorID   = $floor['id'] ?? 0;
+                    $floorName = $floor['etagenname'] ?? "Unbekannt";
+
+                    // Kategorie für Etage
+                    $floorCatIdent = "Floor_" . $floorID;
+                    $floorCatId = @IPS_GetObjectIDByIdent($floorCatIdent, $catRoomsID);
+                    if ($floorCatId === false) {
+                        $floorCatId = IPS_CreateCategory();
+                        IPS_SetName($floorCatId, $floorName);
+                        IPS_SetIdent($floorCatId, $floorCatIdent);
+                        IPS_SetParent($floorCatId, $catRoomsID);
+                    } else {
+                        IPS_SetName($floorCatId, $floorName);
+                    }
+
+                    // Etagen-Variablen
+                    $floorIdVar   = $this->ensureVariable("FloorID", "Etagen-ID", VARIABLETYPE_INTEGER, "", 5, $floorCatId);
+                    $floorNameVar = $this->ensureVariable("FloorName", "Etagenname", VARIABLETYPE_STRING, "", 6, $floorCatId);
+
+                    SetValue($floorIdVar, (int) $floorID);
+                    SetValue($floorNameVar, (string) $floorName);
+
+                    // Räume dieser Etage durchgehen
                     foreach ($floor['raeume'] as $room) {
                         $roomID   = $room['id'] ?? 0;
                         $roomName = $room['name'] ?? "Unbekannt";
-                        $floorID  = $floor['id'] ?? 0;
-                        $floorName = $floor['etagenname'] ?? "Haus";
 
                         $roomCatIdent = "Room_" . $roomID;
-                        $catRoomID = @IPS_GetObjectIDByIdent($roomCatIdent, $catRoomsID);
-                        if ($catRoomID === false) {
-                            $catRoomID = IPS_CreateCategory();
-                            IPS_SetName($catRoomID, $roomName);
-                            IPS_SetIdent($catRoomID, $roomCatIdent);
-                            IPS_SetParent($catRoomID, $catRoomsID);
+                        $roomCatId = @IPS_GetObjectIDByIdent($roomCatIdent, $floorCatId);
+                        if ($roomCatId === false) {
+                            $roomCatId = IPS_CreateCategory();
+                            IPS_SetName($roomCatId, $roomName);
+                            IPS_SetIdent($roomCatId, $roomCatIdent);
+                            IPS_SetParent($roomCatId, $floorCatId);
                         } else {
-                            IPS_SetName($catRoomID, $roomName);
+                            IPS_SetName($roomCatId, $roomName);
                         }
 
-                        // Hier dann die Variablen setzen
-                        $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 10, $catRoomID);
-                        $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 20, $catRoomID);
-                        $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 30, $catRoomID);
-                        $heatingId = $this->ensureVariable("Heating", "Heizung an", VARIABLETYPE_BOOLEAN, "~Switch", 40, $catRoomID);
+                        // Raum-Variablen
+                        $roomIdVar   = $this->ensureVariable("RoomID", "Raum-ID", VARIABLETYPE_INTEGER, "", 10, $roomCatId);
+                        $roomNameVar = $this->ensureVariable("RoomName", "Raumname", VARIABLETYPE_STRING, "", 20, $roomCatId);
 
-                        SetValue($tempId, (float) $room['temperature']);
-                        SetValue($targetId, (float) $room['target']);
-                        SetValue($stateId, (string) $room['state']);
-                        SetValue($heatingId, (bool) $room['heating']);
+                        SetValue($roomIdVar, (int) $roomID);
+                        SetValue($roomNameVar, (string) $roomName);
+
+                        // Placeholder für später (kommt erst wenn echte Werte verfügbar sind)
+                        $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 30, $roomCatId);
+                        $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 40, $roomCatId);
+                        $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 50, $roomCatId);
+                        $heatingId = $this->ensureVariable("Heating", "Heizung an", VARIABLETYPE_BOOLEAN, "~Switch", 60, $roomCatId);
+
+                        // Noch keine Werte → leer initialisieren
+                        SetValue($tempId, 0.0);
+                        SetValue($targetId, 0.0);
+                        SetValue($stateId, "");
+                        SetValue($heatingId, false);
                     }
                 }
             }
