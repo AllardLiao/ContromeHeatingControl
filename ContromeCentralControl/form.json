@@ -157,8 +157,8 @@
                     "name": "FloorID",
                     "onChange": "",
                     "validate": "",
-                    "value": 0,
-                    "minimum": 0,
+                    "value": 1,
+                    "minimum": 1,
                     "visible": false,
                     "width": "100px"
                 },
@@ -169,8 +169,8 @@
                     "name": "RoomID",
                     "onChange": "",
                     "validate": "",
-                    "value": 0,
-                    "minimum": 0,
+                    "value": 1,
+                    "minimum": 1,
                     "visible": true,
                     "width": "100px"
                 },
