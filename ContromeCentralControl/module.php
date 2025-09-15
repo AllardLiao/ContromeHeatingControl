@@ -223,6 +223,9 @@ class ContromeCentralControl extends IPSModuleStrict
         // System Info
         // ======================
         if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
+            //Existienz der VAriablen sicherstellen
+            $this->registerSystemInfoVariables();
+
             $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
 
             $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO], true);
@@ -248,6 +251,9 @@ class ContromeCentralControl extends IPSModuleStrict
         // Räume
         // ======================
         if (isset($data[ACTIONs::DATA_ROOMS])) {
+            //Existienz der VAriablen sicherstellen
+            $this->registerSystemInfoVariables();
+
             $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
 
             $rooms = json_decode($data[ACTIONs::DATA_ROOMS], true);
@@ -348,8 +354,9 @@ class ContromeCentralControl extends IPSModuleStrict
         $parentId = $this->InstanceID;
 
         // Kategorie "SystemInfo" sicherstellen
-        $sysCatId = @IPS_GetObjectIDByName("SystemInfo", $parentId);
-        if ($sysCatId === false) {
+        try {
+            $sysCatId = IPS_GetObjectIDByName("SystemInfo", $parentId);
+        } catch (Exception $e) {
             $sysCatId = IPS_CreateCategory();
             IPS_SetName($sysCatId, "SystemInfo");
             IPS_SetParent($sysCatId, $parentId);
