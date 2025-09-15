@@ -359,9 +359,10 @@ class ContromeGateway extends IPSModuleStrict
             $this->SetStatus(IS_BAD_JSON);
             return json_encode(false);
         }
-
-        $this->SendDebug(__FUNCTION__, "Systeminfo erfolgreich empfangen", 0);
-        $this->SetStatus(IS_ACTIVE);
+        else {
+            $this->SendDebug(__FUNCTION__, "Systeminfo received: " . print_r($data, true), 0);
+            $this->SetStatus(IS_ACTIVE);
+        }
 
         return json_encode($data);
     }
