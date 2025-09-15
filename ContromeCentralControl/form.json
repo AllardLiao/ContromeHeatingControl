@@ -106,7 +106,7 @@
     "actions": [
         {
             "type": "Label",
-            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server.\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work - check it using the \"Test Controme data delivry\"-button!\n"
+            "caption": "\nCheck connection to Controme Gateway and Controme Mini-Server.\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work - check it using the \"Test read room data\"-button!\n"
         },
         {
             "type": "RowLayout",
@@ -120,6 +120,22 @@
                 {
                     "type": "Label",
                     "name": "Result",
+                    "caption": " "
+                }
+            ]
+        },
+        {
+            "type": "RowLayout",
+            "items": [
+                {
+                    "type": "Button",
+                    "caption": "Read Data Now",
+                    "onClick": "IPS_RequestAction($id,'UpdateData',true);",
+                    "enabled": true
+                },
+                {
+                    "type": "Label",
+                    "name": "ResultUpdate",
                     "caption": " "
                 }
             ]

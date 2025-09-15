@@ -52,7 +52,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
 
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
-        $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateRoomData", true);');
+        $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "' . ACTIONs::UPDATE_DATA . '", true);');
 
         // Link zum Controme Gateway anpassen
         $ip = $this->RequestGatewayIPAddress();
@@ -86,6 +86,7 @@ class ContromeCentralControl extends IPSModuleStrict
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $this->registerSystemInfoVariables();
         }
+        $this->UpdateData();
 
         // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
@@ -158,8 +159,8 @@ class ContromeCentralControl extends IPSModuleStrict
         $data = json_decode($result, true);
         if (isset($data['name'])) {
             $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.", KL_MESSAGE);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.");
+            $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)", KL_MESSAGE);
+            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)");
         } else {
             $this->SendDebug(__FUNCTION__, "Fetching Data ok, but room $roomId data not valid!", 0);
             $this->LogMessage("TestReadRoomData: Fetching Data ok, but room data not valid!", KL_ERROR);
@@ -204,6 +205,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         $this->SendDebug(__FUNCTION__, "Room data updated", 0);
+        $this->UpdateFormField("ResultUpdate", "caption", "Room data updated at " . date("d.m.Y H:i:s"));
         $this->SetStatus(IS_ACTIVE);
 
         return $this->saveDataToVariables($data);
