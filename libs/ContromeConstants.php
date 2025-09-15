@@ -102,7 +102,8 @@ class CONTROME_PROFILES
 
     public static function getSetPointPresentation(): string
     {
-        return self::$setPointPresentation;
+        //return self::$setPointPresentation;
+        return "~Temperature";
     }
 
     public static function getLabelBetriebsart(int $value): string
