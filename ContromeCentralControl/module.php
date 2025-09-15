@@ -322,7 +322,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 30, $roomCatId);
                             $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 40, $roomCatId);
                             $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 50, $roomCatId);
-                            $humidityId = $this->ensureVariable("Humidity", "Luftfeuchte", VARIABLETYPE_FLOAT, "~Humidity", 60, $roomCatId);
+                            $humidityId = $this->ensureVariable("Humidity", "Luftfeuchte", VARIABLETYPE_FLOAT, "~Humidity.F", 60, $roomCatId);
                             SetValue($tempId, floatval($room['temperatur']));
                             SetValue($targetId, floatval($room['solltemperatur']));
                             SetValue($stateId, $room['betriebsart']);
