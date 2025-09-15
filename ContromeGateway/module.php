@@ -151,8 +151,13 @@ class ContromeGateway extends IPSModuleStrict
             case ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL:
                 // Wird von Child-Instanzen genutzt, aufruf ohne Parameter.
                 $result = [];
-                if (!empty($data[ACTIONs::DATA_SYSTEM_INFO])) {    $result[ACTIONs::DATA_SYSTEM_INFO] = $this->fetchSystemInfo();}
+                if (!empty($data[ACTIONs::DATA_SYSTEM_INFO])) {
+                    $sysInfo = $this->fetchSystemInfo();
+                    $this->SendDebug(__FUNCTION__, "fetchSystemInfo returned: " . print_r($sysInfo, true), 0);
+                    $result[ACTIONs::DATA_SYSTEM_INFO] = $sysInfo;
+                }
                 //if (!empty($data[ACTIONs::DATA_ROOMS])) {          $result[ACTIONs::DATA_ROOMS] = $this->fetchRooms();}
+                $this->SendDebug(__FUNCTION__, "Returning result: " . print_r($result, true), 0);
                 return json_encode($result);
                 break;
 
