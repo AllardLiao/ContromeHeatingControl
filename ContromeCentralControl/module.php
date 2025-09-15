@@ -213,16 +213,29 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function saveDataToVariables($data): bool
     {
+        $this->SendDebug(__FUNCTION__, "Received data: " . print_r($data, true), 0);
+
         // System Info
         if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
+            $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . $data[ACTIONs::DATA_SYSTEM_INFO], 0);
+
             $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO], true);
+            $this->SendDebug(__FUNCTION__, "Decoded info: " . print_r($info, true), 0);
+
+            if ($info === null) {
+                $this->SendDebug(__FUNCTION__, "JSON decode failed! Raw data: " . $data[ACTIONs::DATA_SYSTEM_INFO], 0);
+                return false;
+            }
+
             $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
             $this->SetValue("SysInfo_SWDate",       $info['sw-date'] ?? "");
             $this->SetValue("SysInfo_Branch",       $info['branch'] ?? "");
             $this->SetValue("SysInfo_OS",           $info['os'] ?? "");
             $this->SetValue("SysInfo_FBI",          $info['fbi'] ?? "");
             $this->SetValue("SysInfo_AppCompat",    $info['app-compatibility'] ?? false);
-            $this->SendDebug("saveDataToVariables", "SystemInfo updated", 0);
+            $this->SendDebug(__FUNCTION__, "SystemInfo updated with values", 0);
+        } else {
+            $this->SendDebug(__FUNCTION__, "SystemInfo not requested or not found in data", 0);
         }
         return true;
     }
