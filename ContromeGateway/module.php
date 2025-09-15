@@ -156,10 +156,13 @@ class ContromeGateway extends IPSModuleStrict
                     $this->SendDebug(__FUNCTION__, "fetchSystemInfo returned: " . print_r($sysInfo, true), 0);
                     $result[ACTIONs::DATA_SYSTEM_INFO] = $sysInfo;
                 }
-                if (!empty($data[ACTIONs::DATA_ROOMS])) {
+                if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS])) {
                     $rooms = $this->fetchRooms();
                     $this->SendDebug(__FUNCTION__, "fetchRooms returned: " . print_r($rooms, true), 0);
                     $result[ACTIONs::DATA_ROOMS] = $rooms;
+                    if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS])) {
+                        $result[ACTIONs::DATA_TEMPERATURS] = true; //Merker: er nutzt den gleichen Payload von rooms.
+                    }
                 }
                 $this->SendDebug(__FUNCTION__, "Returning result: " . print_r($result, true), 0);
                 return json_encode($result);
@@ -264,7 +267,7 @@ class ContromeGateway extends IPSModuleStrict
             return false;
         }
 
-        $url = $this->getJsonGet() . CONTROME_API::GET_ROOMS;
+        $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS;
         $opts = [
             "http" => [
                 "method"        => "GET",
@@ -341,7 +344,7 @@ class ContromeGateway extends IPSModuleStrict
 
         return true;
     }
-    
+
     public function fetchSystemInfo(): string
     {
         $ip      = $this->ReadPropertyString("IPAddress");

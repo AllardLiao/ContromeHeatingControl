@@ -249,7 +249,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // ======================
         // Räume
         // ======================
-        if (isset($data[ACTIONs::DATA_ROOMS])) {
+        if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_TEMPERATURS])) {
             //Existienz der VAriablen sicherstellen
             $this->registerRoomCategory();
 
@@ -318,17 +318,16 @@ class ContromeCentralControl extends IPSModuleStrict
                         SetValue($roomIdVar, (int) $roomID);
                         SetValue($roomNameVar, (string) $roomName);
 
-                        // Placeholder für später (kommt erst wenn echte Werte verfügbar sind)
-                        $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 30, $roomCatId);
-                        $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 40, $roomCatId);
-                        $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 50, $roomCatId);
-                        $heatingId = $this->ensureVariable("Heating", "Heizung an", VARIABLETYPE_BOOLEAN, "~Switch", 60, $roomCatId);
-
-                        // Noch keine Werte → leer initialisieren
-                        SetValue($tempId, 0.0);
-                        SetValue($targetId, 0.0);
-                        SetValue($stateId, "");
-                        SetValue($heatingId, false);
+                        if (isset($data[ACTIONs::DATA_TEMPERATURS])){
+                            $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 30, $roomCatId);
+                            $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 40, $roomCatId);
+                            $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 50, $roomCatId);
+                            $humidityId = $this->ensureVariable("Humidity", "Luftfeuchte", VARIABLETYPE_FLOAT, "~Humidity", 60, $roomCatId);
+                            SetValue($tempId, floatval($room['temperatur']));
+                            SetValue($targetId, floatval($room['solltemperatur']));
+                            SetValue($stateId, $room['betriebsart']);
+                            SetValue($humidityId, floatval($room['luftfeuchte']));
+                        }
                     }
                 }
             }
