@@ -232,16 +232,16 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, "Decoded info: " . print_r($info, true), 0);
             if (!is_array($info)) {
                 $this->SendDebug(__FUNCTION__, "SystemInfo is not array: " . print_r($info, true), 0);
-                return false;
             }
-
-            $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
-            $this->SetValue("SysInfo_SWDate",       $info['sw-date'] ?? "");
-            $this->SetValue("SysInfo_Branch",       $info['branch'] ?? "");
-            $this->SetValue("SysInfo_OS",           $info['os'] ?? "");
-            $this->SetValue("SysInfo_FBI",          $info['fbi'] ?? "");
-            $this->SetValue("SysInfo_AppCompat",    $info['app-compatibility'] ?? false);
-            $this->SendDebug(__FUNCTION__, "SystemInfo updated with values", 0);
+            else {
+                $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
+                $this->SetValue("SysInfo_SWDate",       $info['sw-date'] ?? "");
+                $this->SetValue("SysInfo_Branch",       $info['branch'] ?? "");
+                $this->SetValue("SysInfo_OS",           $info['os'] ?? "");
+                $this->SetValue("SysInfo_FBI",          $info['fbi'] ?? "");
+                $this->SetValue("SysInfo_AppCompat",    $info['app-compatibility'] ?? false);
+                $this->SendDebug(__FUNCTION__, "SystemInfo updated with values", 0);
+            }
         } else {
             $this->SendDebug(__FUNCTION__, "SystemInfo not requested or not found in data: " . print_r($data, true), 0);
         }
@@ -258,55 +258,55 @@ class ContromeCentralControl extends IPSModuleStrict
             $rooms = $data[ACTIONs::DATA_ROOMS];
             if (!is_array($rooms)) {
                 $this->SendDebug(__FUNCTION__, "Rooms is not array: " . print_r($rooms, true), 0);
-                return false;
             }
+            else {
+                // Root-Kategorie für Räume sicherstellen
+                $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
+                if ($catRoomsID === false) {
+                    $catRoomsID = IPS_CreateCategory();
+                    IPS_SetName($catRoomsID, "Rooms");
+                    IPS_SetIdent($catRoomsID, "Rooms");
+                    IPS_SetParent($catRoomsID, $this->InstanceID);
+                }
 
-            // Root-Kategorie für Räume sicherstellen
-            $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
-            if ($catRoomsID === false) {
-                $catRoomsID = IPS_CreateCategory();
-                IPS_SetName($catRoomsID, "Rooms");
-                IPS_SetIdent($catRoomsID, "Rooms");
-                IPS_SetParent($catRoomsID, $this->InstanceID);
-            }
+                // Räume durchgehen
+                foreach ($rooms as $floor) {
+                    if (!isset($floor['raeume']) || !is_array($floor['raeume'])) continue;
 
-            // Räume durchgehen
-            foreach ($rooms as $floor) {
-                if (!isset($floor['raeume']) || !is_array($floor['raeume'])) continue;
+                    foreach ($floor['raeume'] as $room) {
+                        $roomID   = $room['id'] ?? 0;
+                        $roomName = $room['name'] ?? "Unbekannt";
+                        $floorID  = $floor['id'] ?? 0;
+                        $floorName = $floor['etagenname'] ?? "Haus";
 
-                foreach ($floor['raeume'] as $room) {
-                    $roomID   = $room['id'] ?? 0;
-                    $roomName = $room['name'] ?? "Unbekannt";
-                    $floorID  = $floor['id'] ?? 0;
-                    $floorName = $floor['etagenname'] ?? "Haus";
+                        $roomCatIdent = "Room_" . $roomID;
+                        $catRoomID = @IPS_GetObjectIDByIdent($roomCatIdent, $catRoomsID);
+                        if ($catRoomID === false) {
+                            $catRoomID = IPS_CreateCategory();
+                            IPS_SetName($catRoomID, $roomName);
+                            IPS_SetIdent($catRoomID, $roomCatIdent);
+                            IPS_SetParent($catRoomID, $catRoomsID);
+                        } else {
+                            IPS_SetName($catRoomID, $roomName);
+                        }
 
-                    $roomCatIdent = "Room_" . $roomID;
-                    $catRoomID = @IPS_GetObjectIDByIdent($roomCatIdent, $catRoomsID);
-                    if ($catRoomID === false) {
-                        $catRoomID = IPS_CreateCategory();
-                        IPS_SetName($catRoomID, $roomName);
-                        IPS_SetIdent($catRoomID, $roomCatIdent);
-                        IPS_SetParent($catRoomID, $catRoomsID);
-                    } else {
-                        IPS_SetName($catRoomID, $roomName);
+                        // Hier dann die Variablen über MaintainVariable
+                        $this->MaintainVariable("RoomID_" . $roomID, "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
+                        IPS_SetParent($this->GetIDForIdent("RoomID_" . $roomID), $catRoomID);
+                        $this->SetValue("RoomID_" . $roomID, $roomID);
+
+                        $this->MaintainVariable("FloorID_" . $roomID, "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
+                        IPS_SetParent($this->GetIDForIdent("FloorID_" . $roomID), $catRoomID);
+                        $this->SetValue("FloorID_" . $roomID, $floorID);
+
+                        $this->MaintainVariable("FloorName_" . $roomID, "Etage", VARIABLETYPE_STRING, "", 30, true);
+                        IPS_SetParent($this->GetIDForIdent("FloorName_" . $roomID), $catRoomID);
+                        $this->SetValue("FloorName_" . $roomID, $floorName);
+
+                        $this->MaintainVariable("RoomName_" . $roomID, "Raumname", VARIABLETYPE_STRING, "", 40, true);
+                        IPS_SetParent($this->GetIDForIdent("RoomName_" . $roomID), $catRoomID);
+                        $this->SetValue("RoomName_" . $roomID, $roomName);
                     }
-
-                    // Hier dann die Variablen über MaintainVariable
-                    $this->MaintainVariable("RoomID_" . $roomID, "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
-                    IPS_SetParent($this->GetIDForIdent("RoomID_" . $roomID), $catRoomID);
-                    $this->SetValue("RoomID_" . $roomID, $roomID);
-
-                    $this->MaintainVariable("FloorID_" . $roomID, "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
-                    IPS_SetParent($this->GetIDForIdent("FloorID_" . $roomID), $catRoomID);
-                    $this->SetValue("FloorID_" . $roomID, $floorID);
-
-                    $this->MaintainVariable("FloorName_" . $roomID, "Etage", VARIABLETYPE_STRING, "", 30, true);
-                    IPS_SetParent($this->GetIDForIdent("FloorName_" . $roomID), $catRoomID);
-                    $this->SetValue("FloorName_" . $roomID, $floorName);
-
-                    $this->MaintainVariable("RoomName_" . $roomID, "Raumname", VARIABLETYPE_STRING, "", 40, true);
-                    IPS_SetParent($this->GetIDForIdent("RoomName_" . $roomID), $catRoomID);
-                    $this->SetValue("RoomName_" . $roomID, $roomName);
                 }
             }
         } else {
