@@ -86,7 +86,7 @@ class ContromeCentralControl extends IPSModuleStrict
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $this->registerSystemInfoVariables();
         }
-        $this->UpdateData();
+        //$this->UpdateData();
 
         // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
