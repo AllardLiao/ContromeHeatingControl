@@ -96,7 +96,7 @@ class ContromeGateway extends IPSModuleStrict
 
         switch($ident) {
             case ACTIONs::FETCH_ROOM_LIST:
-                $this->FetchRoomList();
+                $this->SetRoomList(); // Räume abrufen und im Konfig-Form speichern
                 break;
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection($value);
@@ -156,7 +156,11 @@ class ContromeGateway extends IPSModuleStrict
                     $this->SendDebug(__FUNCTION__, "fetchSystemInfo returned: " . print_r($sysInfo, true), 0);
                     $result[ACTIONs::DATA_SYSTEM_INFO] = $sysInfo;
                 }
-                //if (!empty($data[ACTIONs::DATA_ROOMS])) {          $result[ACTIONs::DATA_ROOMS] = $this->fetchRooms();}
+                if (!empty($data[ACTIONs::DATA_ROOMS])) {
+                    $rooms = $this->fetchRooms();
+                    $this->SendDebug(__FUNCTION__, "fetchRooms returned: " . print_r($rooms, true), 0);
+                    $result[ACTIONs::DATA_ROOMS] = $rooms;
+                }
                 $this->SendDebug(__FUNCTION__, "Returning result: " . print_r($result, true), 0);
                 return json_encode($result);
                 break;
@@ -242,55 +246,77 @@ class ContromeGateway extends IPSModuleStrict
     }
 
     /**
-     * Update Data from Controme MiniServer
-     *
-     * @return boolean
+     * Holt die Rohdaten der Räume vom Controme-API.
+     * Rückgabe:
+     *  - array (decoded JSON) bei Erfolg
+     *  - false bei Fehler
      */
-    public function FetchRoomList(): bool
+    public function FetchRooms(): array|false
     {
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
 
         if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug(__FUNCTION__, "IP, User oder Passwort nicht gesetzt!", 0);
+            $this->SendDebug(__FUNCTION__, "IP, user or password missing!", 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to login - missing argument.");
+            $this->SetStatus(IS_INACTIVE);
             return false;
         }
 
         $url = $this->getJsonGet() . CONTROME_API::GET_ROOMS;
         $opts = [
             "http" => [
-                "header" => "Authorization: Basic " . base64_encode("$user:$pass")
+                "method"        => "GET",
+                "header"        => "Authorization: Basic " . base64_encode("$user:$pass"),
+                "timeout"       => 5,
+                "ignore_errors" => true // damit wir Header/Body auch bei 4xx/5xx lesen können
             ]
         ];
         $context = stream_context_create($opts);
         $json = @file_get_contents($url, false, $context);
 
-        if ($json === FALSE) {
+        if ($json === false) {
+            $message = "HTTP request failed and no response header available.";
             if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
                 $message = $this->CheckHttpReponseHeader($http_response_header);
             }
-            else {
-                $message = "HTTP request failed and no response header available.";
-            }
-            $this->SendDebug(__FUNCTION__, "Fehler beim Abrufen von $url\n" . $message, 0);
+            $this->SendDebug(__FUNCTION__, "Error calling {$url}: {$message}", 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
-            // Etwas stimmt nicht
+            $this->LogMessage("fetchRooms: Request failed for {$url} ({$message})", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
         }
 
         $data = json_decode($json, true);
-        if ($data === null) {
-            $this->SendDebug(__FUNCTION__, "Fehler beim JSON-Decode", 0);
+        if (!is_array($data)) {
+            $this->SendDebug(__FUNCTION__, "Error: JSON-Decode", 0);
             $this->UpdateFormField("StatusInstances", "caption", "Failed to decode data.");
-            // Etwas stimmt nicht
+            $this->LogMessage("fetchRooms: invalid JSON from {$url}", KL_ERROR);
             $this->SetStatus(IS_BAD_JSON);
             return false;
         }
 
-        // Räume durchgehen und Json für Formular-Liste erstellen.
+        // Alles gut — zurückgeben (Rohdaten, Struktur wie API liefert)
+        return $data;
+    }
+
+    /**
+     * Build the form list and update the module/form UI.
+     * Liefert true bei Erfolg, false bei Fehler.
+     */
+    public function SetRoomList(): bool
+    {
+        $data = $this->FetchRooms();
+
+        if ($data === false) {
+            $this->SendDebug(__FUNCTION__, "No data received from Gateway!", 0);
+            // FetchRooms() hat bereits Status und FormCaption gesetzt, hier nur zusätzliche Info
+            $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
+            $this->SetStatus(IS_NO_CONNECTION);
+            return false;
+        }
+
         $formListJson = [];
         foreach ($data as $etage) {
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
@@ -304,12 +330,9 @@ class ContromeGateway extends IPSModuleStrict
                 ];
             }
         }
-        $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
-
-        // Räume Speichern - erfolgt automatisch durch das Form.
-        // $this->WriteAttributeString("Rooms", $formListJson);
 
         $this->SendDebug(__FUNCTION__, "Updated Controme Heating Data.", 0);
+        $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
         $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
@@ -318,7 +341,7 @@ class ContromeGateway extends IPSModuleStrict
 
         return true;
     }
-
+    
     public function fetchSystemInfo(): string
     {
         $ip      = $this->ReadPropertyString("IPAddress");

@@ -8,8 +8,9 @@ IP-Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen
 
 Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte und Betriebsart.
 
-Unterstützt Lesen und Schreiben über die Controme API.
+Unterstützt Lesen und Schreiben über die Controme API - V1 Branch.
 API Informatiaon can be found at https://support.controme.com/api/
+HINWEIS: Controme hat die Entwicklung der V2 angekündigt - diese ist momentan (für mich) noch nicht testbar.
 
 Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Visualisierung.
 

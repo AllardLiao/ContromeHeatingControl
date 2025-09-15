@@ -6,10 +6,10 @@ namespace Controme;
 class GUIDs
 {
     // Gemeinsame DataFlow-GUID für Gateway <-> Child
-    public const DATAFLOW = '{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}';
+    public const DATAFLOW             = '{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}';
 
     // --- Modul GUIDs (Instanzen) ---
-    public const LIBRARY              = '{89077CE1-F783-DE03-9291-0EEF49585535}'; // deine library.json
+    public const LIBRARY              = '{89077CE1-F783-DE03-9291-0EEF49585535}';
     public const GATEWAY              = '{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}';
     public const CENTRAL_CONTROL      = '{A19ABE82-5AB1-7969-3851-E6446DECEBA9}';
     public const ROOM_THERMOSTAT      = '{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}';

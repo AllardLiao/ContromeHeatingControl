@@ -83,10 +83,14 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         // Sicherstellen, dass die Variablen registriert sind
+        // SystemInfo vorbereiten/anlegen
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $this->registerSystemInfoVariables();
         }
-        //$this->UpdateData();
+        // Rooms vorbereiten/anlegen
+        if ($this->ReadPropertyBoolean("ShowRooms")) {
+            $this->registerRoomCategory();
+        }
 
         // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
@@ -215,7 +219,9 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         $this->SendDebug(__FUNCTION__, "Received data: " . print_r($data, true), 0);
 
+        // ======================
         // System Info
+        // ======================
         if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
             $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
 
@@ -237,6 +243,72 @@ class ContromeCentralControl extends IPSModuleStrict
         } else {
             $this->SendDebug(__FUNCTION__, "SystemInfo not requested or not found in data: " . print_r($data, true), 0);
         }
+
+        // ======================
+        // Räume
+        // ======================
+        if (isset($data[ACTIONs::DATA_ROOMS])) {
+            $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
+
+            $rooms = json_decode($data[ACTIONs::DATA_ROOMS], true);
+            if ($rooms === null) {
+                $this->SendDebug(__FUNCTION__, "JSON decode failed (rooms)! Raw data: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
+                return false;
+            }
+
+            // Root-Kategorie für Räume sicherstellen
+            $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
+            if ($catRoomsID === false) {
+                $catRoomsID = IPS_CreateCategory();
+                IPS_SetName($catRoomsID, "Rooms");
+                IPS_SetIdent($catRoomsID, "Rooms");
+                IPS_SetParent($catRoomsID, $this->InstanceID);
+            }
+
+            // Räume durchgehen
+            foreach ($rooms as $floor) {
+                if (!isset($floor['raeume']) || !is_array($floor['raeume'])) continue;
+
+                foreach ($floor['raeume'] as $room) {
+                    $roomID   = $room['id'] ?? 0;
+                    $roomName = $room['name'] ?? "Unbekannt";
+                    $floorID  = $floor['id'] ?? 0;
+                    $floorName = $floor['etagenname'] ?? "Haus";
+
+                    // Kategorie für Raum sicherstellen
+                    $roomCatIdent = "Room_" . $roomID;
+                    $catRoomID = @IPS_GetObjectIDByIdent($roomCatIdent, $catRoomsID);
+                    if ($catRoomID === false) {
+                        $catRoomID = IPS_CreateCategory();
+                        IPS_SetName($catRoomID, $roomName);
+                        IPS_SetIdent($catRoomID, $roomCatIdent);
+                        IPS_SetParent($catRoomID, $catRoomsID);
+                    } else {
+                        IPS_SetName($catRoomID, $roomName); // evtl. geänderten Namen übernehmen
+                    }
+
+                    // Basisvariablen registrieren
+                    $this->RegisterVariableInteger("RoomID", "Room ID", "", 10);
+                    IPS_SetParent($this->GetIDForIdent("RoomID"), $catRoomID);
+                    $this->SetValue("RoomID", $roomID);
+
+                    $this->RegisterVariableInteger("FloorID", "Floor ID", "", 20);
+                    IPS_SetParent($this->GetIDForIdent("FloorID"), $catRoomID);
+                    $this->SetValue("FloorID", $floorID);
+
+                    $this->RegisterVariableString("FloorName", "Etage", "", 30);
+                    IPS_SetParent($this->GetIDForIdent("FloorName"), $catRoomID);
+                    $this->SetValue("FloorName", $floorName);
+
+                    $this->RegisterVariableString("RoomName", "Raumname", "", 40);
+                    IPS_SetParent($this->GetIDForIdent("RoomName"), $catRoomID);
+                    $this->SetValue("RoomName", $roomName);
+                }
+            }
+        } else {
+            $this->SendDebug(__FUNCTION__, "Room info not requested or not found in data: " . print_r($data, true), 0);
+        }
+
         return true;
     }
 
@@ -273,14 +345,48 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function registerSystemInfoVariables(): void
     {
+        $parentId = $this->InstanceID;
+
+        // Kategorie "SystemInfo" sicherstellen
+        $sysCatId = @IPS_GetObjectIDByName("SystemInfo", $parentId);
+        if ($sysCatId === false) {
+            $sysCatId = IPS_CreateCategory();
+            IPS_SetName($sysCatId, "SystemInfo");
+            IPS_SetParent($sysCatId, $parentId);
+        }
+
+        // Variablen in der Kategorie anlegen
         $this->RegisterVariableString("SysInfo_HW", "Hardware", "", 10);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_HW"), $sysCatId);
+
         $this->RegisterVariableString("SysInfo_SWDate", "Software Datum", "", 11);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_SWDate"), $sysCatId);
+
         $this->RegisterVariableString("SysInfo_Branch", "Branch", "", 12);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_Branch"), $sysCatId);
+
         $this->RegisterVariableString("SysInfo_OS", "Betriebssystem", "", 13);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_OS"), $sysCatId);
+
         $this->RegisterVariableString("SysInfo_FBI", "Filesystem Build", "", 14);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_FBI"), $sysCatId);
+
         $this->RegisterVariableBoolean("SysInfo_AppCompat", "App kompatibel", "~Switch", 15);
+        IPS_SetParent($this->GetIDForIdent("SysInfo_AppCompat"), $sysCatId);
     }
 
+    private function registerRoomCategory(): void
+    {
+        $parentId = $this->InstanceID;
+
+        // Kategorie "Rooms" sicherstellen
+        $roomsCatId = @IPS_GetObjectIDByName("Rooms", $parentId);
+        if ($roomsCatId === false) {
+            $roomsCatId = IPS_CreateCategory();
+            IPS_SetName($roomsCatId, "Rooms");
+            IPS_SetParent($roomsCatId, $parentId);
+        }
+    }
     /**
      * Is called by pressing the button "Check Connection" from the instance configuration
      *
