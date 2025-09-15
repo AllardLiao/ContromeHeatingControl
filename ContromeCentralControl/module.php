@@ -217,13 +217,13 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // System Info
         if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
-            $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . $data[ACTIONs::DATA_SYSTEM_INFO], 0);
+            $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
 
             $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO], true);
             $this->SendDebug(__FUNCTION__, "Decoded info: " . print_r($info, true), 0);
 
             if ($info === null) {
-                $this->SendDebug(__FUNCTION__, "JSON decode failed! Raw data: " . $data[ACTIONs::DATA_SYSTEM_INFO], 0);
+                $this->SendDebug(__FUNCTION__, "JSON decode failed! Raw data: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
                 return false;
             }
 
@@ -235,7 +235,7 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SetValue("SysInfo_AppCompat",    $info['app-compatibility'] ?? false);
             $this->SendDebug(__FUNCTION__, "SystemInfo updated with values", 0);
         } else {
-            $this->SendDebug(__FUNCTION__, "SystemInfo not requested or not found in data", 0);
+            $this->SendDebug(__FUNCTION__, "SystemInfo not requested or not found in data: " . print_r($data, true), 0);
         }
         return true;
     }
