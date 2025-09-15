@@ -160,7 +160,7 @@ class ContromeGateway extends IPSModuleStrict
                     $rooms = $this->fetchRooms();
                     $this->SendDebug(__FUNCTION__, "fetchRooms returned: " . print_r($rooms, true), 0);
                     $result[ACTIONs::DATA_ROOMS] = $rooms;
-                    if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS])) {
+                    if (!empty($data[ACTIONs::DATA_TEMPERATURS])) {
                         $result[ACTIONs::DATA_TEMPERATURS] = true; //Merker: er nutzt den gleichen Payload von rooms.
                     }
                 }
