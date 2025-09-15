@@ -290,22 +290,16 @@ class ContromeCentralControl extends IPSModuleStrict
                             IPS_SetName($catRoomID, $roomName);
                         }
 
-                        // Hier dann die Variablen über MaintainVariable
-                        $this->MaintainVariable("RoomID_" . $roomID, "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
-                        IPS_SetParent($this->GetIDForIdent("RoomID_" . $roomID), $catRoomID);
-                        $this->SetValue("RoomID_" . $roomID, $roomID);
+                        // Hier dann die Variablen setzen
+                        $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 10, $catRoomID);
+                        $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 20, $catRoomID);
+                        $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 30, $catRoomID);
+                        $heatingId = $this->ensureVariable("Heating", "Heizung an", VARIABLETYPE_BOOLEAN, "~Switch", 40, $catRoomID);
 
-                        $this->MaintainVariable("FloorID_" . $roomID, "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
-                        IPS_SetParent($this->GetIDForIdent("FloorID_" . $roomID), $catRoomID);
-                        $this->SetValue("FloorID_" . $roomID, $floorID);
-
-                        $this->MaintainVariable("FloorName_" . $roomID, "Etage", VARIABLETYPE_STRING, "", 30, true);
-                        IPS_SetParent($this->GetIDForIdent("FloorName_" . $roomID), $catRoomID);
-                        $this->SetValue("FloorName_" . $roomID, $floorName);
-
-                        $this->MaintainVariable("RoomName_" . $roomID, "Raumname", VARIABLETYPE_STRING, "", 40, true);
-                        IPS_SetParent($this->GetIDForIdent("RoomName_" . $roomID), $catRoomID);
-                        $this->SetValue("RoomName_" . $roomID, $roomName);
+                        SetValue($tempId, (float) $room['temperature']);
+                        SetValue($targetId, (float) $room['target']);
+                        SetValue($stateId, (string) $room['state']);
+                        SetValue($heatingId, (bool) $room['heating']);
                     }
                 }
             }
@@ -374,15 +368,16 @@ class ContromeCentralControl extends IPSModuleStrict
         $parentId = $this->InstanceID;
 
         // Kategorie "Rooms" sicherstellen
-        $roomsCatId = @IPS_GetObjectIDByName("Rooms", $parentId);
+        $roomsCatId = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
         if ($roomsCatId === false) {
             $roomsCatId = IPS_CreateCategory();
             IPS_SetName($roomsCatId, "Rooms");
-            IPS_SetParent($roomsCatId, $parentId);
+            IPS_SetIdent($roomsCatId, "Rooms");
+            IPS_SetParent($roomsCatId, $this->InstanceID);
         }
     }
 
-    private function ensureVariable(string $ident, string $name, int $type, string $profile, int $position, int $parentId): void
+    private function ensureVariable(string $ident, string $name, int $type, string $profile, int $position, int $parentId): int
     {
         $varId = @IPS_GetObjectIDByIdent($ident, $parentId);
         if ($varId === false) {
@@ -394,7 +389,15 @@ class ContromeCentralControl extends IPSModuleStrict
                 IPS_SetVariableCustomProfile($varId, $profile);
             }
             IPS_SetPosition($varId, $position);
+        } else {
+            // Optional: vorhandene Variablen aktualisieren
+            IPS_SetName($varId, $name);
+            IPS_SetPosition($varId, $position);
+            if ($profile != "") {
+                IPS_SetVariableCustomProfile($varId, $profile);
+            }
         }
+        return $varId;
     }
     /**
      * Is called by pressing the button "Check Connection" from the instance configuration
