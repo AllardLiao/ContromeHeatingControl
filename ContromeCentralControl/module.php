@@ -357,26 +357,26 @@ class ContromeCentralControl extends IPSModuleStrict
             $sysCatId = IPS_CreateCategory();
             IPS_SetName($sysCatId, "SystemInfo");
             IPS_SetParent($sysCatId, $parentId);
+
+            // Variablen in der Kategorie anlegen
+            $this->MaintainVariable("SysInfo_HW", "Hardware", VARIABLETYPE_STRING, "", 10, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_HW"), $sysCatId);
+
+            $this->MaintainVariable("SysInfo_SWDate", "Software Datum", VARIABLETYPE_STRING, "", 11, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_SWDate"), $sysCatId);
+
+            $this->MaintainVariable("SysInfo_Branch", "Branch", VARIABLETYPE_STRING, "", 12, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_Branch"), $sysCatId);
+
+            $this->MaintainVariable("SysInfo_OS", "Betriebssystem", VARIABLETYPE_STRING, "", 13, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_OS"), $sysCatId);
+
+            $this->MaintainVariable("SysInfo_FBI", "Filesystem Build", VARIABLETYPE_STRING, "", 14, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_FBI"), $sysCatId);
+
+            $this->MaintainVariable("SysInfo_AppCompat", "App kompatibel", VARIABLETYPE_BOOLEAN, "~Switch", 15, true);
+            IPS_SetParent($this->GetIDForIdent("SysInfo_AppCompat"), $sysCatId);
         }
-
-        // Variablen in der Kategorie anlegen
-        $this->MaintainVariable("SysInfo_HW", "Hardware", VARIABLETYPE_STRING, "", 10, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_HW"), $sysCatId);
-
-        $this->MaintainVariable("SysInfo_SWDate", "Software Datum", VARIABLETYPE_STRING, "", 11, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_SWDate"), $sysCatId);
-
-        $this->MaintainVariable("SysInfo_Branch", "Branch", VARIABLETYPE_STRING, "", 12, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_Branch"), $sysCatId);
-
-        $this->MaintainVariable("SysInfo_OS", "Betriebssystem", VARIABLETYPE_STRING, "", 13, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_OS"), $sysCatId);
-
-        $this->MaintainVariable("SysInfo_FBI", "Filesystem Build", VARIABLETYPE_STRING, "", 14, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_FBI"), $sysCatId);
-
-        $this->MaintainVariable("SysInfo_AppCompat", "App kompatibel", VARIABLETYPE_BOOLEAN, "~Switch", 15, true);
-        IPS_SetParent($this->GetIDForIdent("SysInfo_AppCompat"), $sysCatId);
     }
 
     private function registerRoomCategory(): void
