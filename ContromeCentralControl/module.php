@@ -215,7 +215,7 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         // System Info
         if ($this->ReadPropertyBoolean("ShowSystemInfo") && isset($data[ACTIONs::DATA_SYSTEM_INFO])) {
-            $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO]);
+            $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO], true);
             $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
             $this->SetValue("SysInfo_SWDate",       $info['sw-date'] ?? "");
             $this->SetValue("SysInfo_Branch",       $info['branch'] ?? "");
