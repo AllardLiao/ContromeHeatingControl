@@ -228,11 +228,10 @@ class ContromeCentralControl extends IPSModuleStrict
 
             $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
 
-            $info = json_decode($data[ACTIONs::DATA_SYSTEM_INFO], true);
+            $info = $data[ACTIONs::DATA_SYSTEM_INFO];
             $this->SendDebug(__FUNCTION__, "Decoded info: " . print_r($info, true), 0);
-
-            if ($info === null) {
-                $this->SendDebug(__FUNCTION__, "JSON decode failed! Raw data: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
+            if (!is_array($info)) {
+                $this->SendDebug(__FUNCTION__, "SystemInfo is not array: " . print_r($info, true), 0);
                 return false;
             }
 
@@ -256,9 +255,9 @@ class ContromeCentralControl extends IPSModuleStrict
 
             $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
 
-            $rooms = json_decode($data[ACTIONs::DATA_ROOMS], true);
-            if ($rooms === null) {
-                $this->SendDebug(__FUNCTION__, "JSON decode failed (rooms)! Raw data: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
+            $rooms = $data[ACTIONs::DATA_ROOMS];
+            if (!is_array($rooms)) {
+                $this->SendDebug(__FUNCTION__, "Rooms is not array: " . print_r($rooms, true), 0);
                 return false;
             }
 
@@ -281,7 +280,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     $floorID  = $floor['id'] ?? 0;
                     $floorName = $floor['etagenname'] ?? "Haus";
 
-                    // Kategorie für Raum sicherstellen
                     $roomCatIdent = "Room_" . $roomID;
                     $catRoomID = @IPS_GetObjectIDByIdent($roomCatIdent, $catRoomsID);
                     if ($catRoomID === false) {
@@ -290,23 +288,23 @@ class ContromeCentralControl extends IPSModuleStrict
                         IPS_SetIdent($catRoomID, $roomCatIdent);
                         IPS_SetParent($catRoomID, $catRoomsID);
                     } else {
-                        IPS_SetName($catRoomID, $roomName); // evtl. geänderten Namen übernehmen
+                        IPS_SetName($catRoomID, $roomName);
                     }
 
-                    // Basisvariablen registrieren
-                    $this->RegisterVariableInteger("RoomID", "Room ID", "", 10);
+                    // Hier dann die Variablen über MaintainVariable
+                    $this->MaintainVariable("RoomID", "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
                     IPS_SetParent($this->GetIDForIdent("RoomID"), $catRoomID);
                     $this->SetValue("RoomID", $roomID);
 
-                    $this->RegisterVariableInteger("FloorID", "Floor ID", "", 20);
+                    $this->MaintainVariable("FloorID", "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
                     IPS_SetParent($this->GetIDForIdent("FloorID"), $catRoomID);
                     $this->SetValue("FloorID", $floorID);
 
-                    $this->RegisterVariableString("FloorName", "Etage", "", 30);
+                    $this->MaintainVariable("FloorName", "Etage", VARIABLETYPE_STRING, "", 30, true);
                     IPS_SetParent($this->GetIDForIdent("FloorName"), $catRoomID);
                     $this->SetValue("FloorName", $floorName);
 
-                    $this->RegisterVariableString("RoomName", "Raumname", "", 40);
+                    $this->MaintainVariable("RoomName", "Raumname", VARIABLETYPE_STRING, "", 40, true);
                     IPS_SetParent($this->GetIDForIdent("RoomName"), $catRoomID);
                     $this->SetValue("RoomName", $roomName);
                 }
@@ -362,22 +360,22 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         // Variablen in der Kategorie anlegen
-        $this->RegisterVariableString("SysInfo_HW", "Hardware", "", 10);
+        $this->MaintainVariable("SysInfo_HW", "Hardware", VARIABLETYPE_STRING, "", 10, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_HW"), $sysCatId);
 
-        $this->RegisterVariableString("SysInfo_SWDate", "Software Datum", "", 11);
+        $this->MaintainVariable("SysInfo_SWDate", "Software Datum", VARIABLETYPE_STRING, "", 11, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_SWDate"), $sysCatId);
 
-        $this->RegisterVariableString("SysInfo_Branch", "Branch", "", 12);
+        $this->MaintainVariable("SysInfo_Branch", "Branch", VARIABLETYPE_STRING, "", 12, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_Branch"), $sysCatId);
 
-        $this->RegisterVariableString("SysInfo_OS", "Betriebssystem", "", 13);
+        $this->MaintainVariable("SysInfo_OS", "Betriebssystem", VARIABLETYPE_STRING, "", 13, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_OS"), $sysCatId);
 
-        $this->RegisterVariableString("SysInfo_FBI", "Filesystem Build", "", 14);
+        $this->MaintainVariable("SysInfo_FBI", "Filesystem Build", VARIABLETYPE_STRING, "", 14, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_FBI"), $sysCatId);
 
-        $this->RegisterVariableBoolean("SysInfo_AppCompat", "App kompatibel", "~Switch", 15);
+        $this->MaintainVariable("SysInfo_AppCompat", "App kompatibel", VARIABLETYPE_BOOLEAN, "~Switch", 15, true);
         IPS_SetParent($this->GetIDForIdent("SysInfo_AppCompat"), $sysCatId);
     }
 
