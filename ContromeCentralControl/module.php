@@ -209,7 +209,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         $this->SendDebug(__FUNCTION__, "Room data updated", 0);
-        $this->UpdateFormField("ResultUpdate", "caption", "Room data updated at " . date("d.m.Y H:i:s"));
+        $this->UpdateFormField("ResultUpdate", "caption", "Data updated at " . date("d.m.Y H:i:s"));
         $this->SetStatus(IS_ACTIVE);
 
         return $this->saveDataToVariables($data);
@@ -292,21 +292,21 @@ class ContromeCentralControl extends IPSModuleStrict
                     }
 
                     // Hier dann die Variablen über MaintainVariable
-                    $this->MaintainVariable("RoomID", "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
-                    IPS_SetParent($this->GetIDForIdent("RoomID"), $catRoomID);
-                    $this->SetValue("RoomID", $roomID);
+                    $this->MaintainVariable("RoomID_" . $roomID, "Room ID", VARIABLETYPE_INTEGER, "", 10, true);
+                    IPS_SetParent($this->GetIDForIdent("RoomID_" . $roomID), $catRoomID);
+                    $this->SetValue("RoomID_" . $roomID, $roomID);
 
-                    $this->MaintainVariable("FloorID", "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
-                    IPS_SetParent($this->GetIDForIdent("FloorID"), $catRoomID);
-                    $this->SetValue("FloorID", $floorID);
+                    $this->MaintainVariable("FloorID_" . $roomID, "Floor ID", VARIABLETYPE_INTEGER, "", 20, true);
+                    IPS_SetParent($this->GetIDForIdent("FloorID_" . $roomID), $catRoomID);
+                    $this->SetValue("FloorID_" . $roomID, $floorID);
 
-                    $this->MaintainVariable("FloorName", "Etage", VARIABLETYPE_STRING, "", 30, true);
-                    IPS_SetParent($this->GetIDForIdent("FloorName"), $catRoomID);
-                    $this->SetValue("FloorName", $floorName);
+                    $this->MaintainVariable("FloorName_" . $roomID, "Etage", VARIABLETYPE_STRING, "", 30, true);
+                    IPS_SetParent($this->GetIDForIdent("FloorName_" . $roomID), $catRoomID);
+                    $this->SetValue("FloorName_" . $roomID, $floorName);
 
-                    $this->MaintainVariable("RoomName", "Raumname", VARIABLETYPE_STRING, "", 40, true);
-                    IPS_SetParent($this->GetIDForIdent("RoomName"), $catRoomID);
-                    $this->SetValue("RoomName", $roomName);
+                    $this->MaintainVariable("RoomName_" . $roomID, "Raumname", VARIABLETYPE_STRING, "", 40, true);
+                    IPS_SetParent($this->GetIDForIdent("RoomName_" . $roomID), $catRoomID);
+                    $this->SetValue("RoomName_" . $roomID, $roomName);
                 }
             }
         } else {
