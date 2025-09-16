@@ -33,7 +33,7 @@
                             "caption": "Show main elements (always on)",
                             "value": true,
                             "enabled": false,
-                            "width": "50%"
+                            "width": "400px"
                         },
                         {
                             "type": "SelectColor",
@@ -51,7 +51,7 @@
                             "name": "ShowSystemInfo",
                             "caption": "Show system information (Controme hardware & software)",
                             "value": true,
-                            "width": "50%"
+                            "width": "400px"
                         },
                         {
                             "type": "SelectColor",
@@ -69,7 +69,7 @@
                             "name": "ShowRooms",
                             "caption": "Show room information (name, floor)",
                             "value": true,
-                            "width": "50%"
+                            "width": "400px"
                         },
                         {
                             "type": "SelectColor",
@@ -87,7 +87,7 @@
                             "name": "ShowRoomData",
                             "caption": "Show room data (temperature, humidity, setpoint, mode)",
                             "value": true,
-                            "width": "50%"
+                            "width": "400px"
                         },
                         {
                             "type": "Label",
@@ -103,7 +103,7 @@
                             "name": "ShowRoomOffsets",
                             "caption": "Show room offset information (weather, timer, etc.) - not jet implemented :-(",
                             "value": false,
-                            "width": "50%",
+                            "width": "400px",
                             "enabled": false
                         }
                     ]
@@ -116,7 +116,7 @@
                             "name": "ShowVTR",
                             "caption": "Show flow temperature (actual, setpoint, termperature details) - not jet implemented :-(",
                             "value": false,
-                            "width": "50%",
+                            "width": "400px",
                             "enabled": false
                         }
                     ]
@@ -129,7 +129,7 @@
                             "name": "ShowTimer",
                             "caption": "Show Controme timer (planned heating periods) - not jet implemented :-(",
                             "value": false,
-                            "width": "50%",
+                            "width": "400px",
                             "enabled": false
                         }
                     ]
@@ -142,7 +142,7 @@
                             "name": "ShowCalendar",
                             "caption": "Show Controme calendar (entries from installed/linked calendars - not jet implemented :-(",
                             "value": false,
-                            "width": "50%",
+                            "width": "400px",
                             "enabled": false
                         }
                     ]

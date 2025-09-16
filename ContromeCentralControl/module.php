@@ -530,9 +530,9 @@ class ContromeCentralControl extends IPSModuleStrict
         // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
-        $html = str_replace('<!--COLOR_MAIN_TILES-->', $this->ReadPropertyString("VisuColorMainTiles"), $html);
-        $html = str_replace('<!--COLOR_ROOM_TILES-->', $this->ReadPropertyString("VisuColorRoomTiles"), $html);
-        $html = str_replace('<!--COLOR_SYSTEM_INFO-->', $this->ReadPropertyString("VisuColorSystemInfoTile"), $html);
+        $html = str_replace('<!--COLOR_MAIN_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorMainTiles")), 6, '0', STR_PAD_LEFT), $html);
+        $html = str_replace('<!--COLOR_ROOM_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorRoomTiles")), 6, '0', STR_PAD_LEFT), $html);
+        $html = str_replace('<!--COLOR_SYSTEM_INFO-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorSystemInfoTile")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
