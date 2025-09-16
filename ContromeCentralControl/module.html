@@ -64,41 +64,68 @@
         <select id="mode_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
+        <button id="btn_set_mode">Setzen</button>
     </div>
-
+    <script>
+    document.getElementById('btn_set_mode').addEventListener('click', function() {
+        const mode = parseInt(document.getElementById('mode_select').value);
+        const roomId = parseInt(document.getElementById('room_select_mode').value);
+        RequestAction('Mode', { roomId: roomId, mode: mode });
+    });
+    </script>
     <!-- Tile 2: Ist-Temperatur -->
     <div class="top-tile" id="tile_temperature">
-        <label>Ist-Temperatur</label>
+        <label>Permanente Soll-Temperatur</label>
         <input type="number" id="input_temp" value="<!--MAX_TEMP-->" />
         <select id="temp_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
+        <button id="btn_set_temp">Setzen</button>
     </div>
-
+    <script>
+    document.getElementById('btn_set_temp').addEventListener('click', function() {
+        const mode = parseInt(document.getElementById('input_temp').value);
+        const roomId = parseInt(document.getElementById('temp_room_select').value);
+        RequestAction('Mode', { roomId: roomId, mode: mode });
+    });
+    </script>
     <!-- Tile 3: Zieltemperatur -->
     <div class="top-tile" id="tile_target">
-        <label>Zieltemperatur (h)</label>
-        <input type="number" id="input_target_hours" value="1" />
+        <label>Temporäre Soll-Temperatur (h)</label>
+        <input type="number" id="input_target_temp" value="<!--MAX_TEMP-->" />
+        <div class="tile-duration">
+            <label for="duration_select">Dauer</label>
+            <select id="duration_select">
+                <!--DURATION_OPTIONS-->
+            </select>
+        </div>
         <select id="target_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
+        <button id="btn_set_target">Setzen</button>
     </div>
+    <script>
+    document.getElementById('btn_set_target').addEventListener('click', function() {
+        const mode = parseInt(document.getElementById('input_target_temp').value);
+        const roomId = parseInt(document.getElementById('target_room_select').value);
+        const duration = parseInt(document.getElementById('duration_select').value);
+        RequestAction('Mode', { roomId: roomId, mode: mode, duration: duration });
+    });
+    </script>
 </div>
 
-<!-- Dynamische Raumtiles -->
-<div class="room-tiles">
-    <!--ROOM_TILES-->
+<!-- Räume anzeigen -->
+<div class="rooms-container" id="rooms-container">
+    <!-- Dynamische Raumtiles -->
+    <div class="room-tiles">
+        <!--ROOM_TILES-->
+    </div>
 </div>
 
 <!-- Systeminformationen -->
 <div class="system-info">
     <h3>System Info</h3>
     <!--SYS_INFO-->
-</div>
-
-<!-- Räume anzeigen -->
-<div class="rooms-container" id="rooms-container">
-    <!-- Dynamisch erzeugte Raumtiles -->
 </div>
 
 <!-- Systeminfos -->
@@ -111,58 +138,4 @@
     <div><strong>App kompatibel:</strong> <span id="sys-appcompat">--</span></div>
 </div>
 
-<script>
-(function() {
-    const roomsContainer = document.getElementById('rooms-container');
 
-    function updateRooms(roomsData) {
-        roomsContainer.innerHTML = '';
-        roomsData.forEach(floor => {
-            floor.raeume.forEach(room => {
-                const div = document.createElement('div');
-                div.className = 'room-tile';
-                div.innerHTML = `
-                    <strong>${room.name}</strong><br>
-                    Ist-Temp: ${room.temperatur ?? '--'}°C<br>
-                    Soll-Temp: ${room.solltemperatur ?? '--'}°C<br>
-                    Luftfeuchte: ${room.luftfeuchte ?? '--'}%<br>
-                    Betriebsart: ${room.betriebsart ?? '--'}<br>
-                    ${room.remaining_time > 0 ? `Restzeit: ${Math.floor(room.remaining_time/60)}:${room.remaining_time % 60} Std` : ''}
-                    ${room.perm_solltemperatur ? `<br>Perm Soll: ${room.perm_solltemperatur}` : ''}
-                `;
-                roomsContainer.appendChild(div);
-
-                // Dropdowns aktualisieren
-                ['select-room-mode','select-room-temp','select-room-target'].forEach(selId => {
-                    const sel = document.getElementById(selId);
-                    if (!Array.from(sel.options).some(o => o.value == room.id)) {
-                        const opt = document.createElement('option');
-                        opt.value = room.id;
-                        opt.text = room.name;
-                        sel.add(opt);
-                    }
-                });
-            });
-        });
-    }
-
-    function updateSystemInfo(info) {
-        document.getElementById('sys-hw').textContent = info.hw ?? '--';
-        document.getElementById('sys-swdate').textContent = info['sw-date'] ?? '--';
-        document.getElementById('sys-branch').textContent = info.branch ?? '--';
-        document.getElementById('sys-os').textContent = info.os ?? '--';
-        document.getElementById('sys-fbi').textContent = info.fbi ?? '--';
-        document.getElementById('sys-appcompat').textContent = info['app-compatibility'] ? 'Ja' : 'Nein';
-    }
-
-    // Placeholder: initial befüllen
-    updateRooms([]);
-    updateSystemInfo({});
-
-    // Exportieren für das Modul, das die Daten aktualisiert
-    window.UpdateCentralControlTile = function(data) {
-        if (data.rooms) updateRooms(data.rooms);
-        if (data.systemInfo) updateSystemInfo(data.systemInfo);
-    }
-})();
-</script>

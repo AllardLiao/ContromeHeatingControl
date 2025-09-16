@@ -120,9 +120,14 @@ class ContromeCentralControl extends IPSModuleStrict
             case ACTIONs::TEST_READ_ROOM_DATA:
                 $this->TestReadRoomData();
                 break;
-            case 'visu_setpoint':
-                //$this->WriteSetpoint((float)$value);
-                //$this->updateVisualization();
+            case 'Mode':
+                $this->SetRoomMode((int)$value['roomId'], (int)$value['mode']);
+                break;
+            case 'Temperature':
+                $this->SetRoomTemperature((int)$value['roomId'], floatval($value['temperature']));
+                break;
+            case 'Target':
+                $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration']));
                 break;
         default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
@@ -508,6 +513,12 @@ class ContromeCentralControl extends IPSModuleStrict
             $roomTilesHtml .= '</div>';
         }
         // ========================
+        // 3. Dropdown für Dauer in Stunden (0–24)
+        $durationOptions = '';
+        for ($h = 0; $h <= 24; $h++) {
+            $durationOptions .= '<option value="' . $h . '">' . $h . 'h</option>';
+        }
+        // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
@@ -515,6 +526,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
         $html = str_replace('<!--SYS_INFO-->', $sysHtml, $html);
         $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
+        $html = str_replace('<!--DURATION_OPTIONS-->', $durationOptions, $html);
         $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
         return $html;
     }
