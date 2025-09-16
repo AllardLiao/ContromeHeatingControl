@@ -472,7 +472,7 @@ class ContromeGateway extends IPSModuleStrict
         $setpoint = isset($data['Setpoint']) ? floatval($data['Setpoint']) : null;
 
         if ($roomId === null || $setpoint === null) {
-            $this->SendDebug('WriteSetpoint', 'SETPOINT missing params', 0);
+            $this->SendDebug(__FUNCTION__, 'SETPOINT missing params', 0);
             return json_encode(['success' => false, 'message' => 'Missing p arameter RoomID or Setpoint']);
         }
 
@@ -521,7 +521,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, 'Request failed: ' . $message, 0);
             // Etwas stimmt nicht
             $this->SetStatus(IS_NO_CONNECTION);
-            return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);;
+            return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);
         }
 
         // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
@@ -531,7 +531,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, 'Non-JSON response: ' . $response, 0);
             $this->SetStatus(IS_ACTIVE);
             // Optional: treat any non-empty response as success (oder decide otherwise)
-            return strlen(trim($response)) > 0 ? true : 'Empty response';
+            return json_encode(['success' => true, 'message' => strlen(trim($response)) > 0 ? true : 'Empty response - guessing all good.']);
         }
 
         // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
