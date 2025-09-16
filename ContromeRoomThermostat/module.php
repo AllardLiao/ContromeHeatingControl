@@ -53,18 +53,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
         $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
         $this->EnableAction("Setpoint");
-        //$this->EnableAction('inc');
-        //$this->EnableAction('dec');
 
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
 
-        // Konfigurationselemente der Tile-Visualisierung
-        $this->RegisterPropertyBoolean("VisuXYZ", true);
-
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
         $this->RegisterTimer("UpdateContromeDataRoomID" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "UpdateRoomData", true);');
-
     }
 
     public function Destroy(): void
@@ -116,9 +110,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->WriteSetpoint($new);
                 $this->updateVisualization();
                 break;
-            case 'visu_setpoint':
+            case 'visu_setpoint': // Änderung über Visu
                 $this->WriteSetpoint((float)$value);
                 $this->updateVisualization();
+                break;
+            case 'Setpoint': // Änderung an der Variablen direkt
+                $this->WriteSetpoint((float)$value);
                 break;
         default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
