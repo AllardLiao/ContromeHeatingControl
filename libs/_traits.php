@@ -178,6 +178,10 @@ require_once __DIR__ . '/../libs/WidgetHelper.php';
 require_once __DIR__ . '/../libs/EventHelper.php';
 require_once __DIR__ . '/../libs/VersionHelper.php';
 require_once __DIR__ . '/../libs/UserFriendlyException.php';
+
+/**
+ * Include Controme helper classes.
+ */
 require_once __DIR__ . '/../libs/ContromeConstants.php';
 
 // IPS-Stubs nur in der Entwicklungsumgebung laden

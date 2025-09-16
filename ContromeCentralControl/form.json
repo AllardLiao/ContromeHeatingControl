@@ -62,26 +62,30 @@
                 {
                     "type": "CheckBox",
                     "name": "ShowRoomOffsets",
-                    "caption": "Show room offset information (weather, timer, etc.",
-                    "value": false
+                    "caption": "Show room offset information (weather, timer, etc.) - not jet implemented :-(",
+                    "value": false,
+                    "enabled": false
                 },
                 {
                     "type": "CheckBox",
                     "name": "ShowVTR",
-                    "caption": "Show flow temperature (actual, setpoint, termperature details)",
-                    "value": false
+                    "caption": "Show flow temperature (actual, setpoint, termperature details) - not jet implemented :-(",
+                    "value": false,
+                    "enabled": false
                 },
                 {
                     "type": "CheckBox",
                     "name": "ShowTimer",
-                    "caption": "Show Controme timer (planned heating periods)",
-                    "value": false
+                    "caption": "Show Controme timer (planned heating periods) - not jet implemented :-(",
+                    "value": false,
+                    "enabled": false
                 },
                 {
                     "type": "CheckBox",
                     "name": "ShowCalendar",
-                    "caption": "Show Controme calendar (entries from installed/linked calendars)",
-                    "value": false
+                    "caption": "Show Controme calendar (entries from installed/linked calendars - not jet implemented :-(",
+                    "value": false,
+                    "enabled": false
                 }
             ]
         },

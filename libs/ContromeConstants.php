@@ -60,12 +60,21 @@ class CONTROME_API
     public const SET_SETPOINT       = "soll/";
     public const SET_SETPOINT_TEMP  = "ziel/";
     public const SET_OPERATION_MODE = "rooms/";
+
+    // Betriebsarten Mapping API <-> IPS - siehe CONTROME_PROFILES::$betriebsartMap
+    private static array $betriebsartMapAPI = [
+        0 => "cooling",
+        1 => "off",
+        2 => "heating",
+        3 => "on"
+    ];
+
 }
 
 class CONTROME_PROFILES
 {
     public const BETRIEBSART = 'Controme.Betriebsart';
-    private static array $betriebsartMap = [
+    public static array $betriebsartMap = [
         0 => "Kühlen (Auto)",
         1 => "Dauer-Aus",
         2 => "Heizen (Auto)",

@@ -14,7 +14,6 @@ require_once __DIR__ . '/../libs/_traits.php';
 // Bibliotheks-übergreifende Constanten einbinden
 use Controme\GUIDs;
 use Controme\ACTIONs;
-use Controme\CONTROME_API;
 use Controme\CONTROME_PROFILES;
 
 class ContromeCentralControl extends IPSModuleStrict
@@ -88,7 +87,7 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->registerSystemInfoVariables();
         }
         // Rooms vorbereiten/anlegen
-        if ($this->ReadPropertyBoolean("ShowRooms")) {
+        if ($this->ReadPropertyBoolean("ShowRooms") || $this->ReadPropertyBoolean("ShowRoomData")) {
             $this->registerRoomCategory();
         }
 
@@ -459,4 +458,112 @@ class ContromeCentralControl extends IPSModuleStrict
         return true;
     }
 
+    public function GetVisualizationTile(): string
+    {
+        $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
+        $sysInfo = $this->GetSystemInfo();
+
+        // ========================
+        // 1. Mode-Options
+        $modeOptions = '';
+        foreach (CONTROME_PROFILES::$betriebsartMap as $id => $label) {
+            $modeOptions .= '<option value="' . $id . '">' . $label . '</option>';
+        }
+        // ========================
+        // 2. Dropdown für Räume: Alle Räume + Einzelräume
+        $roomOptions = '<option value="all">Alle Räume</option>';
+        foreach ($rooms as $room) {
+            $roomOptions .= '<option value="' . $room['id'] . '">' . $room['name'] . '</option>';
+        }
+        // ========================
+        // 3. Systeminfo HTML
+        $sysHtml = '';
+        foreach ($sysInfo as $key => $value) {
+            $sysHtml .= '<div><strong>' . $key . ':</strong> ' . ($value ?? '--') . '</div>';
+        }
+        // ========================
+        // 4. Raumtiles HTML
+        $roomTilesHtml = '';
+        foreach ($rooms as $room) {
+            $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
+                . '<span class="room-name">' . $room['name'] . '</span>'
+                . '<span class="room-temp">' . ($room['temperature'] ?? '--') . '</span>'
+                . '<span class="room-target">' . ($room['target'] ?? '--') . '</span>'
+                . '<span class="room-humidity">' . ($room['humidity'] ?? '--') . '</span>'
+                . '<span class="room-state">' . ($room['state'] ?? '--') . '</span>';
+            // nur anzeigen, wenn remaining_time > 0
+            if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                $hours = floor($room['remaining_time'] / 60);
+                $minutes = $room['remaining_time'] % 60;
+                $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                $roomTilesHtml .= '<span class="room-remaining">' . $hoursMinutes . '</span>'
+                    . '<span class="room-perm-soll">' . ($room['perm_solltemperatur'] ?? '--') . '</span>';
+            }
+            $roomTilesHtml .= '</div>';
+        }
+        // ========================
+        // 5. Max Temp für Ist-Temperatur Input
+        $maxTemp = '--';
+        if (!empty($rooms)) {
+            $temps = array_column($rooms, 'temperature');
+            if (!empty($temps)) {
+                $maxTemp = max($temps);
+            }
+        }
+        // ========================
+        // 6. HTML Template laden & Platzhalter ersetzen
+        $html = file_get_contents(__DIR__ . '/module.html');
+        $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
+        $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
+        $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
+        $html = str_replace('<!--SYS_INFO-->', $sysHtml, $html);
+        $html = str_replace('<!--MAX_TEMP-->', $maxTemp, $html);
+
+        return $html;
+    }
+
+    private function GetRoomData(): array
+    {
+        $rooms = [];
+        $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
+        if ($catRoomsID === false) return $rooms;
+
+        $floorIDs = IPS_GetChildrenIDs($catRoomsID);
+        foreach ($floorIDs as $floorID) {
+            $roomIDs = IPS_GetChildrenIDs($floorID);
+            foreach ($roomIDs as $roomID) {
+                $rooms[] = [
+                    'id' => $this->GetValueByParent('RoomID', $roomID),
+                    'name' => $this->GetValueByParent('RoomName', $roomID),
+                    'temperature' => $this->GetValueByParent('Temperature', $roomID),
+                    'target' => $this->GetValueByParent('Target', $roomID),
+                    'humidity' => $this->GetValueByParent('Humidity', $roomID),
+                    'state' => $this->GetValueByParent('State', $roomID),
+                    'remaining_time' => $this->GetValueByParent('RemainingTime', $roomID) ?? 0,
+                    'perm_solltemperatur' => $this->GetValueByParent('PermSolltemperatur', $roomID) ?? 0
+                ];
+            }
+        }
+        return $rooms;
+    }
+
+    private function GetSystemInfo(): array
+    {
+        return [
+            'Hardware' => $this->GetValue('SysInfo_HW'),
+            'Software Datum' => $this->GetValue('SysInfo_SWDate'),
+            'Branch' => $this->GetValue('SysInfo_Branch'),
+            'OS' => $this->GetValue('SysInfo_OS'),
+            'Filesystem Build' => $this->GetValue('SysInfo_FBI'),
+            'App kompatibel' => $this->GetValue('SysInfo_AppCompat')
+        ];
+    }
+
+    // Hilfsfunktion, um Wert einer Variable anhand Ident in einer Kategorie zu holen
+    private function GetValueByParent(string $ident, int $parentID)
+    {
+        $varId = @IPS_GetObjectIDByIdent($ident, $parentID);
+        if ($varId === false) return null;
+        return GetValue($varId);
+    }
 }
