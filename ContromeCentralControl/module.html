@@ -51,24 +51,25 @@
     margin-bottom: 5px;
 }
 
-/* Zwei-Spalten Layout für Werte in Raumtiles */
+/* Raumwerte: 2 Spalten, Label links, Wert linksbündig rechts */
 .room-values, .room-temp-schedule {
     display: grid;
-    grid-template-columns: max-content 1fr; /* Label / Wert */
+    grid-template-columns: max-content 1fr;
     gap: 2px 10px;
+    margin-bottom: 5px;
 }
 
 .room-values div strong,
 .room-temp-schedule div strong {
-    text-align: left; /* Label linksbündig */
+    text-align: left;
 }
 
 .room-values div span,
 .room-temp-schedule div span {
-    text-align: left; /* Wert linksbündig */
+    text-align: left;
 }
 
-/* Systeminfo in zwei Spalten */
+/* Systeminfo */
 .system-info {
     margin-top: 15px;
     background: <!--COLOR_SYSTEM_INFO-->;
@@ -77,10 +78,10 @@
 }
 
 .system-info h3 {
-    grid-column: 1 / -1; /* Überschrift über beide Spalten */
     margin-bottom: 5px;
 }
 
+/* Systeminfo Werte in zwei Spalten */
 .system-info-values {
     display: grid;
     grid-template-columns: max-content 1fr;
