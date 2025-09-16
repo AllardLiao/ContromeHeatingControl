@@ -96,7 +96,7 @@
                                 },
                                 {
                                     "type": "SelectColor",
-                                    "name": "VisuColorMainTiles",
+                                    "name": "VisuColorSystemInfoTile",
                                     "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
                                     "allowTransparent": true
                                 },
