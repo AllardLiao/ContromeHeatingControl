@@ -28,89 +28,122 @@
                     "type": "RowLayout",
                     "items": [
                         {
-                            "type": "ColumnLayout",
-                            "items": [
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowMainElements",
-                                    "caption": "Show main elements",
-                                    "value": true,
-                                    "enabled": false
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowSystemInfo",
-                                    "caption": "Show system information (Controme hardware & software)",
-                                    "value": true
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowRooms",
-                                    "caption": "Show room information (name, floor)",
-                                    "value": true
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowRoomData",
-                                    "caption": "Show room data (temperature, humidity, setpoint, mode)",
-                                    "value": true
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowRoomOffsets",
-                                    "caption": "Show room offset information (weather, timer, etc.) - not jet implemented :-(",
-                                    "value": false,
-                                    "enabled": false
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowVTR",
-                                    "caption": "Show flow temperature (actual, setpoint, termperature details) - not jet implemented :-(",
-                                    "value": false,
-                                    "enabled": false
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowTimer",
-                                    "caption": "Show Controme timer (planned heating periods) - not jet implemented :-(",
-                                    "value": false,
-                                    "enabled": false
-                                },
-                                {
-                                    "type": "CheckBox",
-                                    "name": "ShowCalendar",
-                                    "caption": "Show Controme calendar (entries from installed/linked calendars - not jet implemented :-(",
-                                    "value": false,
-                                    "enabled": false
-                                }
-                            ]
+                            "type": "CheckBox",
+                            "name": "ShowMainElements",
+                            "caption": "Show main elements (always on)",
+                            "value": true,
+                            "enabled": false,
+                            "width": "50%"
                         },
                         {
-                            "type": "ColumnLayout",
-                            "items": [
-                                {
-                                    "type": "SelectColor",
-                                    "name": "VisuColorMainTiles",
-                                    "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
-                                    "allowTransparent": true
-                                },
-                                {
-                                    "type": "SelectColor",
-                                    "name": "VisuColorSystemInfoTile",
-                                    "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
-                                    "allowTransparent": true
-                                },
-                                {
-                                    "type": "SelectColor",
-                                    "name": "VisuColorRoomTiles",
-                                    "caption": "Dashboard background color for rooms:",
-                                    "allowTransparent": true
-                                },
-                                {
-                                    "type": "Label",
-                                    "caption": "Same tile as above (show room info)..."
-                                }
-                            ]
+                            "type": "SelectColor",
+                            "name": "VisuColorMainTiles",
+                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
+                            "allowTransparent": true
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowSystemInfo",
+                            "caption": "Show system information (Controme hardware & software)",
+                            "value": true,
+                            "width": "50%"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorSystemInfoTile",
+                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
+                            "allowTransparent": true
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowRooms",
+                            "caption": "Show room information (name, floor)",
+                            "value": true,
+                            "width": "50%"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorRoomTiles",
+                            "caption": "Dashboard background color for rooms:",
+                            "allowTransparent": true
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowRoomData",
+                            "caption": "Show room data (temperature, humidity, setpoint, mode)",
+                            "value": true,
+                            "width": "50%"
+                        },
+                        {
+                            "type": "Label",
+                            "caption": "Same tile as above (show room info)..."
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowRoomOffsets",
+                            "caption": "Show room offset information (weather, timer, etc.) - not jet implemented :-(",
+                            "value": false,
+                            "width": "50%",
+                            "enabled": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowVTR",
+                            "caption": "Show flow temperature (actual, setpoint, termperature details) - not jet implemented :-(",
+                            "value": false,
+                            "width": "50%",
+                            "enabled": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowTimer",
+                            "caption": "Show Controme timer (planned heating periods) - not jet implemented :-(",
+                            "value": false,
+                            "width": "50%",
+                            "enabled": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowCalendar",
+                            "caption": "Show Controme calendar (entries from installed/linked calendars - not jet implemented :-(",
+                            "value": false,
+                            "width": "50%",
+                            "enabled": false
                         }
                     ]
                 }
