@@ -32,8 +32,11 @@ class ContromeCentralControl extends IPSModuleStrict
         parent::Create();
 
         // Properties für die Konfiguration des Moduls
+        $this->RegisterPropertyInteger("VisuColorMainTiles", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowSystemInfo", true);
+        $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowRooms", true);
+        $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
         $this->RegisterPropertyBoolean("ShowVTR", false);
@@ -498,18 +501,22 @@ class ContromeCentralControl extends IPSModuleStrict
         foreach ($rooms as $room) {
             if (!empty($room['name'])) {
                 $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
-                    . '<span class="room-name">' . $room['name'] . '</span>'
-                    . '<span class="room-temp">Temperatur: ' . ($room['temperature'] ?? '--') . '</span>'
-                    . '<span class="room-target">Set point' . ($room['target'] ?? '--') . '</span>'
-                    . '<span class="room-humidity">Humidity: ' . ($room['humidity'] ?? '--') . '</span>'
-                    . '<span class="room-state">Mode: ' . ($room['state'] ?? '--') . '</span>';
-                // nur anzeigen, wenn remaining_time > 0
+                    . '<div class="room-header">' . $room['name'] . '</div>'
+                    . '<div class="room-values">'
+                        . '<div><strong>Ist:</strong> ' . ($room['temperature'] ?? '--') . '°C</div>'
+                        . '<div><strong>Soll:</strong> ' . ($room['target'] ?? '--') . '°C</div>'
+                        . '<div><strong>Luftfeuchte:</strong> ' . ($room['humidity'] ?? '--') . '%</div>'
+                        . '<div><strong>Status:</strong> ' . ($room['state'] ?? '--') . '</div>'
+                    . '</div>';
+
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $hours = floor($room['remaining_time'] / 60);
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                    $roomTilesHtml .= '<span class="room-remaining">Temp set point set for ' . $hoursMinutes . '</span>'
-                        . '<span class="room-perm-soll">Afterwards normal set point: ' . ($room['perm_solltemperatur'] ?? '--') . '</span>';
+                    $roomTilesHtml .= '<div class="room-temp-schedule">'
+                        . '<div><strong>Remaining:</strong> ' . $hoursMinutes . '</div>'
+                        . '<div><strong>Perm Soll:</strong> ' . ($room['perm_solltemperatur'] ?? '--') . '°C</div>'
+                    . '</div>';
                 }
                 $roomTilesHtml .= '</div>';
             }
@@ -523,6 +530,9 @@ class ContromeCentralControl extends IPSModuleStrict
         // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
+        $html = str_replace('<!--COLOR_MAIN_TILES-->', $this->ReadPropertyString("VisuColorMainTiles"), $html);
+        $html = str_replace('<!--COLOR_ROOM_TILES-->', $this->ReadPropertyString("VisuColorRoomTiles"), $html);
+        $html = str_replace('<!--COLOR_SYSTEM_INFO-->', $this->ReadPropertyString("VisuColorSystemInfoTile"), $html);
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);

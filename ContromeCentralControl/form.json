@@ -25,39 +25,59 @@
             "caption": "Visualisation ...",
             "items": [
                 {
+                    "type": "SelectColor",
+                    "name": "VisuColorMainTiles",
+                    "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
+                    "allowTransparent": true
+                },
+                {
                     "type": "RowLayout",
                     "items": [
                         {
-                            "type": "SelectColor",
-                            "name": "VisuOnColor",
-                            "caption": "Dashboard background color (online):",
-                            "allowTransparent": true
+                            "type": "CheckBox",
+                            "name": "ShowSystemInfo",
+                            "caption": "Show system information (Controme hardware & software)",
+                            "value": true
                         },
                         {
                             "type": "SelectColor",
-                            "name": "VisuOffColor",
-                            "caption": "Dashboard background color (offline):",
+                            "name": "VisuColorMainTiles",
+                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
                             "allowTransparent": true
                         }
                     ]
                 },
                 {
-                    "type": "CheckBox",
-                    "name": "ShowSystemInfo",
-                    "caption": "Show system information (Controme hardware & software)",
-                    "value": true
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowRooms",
+                            "caption": "Show room information (name, floor)",
+                            "value": true
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorRoomTiles",
+                            "caption": "Dashboard background color for rooms:",
+                            "allowTransparent": true
+                        }
+                    ]
                 },
                 {
-                    "type": "CheckBox",
-                    "name": "ShowRooms",
-                    "caption": "Show room information (name, floor)",
-                    "value": true
-                },
-                {
-                    "type": "CheckBox",
-                    "name": "ShowRoomData",
-                    "caption": "Show room data (temperature, humidity, setpoint, mode)",
-                    "value": true
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
+                            "name": "ShowRoomData",
+                            "caption": "Show room data (temperature, humidity, setpoint, mode)",
+                            "value": true
+                        },
+                        {
+                            "type": "label",
+                            "caption": "Same tile as above (show room info)..."
+                        }
+                    ]
                 },
                 {
                     "type": "CheckBox",
