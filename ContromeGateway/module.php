@@ -492,10 +492,10 @@ class ContromeGateway extends IPSModuleStrict
         $url = $this->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
-        $postData = json_encode([
+        $postData = http_build_query([
             'user'     => $user,
             'password' => $pass,
-            'soll'     => (float)$setpoint
+            'soll'     => number_format($setpoint, 2, '.', '')
         ]);
 
         $opts = [
@@ -529,6 +529,7 @@ class ContromeGateway extends IPSModuleStrict
         if ($json === null) {
             // Wenn kein JSON, aber die API trotzdem success impliziert, akzeptieren wir das
             $this->SendDebug(__FUNCTION__, 'Non-JSON response: ' . $response, 0);
+            $this->SetStatus(IS_ACTIVE);
             // Optional: treat any non-empty response as success (oder decide otherwise)
             return strlen(trim($response)) > 0 ? true : 'Empty response';
         }
@@ -536,14 +537,15 @@ class ContromeGateway extends IPSModuleStrict
         // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
         $this->SendDebug(__FUNCTION__, 'API returned: ' . print_r($json, true), 0);
 
-        // Falls die API ein structured response liefert, prüfe ein success-flag
-        if (isset($json['success'])) {
-            return ($json['success'] ? true : (isset($json['message']) ? $json['message'] : 'API returned failure'));
+        // Prüfe auf explizite Fehlermeldung in der JSON Response
+        if (isset($json['error']) || isset($json['status']) && $json['status'] === 'error') {
+            $errorMsg = $json['error'] ?? $json['message'] ?? 'Unknown API error';
+            $this->SendDebug(__FUNCTION__, 'API returned error: ' . $errorMsg, 0);
+            return json_encode(['success' => false, 'message' => 'API Error: ' . $errorMsg]);
         }
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
-
         return json_encode(['success' => true, 'message' => 'Setpoint updated']);
 
     }
