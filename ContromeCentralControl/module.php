@@ -517,8 +517,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
         $html = str_replace('<!--SYS_INFO-->', $sysHtml, $html);
-        $html = str_replace('<!--MAX_TEMP-->', $maxTemp, $html);
-
+        $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
         return $html;
     }
 
@@ -549,13 +548,16 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function GetSystemInfo(): array
     {
+        $catSysID = @IPS_GetObjectIDByIdent("SystemInfo", $this->InstanceID);
+        if ($catSysID === false) return [];
+
         return [
-            'Hardware' => $this->GetValue('SysInfo_HW'),
-            'Software Datum' => $this->GetValue('SysInfo_SWDate'),
-            'Branch' => $this->GetValue('SysInfo_Branch'),
-            'OS' => $this->GetValue('SysInfo_OS'),
-            'Filesystem Build' => $this->GetValue('SysInfo_FBI'),
-            'App kompatibel' => $this->GetValue('SysInfo_AppCompat')
+            'Hardware' => $this->GetValueByParent('SysInfo_HW', $catSysID),
+            'Software Datum' => $this->GetValueByParent('SysInfo_SWDate', $catSysID),
+            'Branch' => $this->GetValueByParent('SysInfo_Branch', $catSysID),
+            'OS' => $this->GetValueByParent('SysInfo_OS', $catSysID),
+            'Filesystem Build' => $this->GetValueByParent('SysInfo_FBI', $catSysID),
+            'App kompatibel' => $this->GetValueByParent('SysInfo_AppCompat', $catSysID)
         ];
     }
 
