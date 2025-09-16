@@ -4,22 +4,19 @@
     flex-wrap: wrap;
     gap: 10px;
 }
-
 .subtile {
     flex: 1 1 30%;
     min-width: 250px;
     background: <!--COLOR_MAIN_TILES-->;
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
 .subtile label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
 }
-
 .subtile input,
 .subtile select {
     width: 100%;
@@ -35,7 +32,6 @@
     gap: 10px;
     margin-top: 10px;
 }
-
 .room-tile {
     flex: 1 1 150px;
     min-width: 150px;
@@ -44,12 +40,41 @@
     padding: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+.room-header {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+.room-values, .room-temp-schedule {
+    display: grid;
+    grid-template-columns: max-content 1fr; /* 2 Spalten: Label / Wert */
+    gap: 5px 10px;
+}
+
+.room-values div, .room-temp-schedule div {
+    display: contents; /* Label und Wert nebeneinander */
+}
+
+.room-values div strong, .room-temp-schedule div strong {
+    text-align: left; /* Label linksbündig */
+}
+
+.room-values div span, .room-temp-schedule div span {
+    text-align: left; /* Wert ebenfalls linksbündig */
+}
 
 .system-info {
     margin-top: 15px;
     background: <!--COLOR_SYSTEM_INFO-->;
     border-radius: 6px;
-    padding: 10px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: max-content 1fr; /* 2 Spalten */
+    gap: 5px 10px;
+}
+
+.system-info div strong, .system-info div span {
+    text-align: left; /* Beide Spalten linksbündig */
 }
 </style>
 

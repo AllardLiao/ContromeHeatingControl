@@ -493,7 +493,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // 3. Systeminfo HTML
         $sysHtml = '';
         foreach ($sysInfo as $key => $value) {
-            $sysHtml .= '<div><strong>' . $key . ':</strong> ' . ($value ?? '--') . '</div>';
+            $sysHtml .= '<div><strong>' . $key . ':</strong><span>' . ($value ?? '--') . '</span></div>';
         }
         // ========================
         // 4. Raumtiles HTML
@@ -503,10 +503,10 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                        . '<div><strong>Ist:</strong> ' . ($room['temperature'] ?? '--') . '°C</div>'
-                        . '<div><strong>Soll:</strong> ' . ($room['target'] ?? '--') . '°C</div>'
-                        . '<div><strong>Luftfeuchte:</strong> ' . ($room['humidity'] ?? '--') . '%</div>'
-                        . '<div><strong>Status:</strong> ' . ($room['state'] ?? '--') . '</div>'
+                        . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>'
+                        . '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
+                        . '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
+                        . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                     . '</div>';
 
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
@@ -514,15 +514,15 @@ class ContromeCentralControl extends IPSModuleStrict
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                     $roomTilesHtml .= '<div class="room-temp-schedule">'
-                        . '<div><strong>Remaining:</strong> ' . $hoursMinutes . '</div>'
-                        . '<div><strong>Perm Soll:</strong> ' . ($room['perm_solltemperatur'] ?? '--') . '°C</div>'
+                        . '<div><strong>Remaining:</strong><span>' . $hoursMinutes . '</span></div>'
+                        . '<div><strong>Perm Soll:</strong><span>' . ($room['perm_solltemperatur'] ?? '--') . '°C</span></div>'
                     . '</div>';
                 }
                 $roomTilesHtml .= '</div>';
             }
         }
         // ========================
-        // 3. Dropdown für Dauer in Stunden (0–24)
+        // 5. Dropdown für Dauer in Stunden (0–24)
         $durationOptions = '';
         for ($h = 0; $h <= 24; $h++) {
             $durationOptions .= '<option value="' . $h . '">' . $h . 'h</option>';
