@@ -470,10 +470,16 @@ class ContromeCentralControl extends IPSModuleStrict
             $modeOptions .= '<option value="' . $id . '">' . $label . '</option>';
         }
         // ========================
-        // 2. Dropdown für Räume: Alle Räume + Einzelräume
+        // 2. Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
         $roomOptions = '<option value="all">Alle Räume</option>';
+        $maxTemp = 15.0;
         foreach ($rooms as $room) {
-            $roomOptions .= '<option value="' . $room['id'] . '">' . $room['name'] . '</option>';
+            if (!empty($room['name'])) {
+                $roomOptions .= '<option value="' . $room['id'] . '">' . $room['name'] . '</option>';
+            }
+            if ((!empty($room['target'])) && ($maxTemp < floatval($room['target']))){
+                $maxTemp = floatval($room['target']);
+            }
         }
         // ========================
         // 3. Systeminfo HTML
@@ -502,15 +508,6 @@ class ContromeCentralControl extends IPSModuleStrict
             $roomTilesHtml .= '</div>';
         }
         // ========================
-        // 5. Max Temp für Ist-Temperatur Input
-        $maxTemp = '--';
-        if (!empty($rooms)) {
-            $temps = array_column($rooms, 'temperature');
-            if (!empty($temps)) {
-                $maxTemp = max($temps);
-            }
-        }
-        // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
@@ -518,6 +515,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
         $html = str_replace('<!--SYS_INFO-->', $sysHtml, $html);
         $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
+        $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
         return $html;
     }
 
