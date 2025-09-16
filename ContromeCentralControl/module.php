@@ -491,10 +491,11 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // ========================
         // 3. Systeminfo HTML
-        $sysHtml = '';
+        $sysHtml = '<div class="system-info-values">';
         foreach ($sysInfo as $key => $value) {
             $sysHtml .= '<div><strong>' . $key . ':</strong><span>' . ($value ?? '--') . '</span></div>';
         }
+        $sysHtml .= '</div>';
         // ========================
         // 4. Raumtiles HTML
         $roomTilesHtml = '';
