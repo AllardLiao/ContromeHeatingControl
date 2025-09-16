@@ -1,34 +1,4 @@
 <style>
-.tile-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.subtile {
-    flex: 1 1 30%;
-    min-width: 250px;
-    background: <!--COLOR_MAIN_TILES-->;
-    border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.subtile label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.subtile input,
-.subtile select {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: 1em;
-    box-sizing: border-box;
-}
-
 .rooms-container {
     display: flex;
     flex-wrap: wrap;
@@ -51,22 +21,23 @@
     margin-bottom: 5px;
 }
 
-/* Raumwerte: 2 Spalten, Label links, Wert linksbündig rechts */
 .room-values, .room-temp-schedule {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 2px 10px;
-    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.room-values div strong,
-.room-temp-schedule div strong {
-    text-align: left;
+.room-values div, .room-temp-schedule div {
+    display: flex;
+    justify-content: space-between;
 }
 
-.room-values div span,
-.room-temp-schedule div span {
-    text-align: left;
+.room-values div strong, .room-temp-schedule div strong {
+    flex: 1; /* linke Spalte */
+}
+
+.room-values div span, .room-temp-schedule div span {
+    flex: 1; /* rechte Spalte, linksbündig */
 }
 
 /* Systeminfo */
@@ -81,16 +52,23 @@
     margin-bottom: 5px;
 }
 
-/* Systeminfo Werte in zwei Spalten */
 .system-info-values {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 2px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.system-info-values div strong,
+.system-info-values div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.system-info-values div strong {
+    flex: 1;
+}
+
 .system-info-values div span {
-    text-align: left;
+    flex: 1;
 }
 </style>
 
