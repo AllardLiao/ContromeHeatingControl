@@ -74,7 +74,7 @@
                             "value": true
                         },
                         {
-                            "type": "label",
+                            "type": "Label",
                             "caption": "Same tile as above (show room info)..."
                         }
                     ]
