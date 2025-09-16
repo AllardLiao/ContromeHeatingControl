@@ -495,7 +495,7 @@ class ContromeGateway extends IPSModuleStrict
         $postData = http_build_query([
             'user'     => $user,
             'password' => $pass,
-            'soll'     => '21.5' //number_format($setpoint, 2, '.', '')
+            'soll'     => '22.5' //number_format($setpoint, 2, '.', '')
         ]);
 
         $opts = [
