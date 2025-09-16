@@ -53,10 +53,10 @@
 }
 </style>
 
-<!-- Untertiles oben -->
-<div class="top-tiles">
+<!-- Oberste Tiles -->
+<div class="tile-container">
     <!-- Tile 1: Betriebsart -->
-    <div class="top-tile" id="tile_mode">
+    <div class="subtile" id="tile_mode">
         <label>Betriebsart</label>
         <select id="mode_select">
             <!--MODE_OPTIONS-->
@@ -66,15 +66,9 @@
         </select>
         <button id="btn_set_mode">Setzen</button>
     </div>
-    <script>
-    document.getElementById('btn_set_mode').addEventListener('click', function() {
-        const mode = parseInt(document.getElementById('mode_select').value);
-        const roomId = parseInt(document.getElementById('room_select_mode').value);
-        RequestAction('Mode', { roomId: roomId, mode: mode });
-    });
-    </script>
-    <!-- Tile 2: Ist-Temperatur -->
-    <div class="top-tile" id="tile_temperature">
+
+    <!-- Tile 2: Permanente Soll-Temperatur -->
+    <div class="subtile" id="tile_temperature">
         <label>Permanente Soll-Temperatur</label>
         <input type="number" id="input_temp" value="<!--MAX_TEMP-->" />
         <select id="temp_room_select">
@@ -82,54 +76,30 @@
         </select>
         <button id="btn_set_temp">Setzen</button>
     </div>
-    <script>
-    document.getElementById('btn_set_temp').addEventListener('click', function() {
-        const mode = parseInt(document.getElementById('input_temp').value);
-        const roomId = parseInt(document.getElementById('temp_room_select').value);
-        RequestAction('Mode', { roomId: roomId, mode: mode });
-    });
-    </script>
-    <!-- Tile 3: Zieltemperatur -->
-    <div class="top-tile" id="tile_target">
+
+    <!-- Tile 3: Temporäre Soll-Temperatur -->
+    <div class="subtile" id="tile_target">
         <label>Temporäre Soll-Temperatur (h)</label>
         <input type="number" id="input_target_temp" value="<!--MAX_TEMP-->" />
-        <div class="tile-duration">
-            <label for="duration_select">Dauer</label>
-            <select id="duration_select">
-                <!--DURATION_OPTIONS-->
-            </select>
-        </div>
+        <label for="duration_select">Dauer</label>
+        <select id="duration_select">
+            <!--DURATION_OPTIONS-->
+        </select>
         <select id="target_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
         <button id="btn_set_target">Setzen</button>
     </div>
-    <script>
-    document.getElementById('btn_set_target').addEventListener('click', function() {
-        const mode = parseInt(document.getElementById('input_target_temp').value);
-        const roomId = parseInt(document.getElementById('target_room_select').value);
-        const duration = parseInt(document.getElementById('duration_select').value);
-        RequestAction('Mode', { roomId: roomId, mode: mode, duration: duration });
-    });
-    </script>
 </div>
 
 <!-- Räume anzeigen -->
 <div class="rooms-container" id="rooms-container">
-    <!-- Dynamische Raumtiles -->
-    <div class="room-tiles">
-        <!--ROOM_TILES-->
-    </div>
+    <!--ROOM_TILES-->
 </div>
 
 <!-- Systeminformationen -->
-<div class="system-info">
-    <h3>System Info</h3>
-    <!--SYS_INFO-->
-</div>
-
-<!-- Systeminfos -->
 <div class="system-info" id="system-info">
+    <h3>System Info</h3>
     <div><strong>Hardware:</strong> <span id="sys-hw">--</span></div>
     <div><strong>Software Datum:</strong> <span id="sys-swdate">--</span></div>
     <div><strong>Branch:</strong> <span id="sys-branch">--</span></div>
@@ -138,4 +108,24 @@
     <div><strong>App kompatibel:</strong> <span id="sys-appcompat">--</span></div>
 </div>
 
+<script>
+// EventListener zentralisiert
+document.getElementById('btn_set_mode').addEventListener('click', function() {
+    const mode = parseInt(document.getElementById('mode_select').value);
+    const roomId = parseInt(document.getElementById('mode_room_select').value);
+    RequestAction('Mode', { roomId: roomId, mode: mode });
+});
 
+document.getElementById('btn_set_temp').addEventListener('click', function() {
+    const temp = parseFloat(document.getElementById('input_temp').value);
+    const roomId = parseInt(document.getElementById('temp_room_select').value);
+    RequestAction('Temp', { roomId: roomId, temp: temp });
+});
+
+document.getElementById('btn_set_target').addEventListener('click', function() {
+    const temp = parseFloat(document.getElementById('input_target_temp').value);
+    const roomId = parseInt(document.getElementById('target_room_select').value);
+    const duration = parseInt(document.getElementById('duration_select').value);
+    RequestAction('TargetTemp', { roomId: roomId, temp: temp, duration: duration });
+});
+</script>

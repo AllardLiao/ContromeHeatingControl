@@ -496,21 +496,23 @@ class ContromeCentralControl extends IPSModuleStrict
         // 4. Raumtiles HTML
         $roomTilesHtml = '';
         foreach ($rooms as $room) {
-            $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
-                . '<span class="room-name">' . $room['name'] . '</span>'
-                . '<span class="room-temp">' . ($room['temperature'] ?? '--') . '</span>'
-                . '<span class="room-target">' . ($room['target'] ?? '--') . '</span>'
-                . '<span class="room-humidity">' . ($room['humidity'] ?? '--') . '</span>'
-                . '<span class="room-state">' . ($room['state'] ?? '--') . '</span>';
-            // nur anzeigen, wenn remaining_time > 0
-            if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                $hours = floor($room['remaining_time'] / 60);
-                $minutes = $room['remaining_time'] % 60;
-                $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                $roomTilesHtml .= '<span class="room-remaining">' . $hoursMinutes . '</span>'
-                    . '<span class="room-perm-soll">' . ($room['perm_solltemperatur'] ?? '--') . '</span>';
+            if (!empty($room['name'])) {
+                $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
+                    . '<span class="room-name">' . $room['name'] . '</span>'
+                    . '<span class="room-temp">Temperatur: ' . ($room['temperature'] ?? '--') . '</span>'
+                    . '<span class="room-target">Set point' . ($room['target'] ?? '--') . '</span>'
+                    . '<span class="room-humidity">Humidity: ' . ($room['humidity'] ?? '--') . '</span>'
+                    . '<span class="room-state">Mode: ' . ($room['state'] ?? '--') . '</span>';
+                // nur anzeigen, wenn remaining_time > 0
+                if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                    $hours = floor($room['remaining_time'] / 60);
+                    $minutes = $room['remaining_time'] % 60;
+                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                    $roomTilesHtml .= '<span class="room-remaining">Temp set point set for ' . $hoursMinutes . '</span>'
+                        . '<span class="room-perm-soll">Afterwards normal set point: ' . ($room['perm_solltemperatur'] ?? '--') . '</span>';
+                }
+                $roomTilesHtml .= '</div>';
             }
-            $roomTilesHtml .= '</div>';
         }
         // ========================
         // 3. Dropdown für Dauer in Stunden (0–24)
