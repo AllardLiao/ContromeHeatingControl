@@ -205,7 +205,8 @@
                             "name": "InstanceExists",
                             "caption": "Instance exists",
                             "width": "120px",
-                            "save": true,
+                            "save": false,
+                            "visible": true,
                             "edit": {
                                 "type": "CheckBox",
                                 "enabled": false
