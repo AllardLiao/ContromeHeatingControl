@@ -121,7 +121,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->updateVisualization();
                 break;
             case 'form_toggleAutoUpdate': // Auskösung über onChange der Konfig-Forms
-                $this->toggleAutoUpdate($value);
+                $this->toggleAutoUpdate($value==1);
                 break;
         default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
@@ -139,7 +139,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         ]));
     }
 
-    private function toggleAutoUpdate(bool $toggleAutoUpdate): bool
+    private function toggleAutoUpdate(bool $toggleAutoUpdate)
     {
         if (isset($value) && $value)
         {
