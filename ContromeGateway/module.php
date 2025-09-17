@@ -580,19 +580,23 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
-    private function CreateRoomThermostatInstance($selectedRowData)
+    private function CreateRoomThermostatInstance($roomId)
     {
         try {
-            // Decode der ausgewählten Zeile
-            $rowData = json_decode($selectedRowData, true);
-            if (!$rowData) {
-                throw new Exception('Non-valid row data provided.');
-            }
+            // Raumdaten aus der gespeicherten Liste holen
+            $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
 
-            $floorId = $rowData['FloorID'];
-            $floorName = $rowData['Floor'];
-            $roomId = $rowData['RoomID'];
-            $roomName = $rowData['Room'];
+            $selectedRoom = null;
+            foreach ($rooms as $room) {
+                if ($room['RoomID'] == $roomId) {
+                    $selectedRoom = $room;
+                    break;
+                }
+            }
+            $floorId = $selectedRoom['FloorID'];
+            $floorName = $selectedRoom['Floor'];
+            $roomId = $selectedRoom['RoomID'];
+            $roomName = $selectedRoom['Room'];
             $icon = "temperature-list";
 
             // Zielkategorie aus Konfiguration lesen
@@ -621,6 +625,7 @@ class ContromeGateway extends IPSModuleStrict
             ]);
 
         } catch (Exception $e) {
+            $this->UpdateFormField("InstanceCreationResult", "caption", "Fehler: " . $e->getMessage());
             return json_encode([
                 'success' => false,
                 'message' => 'Fehler beim Erstellen der Instanz: ' . $e->getMessage()
@@ -792,7 +797,7 @@ class ContromeGateway extends IPSModuleStrict
         foreach ($rooms as &$room) {
             $room['InstanceExists'] = var_export($this->CheckIfInstanceExists($room['RoomID']), true);
         }
-        //$this->SendDebug(__FUNCTION__, "Updated room instance status: " . print_r($rooms), 0);
+        $this->SendDebug(__FUNCTION__, "Updated room instance status: " . print_r($rooms, true), 0);
         $this->UpdateFormField("Rooms", "values", json_encode($rooms));
     }
 }
