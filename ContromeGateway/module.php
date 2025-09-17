@@ -604,15 +604,12 @@ class ContromeGateway extends IPSModuleStrict
             // Instanz erstellen
             $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
 
-            // Instanz-Editor öffnen
-            $this->OpenInstanceEditor($instanceId);
-
             // Erfolgsmeldung
-            $this->UpdateFormField("InstanceCreationResult", "caption", "Instanz für '$floorName-$roomName' erfolgreich erstellt!");
+            $this->UpdateFormField("InstanceCreationResult", "caption", "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!");
 
             return json_encode([
                 'success' => true,
-                'message' => "Thermostat-Instanz für '$floorName-$roomName' erfolgreich erstellt!",
+                'message' => "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!",
                 'instanceId' => $instanceId
             ]);
 
@@ -620,7 +617,7 @@ class ContromeGateway extends IPSModuleStrict
             $this->UpdateFormField("InstanceCreationResult", "caption", "Fehler: " . $e->getMessage());
             return json_encode([
                 'success' => false,
-                'message' => 'Fehler beim Erstellen der Instanz: ' . $e->getMessage()
+                'message' => 'Error creating instance: ' . $e->getMessage()
             ]);
         }
     }
@@ -756,16 +753,6 @@ class ContromeGateway extends IPSModuleStrict
         IPS_ApplyChanges($instanceId);
 
         return $instanceId;
-    }
-
-    private function OpenInstanceEditor(int $instanceId)
-    {
-        // JavaScript generieren um Instanz-Editor zu öffnen
-        $script = "window.open('index.php?page=configure&id=$instanceId', '_blank');";
-
-        // Alternative: Form-Update mit JavaScript
-        $this->UpdateFormField('InstanceCreationResult', 'caption',
-            'Instanz erstellt! <a href="#" onclick="' . $script . '">Instanz öffnen</a>');
     }
 
 }

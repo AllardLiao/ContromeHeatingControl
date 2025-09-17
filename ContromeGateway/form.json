@@ -136,7 +136,7 @@
                     "type": "Button",
                     "name": "ButtonCreateCentralInstance",
                     "caption": "Create Instance for central control",
-                    "onClick": "CONGW_CreateCentralControlInstance($id);"
+                    "onClick": "IPS_RequestAction($id, 'CreateCentralControlInstance', '';"
                 },
                 {
                     "type": "Label",
