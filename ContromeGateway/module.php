@@ -571,7 +571,8 @@ class ContromeGateway extends IPSModuleStrict
         IPS_SetName($newId, $instanceName);
         IPS_ApplyChanges($newId);
 
-        $this->SendDebug(__FUNCTION__, "Central Control created with name '$instanceName', ID $newId", 0);
+        $this->SendDebug(__FUNCTION__, "Central Control created with name '$instanceName' (ID $newId)!", 0);
+        $this->UpdateFormField("CCInstanceCreationResult", "caption", "Central Control created with name '$instanceName' (ID $newId)!");
 
         return true;
     }

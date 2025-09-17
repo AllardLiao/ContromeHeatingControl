@@ -133,10 +133,20 @@
                     "bold": false
                 },
                 {
-                    "type": "Button",
-                    "name": "ButtonCreateCentralInstance",
-                    "caption": "Create Instance for central control",
-                    "onClick": "IPS_RequestAction($id, 'CreateCentralControlInstance', '');"
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Button",
+                            "name": "ButtonCreateCentralInstance",
+                            "caption": "Create Instance for central control",
+                            "onClick": "IPS_RequestAction($id, 'CreateCentralControlInstance', '');"
+                        },
+                        {
+                            "type": "Label",
+                            "name": "CCInstanceCreationResult",
+                            "caption": ""
+                        }
+                    ]
                 },
                 {
                     "type": "Label",
@@ -212,7 +222,6 @@
                     "type": "RowLayout",
                     "items": [
                         {
-
                             "type": "Button",
                             "name": "ButtonCreateRoomInstance",
                             "caption": "Create instance for selected room",
