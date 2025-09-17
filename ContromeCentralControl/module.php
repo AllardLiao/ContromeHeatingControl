@@ -132,8 +132,8 @@ class ContromeCentralControl extends IPSModuleStrict
             case 'Target':
                 $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration']));
                 break;
-        default:
-                throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
+            default:
+                parent::RequestAction($ident, $value);
         }
     }
 

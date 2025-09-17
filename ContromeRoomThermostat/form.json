@@ -77,37 +77,22 @@
         {
             "type": "ExpansionPanel",
             "caption": "Visualisation ...",
+            "visible": false,
             "items": [
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "SelectColor",
-                            "name": "VisuOnColor",
-                            "caption": "Tile background color (online):",
-                            "allowTransparent": true
-                        },
-                        {
-                            "type": "SelectColor",
-                            "name": "VisuOffColor",
-                            "caption": "Tile background color (offline):",
-                            "allowTransparent": true
-                        }
-                    ]
-                },
                 {
                     "type": "CheckBox",
                     "name": "VisuNaviBar",
-                    "caption": "Show navigation bar (Prev, Back, Next)?"
+                    "caption": "Show navigation bar (Prev, Back, Next)?",
+                    "visible": false
                 },
                 {
                     "type": "NumberSpinner",
                     "name": "StepSize",
                     "caption": "Step size when changing the setpoint temperature",
                     "minimum": 0.1,
-                    "maximum": 2,
+                    "maximum": 1,
                     "moreDigits": false,
-                    "value":    0.1,
+                    "value":    0.5,
                     "digits":  1,
                     "suffix":  "°C"
                 }
@@ -157,7 +142,7 @@
         },
         {
             "type": "Label",
-            "caption": "\nTest-read data for room from Controme Mini-Server."
+            "caption": "\nRead data for room from Controme Mini-Server only."
         },
         {
             "type": "RowLayout",

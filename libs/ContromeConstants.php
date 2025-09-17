@@ -16,7 +16,7 @@ class GUIDs
 
     // --- Weitere GUIDs ---
     public const PROFILE_BETRIEBSART  = '{16B16C23-64B7-26D3-6BE9-9B9E43AD491B}';
-    public const PROFILE_SETPOINT_PRESENTATION_ID       = '{6B9CAEEC-5958-C223-30F7-BD36569FC57A}'; // IPS build-in for room temperature
+    public const PROFILE_SETPOINT_PRESENTATION_ID       = '{6B9CAEEC-5958-C223-30F7-BD36569FC57A}'; // IPS build-in for room temperature -> https://www.symcon.de/en/service/documentation/developer-area/sdk-tools/sdk-php/constants/
     public const PROFILE_SETPOINT_TEMPLATE_ID           = '{868B087E-A38D-2155-EBE0-157AFBBF9E8C}'; // IPS build-in for room temperatur
 
 }

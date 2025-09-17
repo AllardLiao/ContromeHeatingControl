@@ -109,19 +109,44 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "If not done already: please import the configuration of the Controme Mini-Server first (use the button within \"Execute action...\" section below).",
+                    "caption": "Note: if not done alread, i.e. in case there are no rooms in the room list: please import the configuration of the Controme Mini-Server first (use the button within \"Execute action...\" section below).",
                     "bold": true
+                },
+                {
+                    "type": "Label",
+                    "caption": "Target category for new instances"
+                },
+                {
+                    "type": "SelectCategory",
+                    "name": "TargetCategory",
+                    "caption": "Select target category",
+                    "value": 0
+                },
+                {
+                    "type": "Label",
+                    "caption": "IPS Central Control for Controme",
+                    "bold": true
+                },
+                {
+                    "type": "Label",
+                    "caption": "The Controme Central Control instance is a global instance for controlling and monitoring the Controme system (however limited to the options, that Controme allows to be configured from outside of their system...). It does not belong to a specific room.",
+                    "bold": false
                 },
                 {
                     "type": "Button",
                     "name": "ButtonCreateCentralInstance",
                     "caption": "Create Instance for central control",
-                    "onClick": "CreateCentralControl"
+                    "onClick": "CONGW_CreateCentralControlInstance($id);"
+                },
+                {
+                    "type": "Label",
+                    "caption": "IPS Room Thermostat for Controme",
+                    "bold": true
                 },
                 {
                     "type": "List",
                     "name": "Rooms",
-                    "caption": "Rooms",
+                    "caption": "Configured rooms within Controme Mini-Server",
                     "rowCount": 5,
                     "loadValuesFromConfiguration": true,
                     "add": false,
@@ -132,7 +157,7 @@
                     },
                     "columns": [
                         {
-                            "caption": "FlooID",
+                            "caption": "Floor ID",
                             "name": "FloorID",
                             "width": "80px",
                             "save": true,
@@ -140,7 +165,7 @@
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
                         },
                         {
-                            "caption": "Floor",
+                            "caption": "Floor name",
                             "name": "Floor",
                             "width": "275px",
                             "save": true,
@@ -152,7 +177,7 @@
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
                         },
                         {
-                            "caption": "RoomID",
+                            "caption": "Room ID",
                             "name": "RoomID",
                             "width": "50px",
                             "save": true,
@@ -160,7 +185,7 @@
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
                         },
                         {
-                            "caption": "Room",
+                            "caption": "Room name",
                             "name": "Room",
                             "width": "275px",
                             "save": true,
@@ -170,20 +195,41 @@
                                 "caption": "Floor"
                             },
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
+                        },
+                        {
+                            "name": "InstanceExists",
+                            "caption": "Instance exists",
+                            "width": "120px",
+                            "save": false,
+                            "edit": {
+                                "type": "CheckBox",
+                                "enabled": false
+                            }
                         }
                     ],
                     "values": []
                 },
                 {
                     "type": "Label",
-                    "caption": "Note: You can rename floors and rooms here for better clarity in the IP-Symcon-Admin area. However, if you use the 'Read configuration from Controme Mini-Server' button, your changes will be overwritten with the names given by the Controme Mini-Server. The Controme Room Thermostat and Central Control modules only use the >>room IDs<< as unique identifiers, so changing names in IP-Symcon does not affect the connection, as long as the IDs remain unchanged. The names used for Symcon visualizations will be taken from the \"Controme Central Control\" respectivly \"Controme RoomThermostat\" instances - you can change them there and they will not be overwritten."
+                    "caption": "Note: You can rename floors and rooms here for better clarity in the IP-Symcon-Admin area. However, if you use the 'Read configuration from Controme Mini-Server' button, your changes will be overwritten with the names given by the Controme Mini-Server. The Controme Room Thermostat and Central Control only use the >>room IDs<< as unique identifiers, so changing names in the Room Thermostat does not affect the connection, as long as the IDs remain unchanged. The names used for Symcon visualizations will be taken from the \"Controme Central Control\" respectivly \"Controme Room Thermostat\" instances - you can change them there and they will not be overwritten."
                 },
                 {
-                    "type": "Button",
-                    "name": "ButtonCreateRoomInstance",
-                    "caption": "Create instance for selected room",
-                    "onClick": "print_r($Rooms['Floor'] . ' - ' . print_r($Rooms['Room']));",
-                    "enabled": false
+                    "type": "RowLayout",
+                    "items": [
+                        {
+
+                            "type": "Button",
+                            "name": "ButtonCreateRoomInstance",
+                            "caption": "Create instance for selected room",
+                            "onClick": "$selectedRows = GetValue($id, 'Rooms'); if(count($selectedRows) == 1) { CONGW_CreateRoomThermostatInstance($id, json_encode($selectedRows[0]));}",
+                            "enabled": false
+                        },
+                        {
+                            "type": "Label",
+                            "name": "InstanceCreationResult",
+                            "caption": ""
+                        }
+                    ]
                 }
             ]
         }

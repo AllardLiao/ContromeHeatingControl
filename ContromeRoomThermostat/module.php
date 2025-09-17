@@ -46,7 +46,6 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // Schrittweite für Setpoint-Änderung (Default: 0.5)
         $this->RegisterPropertyFloat('StepSize', 0.5);
 
-
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
 
@@ -123,8 +122,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case 'form_toggleAutoUpdate': // Auskösung über onChange der Konfig-Forms
                 $this->toggleAutoUpdate($value==1);
                 break;
-        default:
-                throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
+            default:
+                parent::RequestAction($ident, $value);
         }
     }
 

@@ -44,6 +44,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyBoolean("UseHTTPS", false);
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
         $this->RegisterPropertyInteger("Mode", 0);
+        $this->RegisterPropertyInteger("TargetCategory", 0); // Zielkategorie für neue Instanzen
     }
 
     public function Destroy(): void
@@ -106,8 +107,11 @@ class ContromeGateway extends IPSModuleStrict
             case ACTIONs::CREATE_CENTRAL_CONTROL_INSTANCE:
                 $this->CreateCentralControlInstance();
                 break;
+            case ACTIONs::CREATE_ROOM_THERMOSTAT_INSTANCE:
+                $this->CreateRoomThermostatInstance($value);
+                break;
             default:
-                throw new Exception("Invalid ident");
+                parent::RequestAction($ident, $value);
         }
     }
 
@@ -549,7 +553,7 @@ class ContromeGateway extends IPSModuleStrict
 
     }
 
-    public function CreateCentralControlInstance(): bool
+    private function CreateCentralControlInstance(): bool
     {
         $parentId = $this->ReadPropertyInteger("TargetParent"); // Gewählter Parent
         $instanceName = $this->ReadPropertyString("InstanceName"); // Gewählter Name
@@ -570,19 +574,65 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
+    private function CreateRoomThermostatInstance($selectedRowData)
+    {
+        try {
+            // Decode der ausgewählten Zeile
+            $rowData = json_decode($selectedRowData, true);
+            if (!$rowData) {
+                throw new Exception('Non-valid row data provided.');
+            }
+
+            $floorId = $rowData['FloorID'];
+            $floorName = $rowData['Floor'];
+            $roomId = $rowData['RoomID'];
+            $roomName = $rowData['Room'];
+            $icon = "temperature-list";
+
+            // Zielkategorie aus Konfiguration lesen
+            $targetCategoryId = $this->ReadPropertyInteger("TargetCategory");
+
+            // Validierung: Kategorie muss ausgewählt sein
+            if ($targetCategoryId < 0) {
+                throw new Exception('Bitte wählen Sie eine Zielkategorie aus.');
+            }
+
+            // Instanz erstellen
+            $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
+
+            // Instanz-Editor öffnen
+            $this->OpenInstanceEditor($instanceId);
+
+            // Erfolgsmeldung
+            $this->UpdateFormField("InstanceCreationResult", "caption", "Instanz für '$floorName-$roomName' erfolgreich erstellt!");
+            // Raum-Liste aktualisieren
+            $this->RefreshRoomInstanceStatus();
+
+            return json_encode([
+                'success' => true,
+                'message' => "Thermostat-Instanz für '$floorName-$roomName' erfolgreich erstellt!",
+                'instanceId' => $instanceId
+            ]);
+
+        } catch (Exception $e) {
+            return json_encode([
+                'success' => false,
+                'message' => 'Fehler beim Erstellen der Instanz: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     public function EnableDisableFormButtons()
     {
-        $rooms = json_decode($this->ReadPropertyString("Rooms"));
-
         // Prüfen, ob Räume vorhanden sind
+        $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
+
         if (is_array($rooms) && count($rooms) > 0) {
-            // Räume existieren – Buttons einblenden
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
+            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", true);
+            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", true);
         } else {
-            // Keine Räume vorhanden
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "false");
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "false");
+            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", false);
+            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", false);
         }
     }
 
@@ -678,5 +728,66 @@ class ContromeGateway extends IPSModuleStrict
 
         $this->SendDebug(__FUNCTION__, "Antwort von $ip, HTTP Code: $httpCode", 0);
         return $httpCode > 0;
+    }
+
+    private function CheckIfInstanceExists(int $roomId): bool
+    {
+        // Suche nach existierenden Instanzen mit dieser RoomID
+        $instances = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
+        foreach ($instances as $instanceId) {
+            $roomIdProperty = IPS_GetProperty($instanceId, 'RoomID');
+            if ($roomIdProperty == $roomId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function CreateAndConfigureRoomInstance(int $parentCategoryId, int $floorId, string $floorName, int $roomId, string $roomName, string $icon = "temperature-list"): int
+    {
+        // Neue Instanz erstellen
+        $instanceId = IPS_CreateInstance(GUIDs::ROOM_THERMOSTAT);
+        IPS_SetName($instanceId, "Thermostat " . $floorName . "-" . $roomName);
+        IPS_SetIcon($instanceId, $icon);
+
+        // In Kategorie verschieben
+        IPS_SetParent($instanceId, $parentCategoryId);
+
+        // Eigenschaften konfigurieren
+        IPS_SetProperty($instanceId, 'FloorID', $floorId);
+        IPS_SetProperty($instanceId, 'Floor', $floorName);
+        IPS_SetProperty($instanceId, 'RoomID', $roomId);
+        IPS_SetProperty($instanceId, 'Room', $roomName);
+
+        // Mit diesem Gateway verbinden
+        IPS_ConnectInstance($instanceId, $this->InstanceID);
+
+        // Konfiguration anwenden
+        IPS_ApplyChanges($instanceId);
+
+        return $instanceId;
+    }
+
+    private function OpenInstanceEditor(int $instanceId)
+    {
+        // JavaScript generieren um Instanz-Editor zu öffnen
+        $script = "window.open('index.php?page=configure&id=$instanceId', '_blank');";
+
+        // Alternative: Form-Update mit JavaScript
+        $this->UpdateFormField('InstanceCreationResult', 'caption',
+            'Instanz erstellt! <a href="#" onclick="' . $script . '">Instanz öffnen</a>');
+    }
+
+    private function RefreshRoomInstanceStatus(): void
+    {
+        $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
+        if (!is_array($rooms)) return;
+
+        foreach ($rooms as &$room) {
+            $room['InstanceExists'] = $this->CheckIfInstanceExists($room['RoomID']);
+        }
+
+        $this->UpdateFormField("Rooms", "values", json_encode($rooms));
     }
 }
