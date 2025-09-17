@@ -76,8 +76,6 @@ class CONTROME_API
 
 class CONTROME_PROFILES
 {
-    use GUIDs;
-
     public const BETRIEBSART = 'Controme.Betriebsart';
     public static array $betriebsartMap = [
         0 => "Kühlen (Auto)",
