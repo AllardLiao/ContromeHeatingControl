@@ -557,7 +557,7 @@ class ContromeGateway extends IPSModuleStrict
 
     private function CreateCentralControlInstance(): bool
     {
-        $parentId = $this->ReadPropertyInteger("TargetParent"); // Gewählter Parent
+        $parentId = $this->ReadPropertyInteger("TargetCategory"); // Gewählter Parent
         $instanceName = "Controme Central Control";
 
         if (!$parentId || !$instanceName) {
