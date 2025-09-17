@@ -227,8 +227,7 @@
                             "type": "Button",
                             "name": "ButtonCreateRoomInstance",
                             "caption": "Create instance for selected room",
-                            "onClick": "var selected = GetSelectedRows($id, 'Rooms'); if(selected.length == 1) { CONGW_CreateRoomThermostatInstance($id, selected[0]['RoomID']); } else { alert('Please select exactly one room!'); }",
-                            "enabled": false
+                            "onClick": "selected = GetSelectedRows($id, 'Rooms'); if(selected.length == 1) { CONGW_CreateRoomThermostatInstance($id, selected[0]['RoomID']); } else { alert('Please select exactly one room!'); }"                            "enabled": false
                         },
                         {
                             "type": "Label",
