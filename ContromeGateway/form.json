@@ -197,7 +197,7 @@
                             "visible": true,
                             "edit": {
                                 "type": "ValidationTextBox",
-                                "caption": "Floor"
+                                "caption": "Room"
                             },
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
                         },

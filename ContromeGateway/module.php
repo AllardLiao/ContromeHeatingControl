@@ -333,20 +333,16 @@ class ContromeGateway extends IPSModuleStrict
 
             foreach ($etage['raeume'] as $raum) {
                 $formListJson[] = [
-                    "FloorID" => $etage['id'] ?? 0,
-                    "Floor"   => $etage['etagenname'] ?? "Haus",
-                    "RoomID"  => $raum['id'] ?? 0,
-                    "Room"    => $raum['name'] ?? "Raum",
+                    "FloorID"           => $etage['id'] ?? 0,
+                    "Floor"             => $etage['etagenname'] ?? "Haus",
+                    "RoomID"            => $raum['id'] ?? 0,
+                    "Room"              => $raum['name'] ?? "Raum",
+                    "InstanceExists"    => $this->CheckIfInstanceExists($raum['id'])
                 ];
             }
         }
 
         $this->SendDebug(__FUNCTION__, "Updated Controme Heating Data.", 0);
-
-        // Instanz-Status für jeden Raum prüfen und hinzufügen
-        foreach ($formListJson as &$room) {
-            $room['InstanceExists'] = $this->CheckIfInstanceExists($room['RoomID']);
-        }
 
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
@@ -750,7 +746,6 @@ class ContromeGateway extends IPSModuleStrict
                 return true;
             }
         }
-
         return false;
     }
 
