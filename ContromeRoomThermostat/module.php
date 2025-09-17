@@ -41,18 +41,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
+        $this->toggleAutoUpdate($this->ReadPropertyBoolean("AutoUpdate"));
 
         // Schrittweite für Setpoint-Änderung (Default: 0.5)
         $this->RegisterPropertyFloat('StepSize', 0.5);
 
-        // Variablen definieren - read-only, kommt von Controme
-        $this->RegisterVariableFloat("Temperature", "Raumtemperatur", "~Temperature.Room", 1);
-        $this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit", "~Humidity.F", 3);
-        $this->RegisterVariableInteger("Mode", "Betriebsart", CONTROME_PROFILES::BETRIEBSART, 4);
-
-        // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
-        $this->RegisterVariableFloat("Setpoint", "Solltemperatur", CONTROME_PROFILES::getSetPointPresentation(), 2);
-        $this->EnableAction("Setpoint");
 
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
@@ -72,6 +65,19 @@ class ContromeRoomThermostat extends IPSModuleStrict
         //Never delete this line!
         parent::ApplyChanges();
 
+        // Variablenprofile/Presentationtemplates sicherstellen
+        CONTROME_PROFILES::registerAllContromeProfilesAndTemplates();
+
+        // Variablen definieren - read-only, kommt von Controme
+        $this->MaintainVariable("Temperature", "Raumtemperatur", 2, "~Temperature.Room", 1, true);
+        $this->MaintainVariable("Humidity", "Luftfeuchtigkeit", 2, "~Humidity.F", 3, true);
+        $this->MaintainVariable("Mode", "Betriebsart", 1, CONTROME_PROFILES::BETRIEBSART, 4, true);
+
+        // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
+        $this->MaintainVariable("Setpoint", "Solltemperatur", 2, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
+        $this->EnableAction("Setpoint");
+
+        // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
             $this->SetTimerInterval("UpdateContromeDataRoomID" . $this->InstanceID, $this->ReadPropertyInteger("UpdateInterval") * 60 * 1000);
         } else {
@@ -114,8 +120,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->WriteSetpoint((float)$value);
                 $this->updateVisualization();
                 break;
-            case 'Setpoint': // Änderung an der Variablen direkt
-                $this->WriteSetpoint((float)$value);
+            case 'form_toggleAutoUpdate': // Auskösung über onChange der Konfig-Forms
+                $this->toggleAutoUpdate($value);
                 break;
         default:
                 throw new Exception("Invalid function call to CONRTROME Room Thermostat. RequestAction: " . $ident);
@@ -131,6 +137,18 @@ class ContromeRoomThermostat extends IPSModuleStrict
             'Humidity'    => floatval($this->GetValue('Humidity')),
             'Mode'        => $this->GetValue('Mode')
         ]));
+    }
+
+    private function toggleAutoUpdate(bool $toggleAutoUpdate): bool
+    {
+        if (isset($value) && $value)
+        {
+            $this->UpdateFormField('UpdateInterval', 'enabled', 'true');
+        }
+        else
+        {
+            $this->UpdateFormField('UpdateInterval', 'enabled', 'false');
+        }
     }
 
     /**
@@ -229,8 +247,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         ]));
 
         if ($result === false) {
-            $this->SendDebug("TestReadRoomData", "Fetching Data: no response from gateway!", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data: no response from gateway", KL_ERROR);
+            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
+            $this->LogMessage(__FUNCTION__ . ": Fetching Data: no response from gateway", KL_ERROR);
             $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: no response from gateway");
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
@@ -238,12 +256,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $data = json_decode($result, true);
         if (isset($data['name'])) {
-            $this->SendDebug("TestReadRoomData", "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.", KL_MESSAGE);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.");
+            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
+            $this->LogMessage("Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)", KL_MESSAGE);
+            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)");
         } else {
-            $this->SendDebug("TestReadRoomData", "Fetching Data ok, but room $roomId data not valid!", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data ok, but room data not valid!", KL_ERROR);
+            $this->SendDebug(__FUNCTION__, "Fetching Data ok, but room $roomId data not valid!", 0);
+            $this->LogMessage("Fetching Data ok, but room data not valid!", KL_ERROR);
             $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data ok, but room data not valid");
             $this->SetStatus(IS_BAD_JSON);
             return false;
@@ -268,7 +286,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         ]));
 
         if ($result === false) {
-            $this->SendDebug("UpdateRoomData", "No data received!", 0);
+            $this->SendDebug(__FUNCTION__, "No data received!", 0);
             $this->LogMessage("Fetching Data for Room $roomId returned no data!", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
@@ -276,13 +294,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $data = json_decode($result, true);
         if (!is_array($data)) {
-            $this->SendDebug("UpdateRoomData", "Invalid data received: " . $result, 0);
+            $this->SendDebug(__FUNCTION__, "Invalid data received: " . $result, 0);
             $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
             $this->SetStatus(IS_BAD_JSON);
             return false;
         }
 
-        $this->SendDebug("UpdateRoomData", "Room data updated", 0);
+        $this->SendDebug(__FUNCTION__, "Room data updated", 0);
         $this->SetStatus(IS_ACTIVE);
 
         return $this->saveDataToVariables($data);
@@ -295,7 +313,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
-        $this->EnableAction("Setpoint");
+        //$this->EnableAction("Setpoint");
 
         if (isset($data['temperatur'])) {
             $this->SetValue("Temperature", floatval($data['temperatur']));
@@ -327,20 +345,20 @@ class ContromeRoomThermostat extends IPSModuleStrict
         ];
 
         $result = $this->SendDataToParent(json_encode($data));
-        $this->SendDebug('SendSetpointToParent', 'Response: ' . $result, 0);
+        $this->SendDebug(__FUNCTION__, 'Response: ' . $result, 0);
 
         if ($result !== false) {
             $decoded = json_decode($result, true);
             if (is_string($decoded)) {
                 $decoded = json_decode($decoded, true);
             }
-            $this->SendDebug("WriteSetpoint", "Decoded result: " . print_r($decoded, true), 0);
+            $this->SendDebug(__FUNCTION__, "Decoded result: " . print_r($decoded, true), 0);
             if (isset($decoded['success']) && $decoded['success'] === true) {
                 $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
-                $this->SendDebug("WriteSetpoint", "Solltemperatur erfolgreich gesetzt: " . $value, 0);
+                $this->SendDebug(__FUNCTION__, "Solltemperatur erfolgreich gesetzt: " . $value, 0);
             } else {
                 $msg = $decoded['message'] ?? 'Unbekannter Fehler';
-                $this->SendDebug("WriteSetpoint", "Fehler beim Setzen der Solltemperatur: " . $msg, 0);
+                $this->SendDebug(__FUNCTION__, "Fehler beim Setzen der Solltemperatur: " . $msg, 0);
                 $this->LogMessage("Setpoint-Fehler: " . $msg, KL_ERROR);
                 // Optional: User Feedback ins Frontend
                 $this->UpdateFormField("Result", "caption", "Fehler: " . $msg);
@@ -348,7 +366,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 throw new UserFriendlyException($decoded['message']);
             }
         } else {
-            $this->SendDebug("WriteSetpoint", "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);
+            $this->SendDebug(__FUNCTION__, "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);
             $this->LogMessage("Setpoint-Fehler: Gateway hat einen Fehler zurückgegeben!", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
             return false;

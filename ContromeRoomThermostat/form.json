@@ -120,13 +120,16 @@
                 {
                     "type": "CheckBox",
                     "name": "AutoUpdate",
-                    "caption": "Automatically update values"
+                    "caption": "Automatically update values",
+                    "onChange": "IPS_RequestAction($id, 'form_toggleAutoUpdate', '$AutoUpdate');"
                 },
                 {
                     "type": "NumberSpinner",
                     "name": "UpdateInterval",
                     "caption": "Update interval",
-                    "suffix": "minutes"
+                    "suffix": "minutes",
+                    "minimum": 1,
+                    "value": 5
                 }
             ]
         }

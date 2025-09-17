@@ -16,6 +16,9 @@ class GUIDs
 
     // --- Weitere GUIDs ---
     public const PROFILE_BETRIEBSART  = '{16B16C23-64B7-26D3-6BE9-9B9E43AD491B}';
+    public const PROFILE_SETPOINT_PRESENTATION_ID       = '{6B9CAEEC-5958-C223-30F7-BD36569FC57A}'; // IPS build-in for room temperature
+    public const PROFILE_SETPOINT_TEMPLATE_ID           = '{868B087E-A38D-2155-EBE0-157AFBBF9E8C}'; // IPS build-in for room temperatur
+
 }
 
 class ACTIONs
@@ -73,6 +76,8 @@ class CONTROME_API
 
 class CONTROME_PROFILES
 {
+    use GUIDs;
+
     public const BETRIEBSART = 'Controme.Betriebsart';
     public static array $betriebsartMap = [
         0 => "Kühlen (Auto)",
@@ -81,21 +86,16 @@ class CONTROME_PROFILES
         3 => "Dauer-Ein"
     ];
 
-    public const SETPOINT = 'Controme.Setpoint';
-    private static String $setPointPresentation = "[
-        'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
-        'SUFFIX' => '°C',
-        'MIN' => 15.0,
-        'MAX' => 28.0,
-        'STEP_SIZE' => 0.5,
-        'GRADIENT_TYPE' => 1, //Temperatur
-        'USAGE_TYPE' => 0, // Standard
-        'DIGITS' => 1,
-        'ICON' => 'Temperature'
-    ]";
+    //public const SETPOINT = 'Controme.Setpoint'; // IPS build-in room temperature - see GUIDs
+
+    public static functiOn registerAllContromeProfilesAndTemplates()
+    {
+        CONTROME_PROFILES::registerProfile(CONTROME_PROFILES::BETRIEBSART);
+    }
 
     public static function registerProfile(string $profile)
     {
+        // Variablenprofile werden anhand des Namens identifiziert, Präsentationen anhand der GUID!
         switch ($profile)
         {
             case self::BETRIEBSART:
@@ -106,13 +106,14 @@ class CONTROME_PROFILES
                         IPS_SetVariableProfileAssociation($profile, $val, $text, "", -1);
                     }
                 }
+                break;
         }
     }
 
     public static function getSetPointPresentation(): string
     {
-        //return self::$setPointPresentation;
-        return "~Temperature";
+        return "['PRESENTATION' => " . GUIDs::PROFILE_SETPOINT_PRESENTATION_ID . ", 'TEMPLATE' => " . GUIDs::PROFILE_SETPOINT_TEMPLATE_ID . "]";
+        //return "~Temperature";
     }
 
     public static function getLabelBetriebsart(int $value): string

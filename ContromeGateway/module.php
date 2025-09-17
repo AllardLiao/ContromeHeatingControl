@@ -59,9 +59,8 @@ class ContromeGateway extends IPSModuleStrict
 
         $this->SetStatus(IS_INACTIVE);
 
-        // Variablenprofil für Betriebsart sicherstellen
-        $profile = CONTROME_PROFILES::BETRIEBSART;
-        CONTROME_PROFILES::registerProfile($profile);
+        // Variablenprofile/Presentationtemplates sicherstellen
+        CONTROME_PROFILES::registerAllContromeProfilesAndTemplates();
 
         $ip = $this->ReadPropertyString("IPAddress");
         if ($ip == "") {
@@ -495,7 +494,7 @@ class ContromeGateway extends IPSModuleStrict
         $postData = http_build_query([
             'user'     => $user,
             'password' => $pass,
-            'soll'     => '22.5' //number_format($setpoint, 2, '.', '')
+            'soll'     => number_format($setpoint, 2, '.', '')
         ]);
 
         $opts = [
