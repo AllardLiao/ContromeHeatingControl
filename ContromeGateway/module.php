@@ -587,6 +587,10 @@ class ContromeGateway extends IPSModuleStrict
             $roomData = json_decode($roomRow, true);
             $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
 
+            if ($roomData === null) {
+                throw new Exception("Invalid JSON data received: " . $roomRow);
+            }
+            
             $floorId = $roomData['FloorID'];
             $floorName = $roomData['Floor'];
             $roomId = $roomData['RoomID'];

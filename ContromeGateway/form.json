@@ -227,7 +227,7 @@
                             "type": "Button",
                             "name": "ButtonCreateRoomInstance",
                             "caption": "Create instance for selected room",
-                            "onClick": "IPS_RequestAction($id, 'CreateRoomThermostatInstance', json_encode($FileList));",
+                            "onClick": "IPS_RequestAction($id, 'CreateRoomThermostatInstance', json_encode($rooms));",
                             "enabled": false
                         },
                         {
