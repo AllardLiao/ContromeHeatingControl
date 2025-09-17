@@ -200,17 +200,6 @@
                                 "caption": "Room"
                             },
                             "onClick": "CONGW_EnableDisableFormButtons($id);"
-                        },
-                        {
-                            "name": "InstanceExists",
-                            "caption": "Instance exists",
-                            "width": "120px",
-                            "save": false,
-                            "visible": true,
-                            "edit": {
-                                "type": "CheckBox",
-                                "enabled": false
-                            }
                         }
                     ],
                     "values": []

@@ -80,9 +80,6 @@ class ContromeGateway extends IPSModuleStrict
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
-        // Instanz-Status in der Raum-Liste aktualisieren (falls Räume bereits geladen)
-        $this->RefreshRoomInstanceStatus();
-
         $this->SetStatus(IS_ACTIVE);
     }
 
@@ -336,8 +333,7 @@ class ContromeGateway extends IPSModuleStrict
                     "FloorID"           => $etage['id'] ?? 0,
                     "Floor"             => $etage['etagenname'] ?? "Haus",
                     "RoomID"            => $raum['id'] ?? 0,
-                    "Room"              => $raum['name'] ?? "Raum",
-                    "InstanceExists"    => var_export($this->CheckIfInstanceExists($raum['id']), true)
+                    "Room"              => $raum['name'] ?? "Raum"
                 ];
             }
         }
@@ -562,7 +558,7 @@ class ContromeGateway extends IPSModuleStrict
     private function CreateCentralControlInstance(): bool
     {
         $parentId = $this->ReadPropertyInteger("TargetParent"); // Gewählter Parent
-        $instanceName = $this->ReadPropertyString("InstanceName"); // Gewählter Name
+        $instanceName = "Controme Central Control";
 
         if (!$parentId || !$instanceName) {
             $this->SendDebug(__FUNCTION__, "Parent or name not set!", 0);
@@ -570,12 +566,12 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         // Neue Central Control Instanz erstellen
-        $newId = IPS_CreateInstance('{A19ABE82-5AB1-7969-3851-E6446DECEBA9}');
+        $newId = IPS_CreateInstance(GUIDs::CENTRAL_CONTROL);
         IPS_SetParent($newId, $parentId);
         IPS_SetName($newId, $instanceName);
         IPS_ApplyChanges($newId);
 
-        $this->SendDebug(__FUNCTION__, "Central Control created under parent $parentId with name '$instanceName', ID $newId", 0);
+        $this->SendDebug(__FUNCTION__, "Central Control created with name '$instanceName', ID $newId", 0);
 
         return true;
     }
@@ -590,7 +586,7 @@ class ContromeGateway extends IPSModuleStrict
             if ($roomData === null) {
                 throw new Exception("Invalid JSON data received: " . $roomRow);
             }
-            
+
             $floorId = $roomData['FloorID'];
             $floorName = $roomData['Floor'];
             $roomId = $roomData['RoomID'];
@@ -613,8 +609,6 @@ class ContromeGateway extends IPSModuleStrict
 
             // Erfolgsmeldung
             $this->UpdateFormField("InstanceCreationResult", "caption", "Instanz für '$floorName-$roomName' erfolgreich erstellt!");
-            // Raum-Liste aktualisieren
-            $this->RefreshRoomInstanceStatus();
 
             return json_encode([
                 'success' => true,
@@ -739,19 +733,6 @@ class ContromeGateway extends IPSModuleStrict
         return $httpCode > 0;
     }
 
-    private function CheckIfInstanceExists(int $roomId): bool
-    {
-        // Suche nach existierenden Instanzen mit dieser RoomID
-        $instances = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
-        foreach ($instances as $instanceId) {
-            $roomIdProperty = IPS_GetProperty($instanceId, 'RoomID');
-            if ($roomIdProperty == $roomId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function CreateAndConfigureRoomInstance(int $parentCategoryId, int $floorId, string $floorName, int $roomId, string $roomName, string $icon = "temperature-list"): int
     {
         // Neue Instanz erstellen
@@ -769,7 +750,7 @@ class ContromeGateway extends IPSModuleStrict
         IPS_SetProperty($instanceId, 'Room', $roomName);
 
         // Mit diesem Gateway verbinden
-        IPS_ConnectInstance($instanceId, $this->InstanceID);
+        //IPS_ConnectInstance($instanceId, $this->InstanceID); Passiert automatisch ;-)
 
         // Konfiguration anwenden
         IPS_ApplyChanges($instanceId);
@@ -787,15 +768,4 @@ class ContromeGateway extends IPSModuleStrict
             'Instanz erstellt! <a href="#" onclick="' . $script . '">Instanz öffnen</a>');
     }
 
-    private function RefreshRoomInstanceStatus(): void
-    {
-        $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
-        if (!is_array($rooms)) return;
-
-        foreach ($rooms as &$room) {
-            $room['InstanceExists'] = var_export($this->CheckIfInstanceExists($room['RoomID']), true);
-        }
-        $this->SendDebug(__FUNCTION__, "Updated room instance status: " . print_r($rooms, true), 0);
-        $this->UpdateFormField("Rooms", "values", json_encode($rooms));
-    }
 }
