@@ -580,23 +580,17 @@ class ContromeGateway extends IPSModuleStrict
         return true;
     }
 
-    private function CreateRoomThermostatInstance($roomId)
+    private function CreateRoomThermostatInstance($roomRow)
     {
         try {
             // Raumdaten aus der gespeicherten Liste holen
-            $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
+            $roomData = json_decode($roomRow, true);
+            $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
 
-            $selectedRoom = null;
-            foreach ($rooms as $room) {
-                if ($room['RoomID'] == $roomId) {
-                    $selectedRoom = $room;
-                    break;
-                }
-            }
-            $floorId = $selectedRoom['FloorID'];
-            $floorName = $selectedRoom['Floor'];
-            $roomId = $selectedRoom['RoomID'];
-            $roomName = $selectedRoom['Room'];
+            $floorId = $roomData['FloorID'];
+            $floorName = $roomData['Floor'];
+            $roomId = $roomData['RoomID'];
+            $roomName = $roomData['Room'];
             $icon = "temperature-list";
 
             // Zielkategorie aus Konfiguration lesen

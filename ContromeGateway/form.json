@@ -227,7 +227,7 @@
                             "type": "Button",
                             "name": "ButtonCreateRoomInstance",
                             "caption": "Create instance for selected room",
-                            "onClick": "selected = GetSelectedRows($id, 'Rooms'); if(selected.length == 1) { CONGW_CreateRoomThermostatInstance($id, selected[0]['RoomID']); } else { alert('Please select exactly one room!'); }",
+                            "onClick": "IPS_RequestAction($id, 'CreateRoomThermostatInstance', json_encode($FileList));",
                             "enabled": false
                         },
                         {
