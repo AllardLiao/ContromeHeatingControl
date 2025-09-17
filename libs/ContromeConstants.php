@@ -110,7 +110,7 @@ class CONTROME_PROFILES
 
     public static function getSetPointPresentation(): string
     {
-        return "['PresentationID' => " . GUIDs::PROFILE_SETPOINT_PRESENTATION_ID . ", 'TemplateID' => " . GUIDs::PROFILE_SETPOINT_TEMPLATE_ID . "]";
+        return "['PresentationID' => '" . GUIDs::PROFILE_SETPOINT_PRESENTATION_ID . "', 'TemplateID' => '" . GUIDs::PROFILE_SETPOINT_TEMPLATE_ID . "']";
         //return "~Temperature";
     }
 
