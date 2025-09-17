@@ -790,7 +790,7 @@ class ContromeGateway extends IPSModuleStrict
         if (!is_array($rooms)) return;
 
         foreach ($rooms as &$room) {
-            $room['InstanceExists'] = var_export($this->CheckIfInstanceExists($room['id']), true)
+            $room['InstanceExists'] = var_export($this->CheckIfInstanceExists($room['id']), true);
         }
         $this->SendDebug(__FUNCTION__, "Updated room instance status: " . print_r($rooms), 0);
         $this->UpdateFormField("Rooms", "values", json_encode($rooms));
