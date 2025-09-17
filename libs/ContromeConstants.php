@@ -108,10 +108,12 @@ class CONTROME_PROFILES
         }
     }
 
-    public static function getSetPointPresentation(): string
+    public static function getSetPointPresentation(): array
     {
-        return "['PresentationID' => '" . GUIDs::PROFILE_SETPOINT_PRESENTATION_ID . "', 'TemplateID' => '" . GUIDs::PROFILE_SETPOINT_TEMPLATE_ID . "']";
-        //return "~Temperature";
+        return [
+            'PresentationID' => GUIDs::PROFILE_SETPOINT_PRESENTATION_ID,
+            'TemplateID' => GUIDs::PROFILE_SETPOINT_TEMPLATE_ID
+        ];
     }
 
     public static function getLabelBetriebsart(int $value): string
