@@ -124,7 +124,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "IPS Central Control for Controme",
+                    "caption": "\nIPS Central Control for Controme",
                     "bold": true
                 },
                 {
@@ -136,11 +136,11 @@
                     "type": "Button",
                     "name": "ButtonCreateCentralInstance",
                     "caption": "Create Instance for central control",
-                    "onClick": "IPS_RequestAction($id, 'CreateCentralControlInstance', '';"
+                    "onClick": "IPS_RequestAction($id, 'CreateCentralControlInstance', '');"
                 },
                 {
                     "type": "Label",
-                    "caption": "IPS Room Thermostat for Controme",
+                    "caption": "\nIPS Room Thermostat for Controme",
                     "bold": true
                 },
                 {
