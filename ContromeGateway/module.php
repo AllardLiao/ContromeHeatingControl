@@ -79,6 +79,10 @@ class ContromeGateway extends IPSModuleStrict
         // JSON url anpassen
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
+
+        // Instanz-Status in der Raum-Liste aktualisieren (falls Räume bereits geladen)
+        $this->RefreshRoomInstanceStatus();
+
         $this->SetStatus(IS_ACTIVE);
     }
 
@@ -338,6 +342,12 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         $this->SendDebug(__FUNCTION__, "Updated Controme Heating Data.", 0);
+
+        // Instanz-Status für jeden Raum prüfen und hinzufügen
+        foreach ($formListJson as &$room) {
+            $room['InstanceExists'] = $this->CheckIfInstanceExists($room['RoomID']);
+        }
+
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
         $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");

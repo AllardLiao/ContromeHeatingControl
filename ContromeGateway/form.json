@@ -12,7 +12,12 @@
         },
         {
             "type": "Label",
-            "caption": "Display of rooms, sensors, actual/target temperatures, humidity, and operating mode.\nSupports reading and writing via the Controme API.\nFully integrable into IPS with timer and variable profiles.\n\n"
+            "caption": "Display of rooms, sensors, actual/target temperatures, humidity, and operating mode.\nSupports reading and writing via the Controme API.\nFully integrable into IPS with timer and variable profiles.\n"
+        },
+        {
+            "type": "Label",
+            "caption": "Limitations: this gateway is tested with Controme firmware branche V2.0 (stable) from 2025-02-18 16:04:25 or later\n\n",
+            "italic": true
         },
         {
             "type": "Label",
@@ -109,11 +114,6 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "Note: if not done alread, i.e. in case there are no rooms in the room list: please import the configuration of the Controme Mini-Server first (use the button within \"Execute action...\" section below).",
-                    "bold": true
-                },
-                {
-                    "type": "Label",
                     "caption": "Target category for new instances"
                 },
                 {
@@ -142,6 +142,11 @@
                     "type": "Label",
                     "caption": "IPS Room Thermostat for Controme",
                     "bold": true
+                },
+                {
+                    "type": "Label",
+                    "caption": "Note: if not done alread, i.e. in case there are no rooms in the room list: please import the configuration of the Controme Mini-Server first (use the button within \"Execute action...\" section below).",
+                    "italic": true
                 },
                 {
                     "type": "List",
