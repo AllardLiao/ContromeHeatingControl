@@ -108,8 +108,9 @@ class CONTROME_PROFILES
         }
     }
 
-    public static function getSetPointPresentation(): array
+    public static function getSetPointPresentation(): array|string
     {
+        return "~Temperature.Room";
         return [
             'PresentationID' => GUIDs::PROFILE_SETPOINT_PRESENTATION_ID,
             'TemplateID' => GUIDs::PROFILE_SETPOINT_TEMPLATE_ID
