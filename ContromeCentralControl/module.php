@@ -48,7 +48,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyBoolean("AutoUpdate", true);
 
         // Konfigurationselemente für Testabfragen
-        $this->RegisterpropertyInteger("RoomID", 1);
+        $this->RegisterPropertyInteger("RoomID", 1);
 
         //Visu Type setzen:
         $this->SetVisualizationType(1);     // 1 = Tile Visu; 0 = Standard.
@@ -89,10 +89,6 @@ class ContromeCentralControl extends IPSModuleStrict
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $this->registerSystemInfoVariables();
         }
-        // Rooms vorbereiten/anlegen
-        if ($this->ReadPropertyBoolean("ShowRooms") || $this->ReadPropertyBoolean("ShowRoomData")) {
-            $this->registerRoomCategory();
-        }
 
         // Timer anpassen
         if ($this->ReadPropertyBoolean("AutoUpdate")) {
@@ -118,19 +114,19 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->CheckConnection();
                 break;
             case ACTIONs::WRITE_SETPOINT:
-                $result = $this->WriteSetpoint(floatval($value));
+                $result = $this->WriteSetpoint(floatval($value)); //TODO
                 break;
             case ACTIONs::TEST_READ_ROOM_DATA:
                 $this->TestReadRoomData();
                 break;
             case 'Mode':
-                $this->SetRoomMode((int)$value['roomId'], (int)$value['mode']);
+                $this->SetRoomMode((int)$value['roomId'], (int)$value['mode']);  //TODO
                 break;
             case 'Temperature':
-                $this->SetRoomTemperature((int)$value['roomId'], floatval($value['temperature']));
+                $this->SetRoomTemperature((int)$value['roomId'], floatval($value['temperature'])); //TODO
                 break;
             case 'Target':
-                $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration']));
+                $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration'])); //TODO
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -257,8 +253,9 @@ class ContromeCentralControl extends IPSModuleStrict
         // Räume
         // ======================
         if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_TEMPERATURS])) {
-            //Existienz der VAriablen sicherstellen
-            $this->registerRoomCategory();
+
+            //Für Reihenfolge im IPS-Baum. SysInfo 1-6
+            $positionCounter = 10;
 
             $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
 
@@ -267,73 +264,45 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->SendDebug(__FUNCTION__, "Rooms is not array: " . print_r($rooms, true), 0);
             }
             else {
-                // Root-Kategorie für Räume sicherstellen
-                $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
-                if ($catRoomsID === false) {
-                    $catRoomsID = IPS_CreateCategory();
-                    IPS_SetName($catRoomsID, "Rooms");
-                    IPS_SetIdent($catRoomsID, "Rooms");
-                    IPS_SetParent($catRoomsID, $this->InstanceID);
-                }
-
                 // Räume durchgehen
                 foreach ($rooms as $floor) {
                     if (!isset($floor['raeume']) || !is_array($floor['raeume'])) continue;
 
                     $floorID   = $floor['id'] ?? 0;
                     $floorName = $floor['etagenname'] ?? "Unbekannt";
+                    $floorVar = "Floor" . $floorID; // Name des Präfix der Variablen für Etagen im IPS Baum
 
-                    // Kategorie für Etage
-                    $floorCatIdent = "Floor_" . $floorID;
-                    $floorCatId = @IPS_GetObjectIDByIdent($floorCatIdent, $catRoomsID);
-                    if ($floorCatId === false) {
-                        $floorCatId = IPS_CreateCategory();
-                        IPS_SetName($floorCatId, $floorName);
-                        IPS_SetIdent($floorCatId, $floorCatIdent);
-                        IPS_SetParent($floorCatId, $catRoomsID);
-                    } else {
-                        IPS_SetName($floorCatId, $floorName);
-                    }
-
-                    // Etagen-Variablen
-                    $floorIdVar   = $this->ensureVariable("FloorID", "Etagen-ID", VARIABLETYPE_INTEGER, "", 5, $floorCatId);
-                    $floorNameVar = $this->ensureVariable("FloorName", "Etagenname", VARIABLETYPE_STRING, "", 6, $floorCatId);
-
-                    SetValue($floorIdVar, (int) $floorID);
-                    SetValue($floorNameVar, (string) $floorName);
+                    // Variablen für Etage anlegen/pflegen
+                    $this->MaintainVariable($floorVar . "ID",     $floorVar . "-ID",    VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                    $this->SetValue(        $floorVar . "ID",     (int) $floorID);
+                    $this->MaintainVariable($floorVar . "Name",   $floorVar . "-Name",   VARIABLETYPE_STRING, "", $positionCounter++, true);
+                    $this->SetValue(        $floorVar . "Name",   (string) $floorName);
 
                     // Räume dieser Etage durchgehen
                     foreach ($floor['raeume'] as $room) {
                         $roomID   = $room['id'] ?? 0;
                         $roomName = $room['name'] ?? "Unbekannt";
-
-                        $roomCatIdent = "Room_" . $roomID;
-                        $roomCatId = @IPS_GetObjectIDByIdent($roomCatIdent, $floorCatId);
-                        if ($roomCatId === false) {
-                            $roomCatId = IPS_CreateCategory();
-                            IPS_SetName($roomCatId, $roomName);
-                            IPS_SetIdent($roomCatId, $roomCatIdent);
-                            IPS_SetParent($roomCatId, $floorCatId);
-                        } else {
-                            IPS_SetName($roomCatId, $roomName);
-                        }
+                        $roomVar  = $floorVar . "Room" . $roomID; // Name des Präfix der Variablen für Räume im IPS Baum
 
                         // Raum-Variablen
-                        $roomIdVar   = $this->ensureVariable("RoomID", "Raum-ID", VARIABLETYPE_INTEGER, "", 10, $roomCatId);
-                        $roomNameVar = $this->ensureVariable("RoomName", "Raumname", VARIABLETYPE_STRING, "", 20, $roomCatId);
-
-                        SetValue($roomIdVar, (int) $roomID);
-                        SetValue($roomNameVar, (string) $roomName);
+                        $this->MaintainVariable($roomVar . "ID", $roomVar . "-ID", VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                        $this->SetValue        ($roomVar . "ID", (int) $roomID);
+                        $this->MaintainVariable($roomVar . "Name", $roomVar . "-Name", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                        $this->SetValue        ($roomVar . "Name", (string) $roomName);
 
                         if (isset($data[ACTIONs::DATA_TEMPERATURS])){
-                            $tempId    = $this->ensureVariable("Temperature", "Temperatur", VARIABLETYPE_FLOAT, "~Temperature", 30, $roomCatId);
-                            $targetId  = $this->ensureVariable("Target", "Solltemperatur", VARIABLETYPE_FLOAT, "~Temperature", 40, $roomCatId);
-                            $stateId   = $this->ensureVariable("State", "Status", VARIABLETYPE_STRING, "", 50, $roomCatId);
-                            $humidityId = $this->ensureVariable("Humidity", "Luftfeuchte", VARIABLETYPE_FLOAT, "~Humidity.F", 60, $roomCatId);
-                            SetValue($tempId, floatval($room['temperatur']));
-                            SetValue($targetId, floatval($room['solltemperatur']));
-                            SetValue($stateId, $room['betriebsart']);
-                            SetValue($humidityId, floatval($room['luftfeuchte']));
+                            $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "Temperature",       floatval($room['temperatur']));
+                            $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
+                            $this->MaintainVariable($roomVar . "State",             $roomVar . "-Status",           VARIABLETYPE_STRING, "", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
+                            $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "Humidity",          floatval($room['luftfeuchte']));
+                            $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "RemainingTime",     $room['remaining_time']);
+                            $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
                         }
                     }
                 }
@@ -378,62 +347,15 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function registerSystemInfoVariables(): void
     {
-        $parentId = $this->InstanceID;
-
-        // Kategorie "SystemInfo" sicherstellen
-        $sysCatId = @IPS_GetObjectIDByName("SystemInfo", $parentId);
-        if ($sysCatId === false || $sysCatId === 0) {
-            $sysCatId = IPS_CreateCategory();
-            IPS_SetName($sysCatId, "SystemInfo");
-            IPS_SetParent($sysCatId, $parentId);
-
-            // Variablen in der Kategorie anlegen
-            // Hilfsfunktion zum sicheren Anlegen
-            $this->ensureVariable("SysInfo_HW", "Hardware", VARIABLETYPE_STRING, "", 10, $sysCatId);
-            $this->ensureVariable("SysInfo_SWDate", "Software Datum", VARIABLETYPE_STRING, "", 11, $sysCatId);
-            $this->ensureVariable("SysInfo_Branch", "Branch", VARIABLETYPE_STRING, "", 12, $sysCatId);
-            $this->ensureVariable("SysInfo_OS", "Betriebssystem", VARIABLETYPE_STRING, "", 13, $sysCatId);
-            $this->ensureVariable("SysInfo_FBI", "Filesystem Build", VARIABLETYPE_STRING, "", 14, $sysCatId);
-            $this->ensureVariable("SysInfo_AppCompat", "App kompatibel", VARIABLETYPE_BOOLEAN, "~Switch", 15, $sysCatId);
-        }
+        // Variablen System-Info anlegen/pflegen
+        $this->MaintainVariable("SysInfo_HW",           "System_Hardware",          VARIABLETYPE_STRING, "", 1, true);
+        $this->MaintainVariable("SysInfo_SWDate",       "System_Software Datum",    VARIABLETYPE_STRING, "", 2, true);
+        $this->MaintainVariable("SysInfo_Branch",       "System_Branch",            VARIABLETYPE_STRING, "", 3, true);
+        $this->MaintainVariable("SysInfo_OS",           "System_Betriebssystem",    VARIABLETYPE_STRING, "", 4, true);
+        $this->MaintainVariable("SysInfo_FBI",          "System_Filesystem Build",  VARIABLETYPE_STRING, "", 5, true);
+        $this->MaintainVariable("SysInfo_AppCompat",    "System_App kompatibel",    VARIABLETYPE_BOOLEAN, "~Switch", 6, true);
     }
 
-    private function registerRoomCategory(): void
-    {
-        $parentId = $this->InstanceID;
-
-        // Kategorie "Rooms" sicherstellen
-        $roomsCatId = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
-        if ($roomsCatId === false) {
-            $roomsCatId = IPS_CreateCategory();
-            IPS_SetName($roomsCatId, "Rooms");
-            IPS_SetIdent($roomsCatId, "Rooms");
-            IPS_SetParent($roomsCatId, $this->InstanceID);
-        }
-    }
-
-    private function ensureVariable(string $ident, string $name, int $type, string $profile, int $position, int $parentId): int
-    {
-        $varId = @IPS_GetObjectIDByIdent($ident, $parentId);
-        if ($varId === false) {
-            $varId = IPS_CreateVariable($type);
-            IPS_SetName($varId, $name);
-            IPS_SetIdent($varId, $ident);
-            IPS_SetParent($varId, $parentId);
-            if ($profile != "") {
-                IPS_SetVariableCustomProfile($varId, $profile);
-            }
-            IPS_SetPosition($varId, $position);
-        } else {
-            // Optional: vorhandene Variablen aktualisieren
-            IPS_SetName($varId, $name);
-            IPS_SetPosition($varId, $position);
-            if ($profile != "") {
-                IPS_SetVariableCustomProfile($varId, $profile);
-            }
-        }
-        return $varId;
-    }
     /**
      * Is called by pressing the button "Check Connection" from the instance configuration
      *
@@ -547,48 +469,39 @@ class ContromeCentralControl extends IPSModuleStrict
     private function GetRoomData(): array
     {
         $rooms = [];
-        $catRoomsID = @IPS_GetObjectIDByIdent("Rooms", $this->InstanceID);
-        if ($catRoomsID === false) return $rooms;
+        $floorID = 1;
 
-        $floorIDs = IPS_GetChildrenIDs($catRoomsID);
-        foreach ($floorIDs as $floorID) {
-            $roomIDs = IPS_GetChildrenIDs($floorID);
-            foreach ($roomIDs as $roomID) {
+        while (@IPS_GetObjectIDByIdent("Floor{$floorID}ID", $this->InstanceID) !== false) {
+            $roomID = 1;
+            while (@IPS_GetObjectIDByIdent("Floor{$floorID}Room{$roomID}ID", $this->InstanceID) !== false) {
+                $roomVar = "Floor{$floorID}Room{$roomID}";
+
                 $rooms[] = [
-                    'id' => $this->GetValueByParent('RoomID', $roomID),
-                    'name' => $this->GetValueByParent('RoomName', $roomID),
-                    'temperature' => $this->GetValueByParent('Temperature', $roomID),
-                    'target' => $this->GetValueByParent('Target', $roomID),
-                    'humidity' => $this->GetValueByParent('Humidity', $roomID),
-                    'state' => $this->GetValueByParent('State', $roomID),
-                    'remaining_time' => $this->GetValueByParent('RemainingTime', $roomID) ?? 0,
-                    'perm_solltemperatur' => $this->GetValueByParent('PermSolltemperatur', $roomID) ?? 0
+                    'id' => $this->GetValue($roomVar . "ID"),
+                    'name' => $this->GetValue($roomVar . "Name"),
+                    'temperature' => $this->GetValue($roomVar . "Temperature"),
+                    'target' => $this->GetValue($roomVar . "Target"),
+                    'humidity' => $this->GetValue($roomVar . "Humidity"),
+                    'state' => $this->GetValue($roomVar . "State"),
+                    'remaining_time' => $this->GetValue($roomVar . "RemainingTime") ?? 0,
+                    'perm_solltemperatur' => $this->GetValue($roomVar . "PermSolltemperatur") ?? 0
                 ];
+                $roomID++;
             }
+            $floorID++;
         }
         return $rooms;
     }
 
     private function GetSystemInfo(): array
     {
-        $catSysID = @IPS_GetObjectIDByIdent("SystemInfo", $this->InstanceID);
-        if ($catSysID === false) return [];
-
         return [
-            'Hardware' => $this->GetValueByParent('SysInfo_HW', $catSysID),
-            'Software Datum' => $this->GetValueByParent('SysInfo_SWDate', $catSysID),
-            'Branch' => $this->GetValueByParent('SysInfo_Branch', $catSysID),
-            'OS' => $this->GetValueByParent('SysInfo_OS', $catSysID),
-            'Filesystem Build' => $this->GetValueByParent('SysInfo_FBI', $catSysID),
-            'App kompatibel' => $this->GetValueByParent('SysInfo_AppCompat', $catSysID)
+            'Hardware' => $this->GetValue('SysInfo_HW'),
+            'Software Datum' => $this->GetValue('SysInfo_SWDate'),
+            'Branch' => $this->GetValue('SysInfo_Branch'),
+            'OS' => $this->GetValue('SysInfo_OS'),
+            'Filesystem Build' => $this->GetValue('SysInfo_FBI'),
+            'App kompatibel' => $this->GetValue('SysInfo_AppCompat')
         ];
-    }
-
-    // Hilfsfunktion, um Wert einer Variable anhand Ident in einer Kategorie zu holen
-    private function GetValueByParent(string $ident, int $parentID)
-    {
-        $varId = @IPS_GetObjectIDByIdent($ident, $parentID);
-        if ($varId === false) return null;
-        return GetValue($varId);
     }
 }
