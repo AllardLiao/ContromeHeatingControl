@@ -378,10 +378,8 @@
         }
     ],
     "status": [
-        {
-            "code": 104,
-            "icon": "inactive",
-            "caption": "Gateway created - interface inactive"
-        }
+        { "code": 201, "icon": "error",     "caption": "No connection to Controme Mini-Server" },
+        { "code": 202, "icon": "error",     "caption": "Authentication failed" },
+        { "code": 203, "icon": "error",     "caption": "Communication not normal" }
     ]
 }
