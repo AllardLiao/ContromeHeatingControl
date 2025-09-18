@@ -202,26 +202,23 @@ class ContromeGateway extends IPSModuleStrict
         if (empty($ip) || empty($user) || empty($pass)) {
             $this->SendDebug(__FUNCTION__, "IP, User oder Passwort nicht gesetzt!", 0);
             $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
-            return false;
-        } else {
-            // Etwas stimmt nicht
             $this->SetStatus(IS_INACTIVE);
-            $this->SendDebug(__FUNCTION__, "Check 1 - sufficient data available to try to connect.", 0);
+            return false;
         }
 
         // 2. Test: Verbindung zum Gateway erreichbar?
         // Dafür nutzen wir schon die Datenabruf-Funktion, denn wir brauchen den Soll-Wert von Raum 1 um das Schreiben mit Passwort zu testen.
-        $roomId = $value['RoomID'] ?? 1;
+        $roomId = $value['RoomID'] ?? 1; //Raum 1 sollte es immer geben - wird genutzt, wenn der Testaufruf direkt im Gateway durhgeführt wird.
         if ($roomId <= 0) {
             $roomId = 1;
         }
-        $currentData = $this->GetTempDataForRoom($roomId); //Raum 1 sollte es immer geben.
+        $currentData = $this->GetTempDataForRoom($roomId);
 
         // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
         if ($currentData === false){
-            $this->SendDebug(__FUNCTION__, "No connection to Controme MiniServer at $ip - please check IP!", 0);
-            $this->LogMessage("No connection to Controme MiniServer at $ip - please check IP!", KL_ERROR);
-            $this->UpdateFormField("Result", "caption", "No connection to Controme MiniServer at $ip - please check IP!");
+            $this->SendDebug(__FUNCTION__, "No connection to Controme Mini-Server at $ip - please check IP!", 0);
+            $this->LogMessage("No connection to Controme Mini-Server at $ip - please check IP!", KL_ERROR);
+            $this->UpdateFormField("Result", "caption", "No connection to Controme Mini-Server at $ip - please check IP!");
             $this->SetStatus(IS_NO_CONNECTION);
             return false;
         } else {
