@@ -431,7 +431,19 @@ class ContromeGateway extends IPSModuleStrict
     public function GetTempDataForRoom(int $roomId)
     {
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
+        // Authentication hinzufügen
+        $user = $this->ReadPropertyString("User");
+        $pass = $this->ReadPropertyString("Password");
 
+        $opts = [
+            "http" => [
+                "method" => "GET",
+                "header" => "Authorization: Basic " . base64_encode("$user:$pass"),
+                "timeout" => 5,
+                "ignore_errors" => true
+            ]
+        ];
+        $context = stream_context_create($opts);
         $response = @file_get_contents($url);
 
         if ($response === false) {
