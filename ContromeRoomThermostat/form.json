@@ -139,7 +139,7 @@
                 {
                     "type": "CheckBox",
                     "name": "FallbackTempSensorUse",
-                    "caption": "Use fallback sensors",
+                    "caption": "Use fallback temperature sensors",
                     "onChange": "IPS_RequestAction($id, 'form_toggleFallbackTempSensor', '$FallbackTempSensor');"
                 },
                 {
@@ -172,7 +172,7 @@
                 {
                     "type": "CheckBox",
                     "name": "FallbackHumiditySensorUse",
-                    "caption": "Use fallback sensors",
+                    "caption": "Use fallback humidity sensors",
                     "onChange": "IPS_RequestAction($id, 'form_toggleFallbackHumiditySensor', '$FallbackHumiditySensor');"
                 },
                 {

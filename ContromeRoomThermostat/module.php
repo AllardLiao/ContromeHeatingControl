@@ -243,24 +243,34 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (isset($data['name'])) {
             // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
             // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
-            if (!isset($data['temperatur']) || is_null($data['temperature'])) {
-                if ($this->ReadPropertyBoolean('FallbackTempSensorUse'))
-                {
-                    if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
-                    {
-                        $data['temperatur'] = floatval(GetValue($this->ReadPropertyInteger("FallbackTempSensor")));
-                        $msgSuffix = ", taken from fallback variable";
-                    }
-                    else {
-                        $data['temperatur'] = $this->ReadPropertyFloat("FallbackTempValue");
-                        $msgSuffix = ", taken from fallback value";
-                    }
-                }
-                else {
+            if (empty($data['temperatur']) || is_null($data['temperatur'])) {
+                if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
+                    $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
+                    $data['temperatur'] = ($fallbackId > 0 && is_numeric(GetValue($fallbackId)))
+                        ? floatval(GetValue($fallbackId))
+                        : $this->ReadPropertyFloat("FallbackTempValue");
+                    $msgSuffix = ($fallbackId > 0 && is_numeric(GetValue($fallbackId)))
+                        ? ", taken from fallback variable"
+                        : ", taken from fallback value";
+                } else {
                     $data['temperatur'] = "n/a";
                 }
             }
-            // Bis hier ist alles gut :-)
+            // Fallback for humidity
+            if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || $data['luftfeuchte'] === '' || $data['luftfeuchte'] === 'kein aktueller Wert vorhanden') {
+                if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
+                    $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
+                    if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
+                        $data['luftfeuchte'] = floatval(GetValue($fallbackHumidityId));
+                        $msgSuffix .= ", humidity taken from fallback variable";
+                    } else {
+                        $data['luftfeuchte'] = $this->ReadPropertyFloat("FallbackHumidityValue");
+                        $msgSuffix .= ", humidity taken from fallback value";
+                    }
+                } else {
+                    $data['luftfeuchte'] = "n/a";
+                }
+            }            // Bis hier ist alles gut :-)
             $msg = "Data for provided room found and data seems valid. (" . $data['name'] . " - " . $data['temperatur'] . " °C" . $msgSuffix . ".)";
             $this->SendDebug(__FUNCTION__, $msg, 0);
             $outputText .= $msg;
@@ -315,24 +325,35 @@ class ContromeRoomThermostat extends IPSModuleStrict
             // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
             // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
             $msgSuffix = "";
-            if (!isset($data['temperatur'])) {
-                if ($this->ReadPropertyBoolean('FallbackTempSensorUse'))
-                {
-                    if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
-                    {
-                        $data['temperatur'] = floatval(GetValue($this->ReadPropertyInteger("FallbackTempSensor")));
+            if (!isset($data['temperatur']) || is_null($data['temperatur']) || $data['temperatur'] === '') {
+                if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
+                    $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
+                    if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
+                        $data['temperatur'] = floatval(GetValue($fallbackId));
                         $msgSuffix = ", taken from fallback variable";
-                    }
-                    else {
+                    } else {
                         $data['temperatur'] = $this->ReadPropertyFloat("FallbackTempValue");
                         $msgSuffix = ", taken from fallback value";
                     }
-                }
-                else {
+                } else {
                     $data['temperatur'] = "n/a";
                 }
             }
-
+            // Fallback for humidity
+            if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || $data['luftfeuchte'] === '' || $data['luftfeuchte'] === 'kein aktueller Wert vorhanden') {
+                if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
+                    $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
+                    if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
+                        $data['luftfeuchte'] = floatval(GetValue($fallbackHumidityId));
+                        $msgSuffix .= ", humidity taken from fallback variable";
+                    } else {
+                        $data['luftfeuchte'] = $this->ReadPropertyFloat("FallbackHumidityValue");
+                        $msgSuffix .= ", humidity taken from fallback value";
+                    }
+                } else {
+                    $data['luftfeuchte'] = "n/a";
+                }
+            }
             $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C" . $msgSuffix . ")";
             $this->SendDebug(__FUNCTION__, $msg, 0);
             $this->LogMessage($msg, KL_MESSAGE);
