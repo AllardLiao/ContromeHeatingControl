@@ -319,7 +319,7 @@ class ContromeGateway extends IPSModuleStrict
             return $this->wrapReturn(false, $msg);
         }
         else {
-            $data = json_decode($data);
+            $data = json_decode($data, true);
         }
 
         $formListJson = [];
