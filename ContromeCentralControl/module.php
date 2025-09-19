@@ -376,6 +376,7 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
         $sysInfo = $this->GetSystemInfo();
+        $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
 
         // ========================
         // 1. Mode-Options
