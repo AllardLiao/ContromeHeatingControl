@@ -508,6 +508,6 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
-        return $this->wrapReturn(true, "Valid IP delivered.", $ip);
+        return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
     }
 }
