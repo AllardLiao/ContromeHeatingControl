@@ -152,9 +152,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function CheckConnection(): string
     {
         $result = $this->checkConnectionPrerequisites();
-        $errMsg = "Missing information to connect.";
-        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        if (!$this->isSuccess($result))
         {
+            $errMsg = "Missing information to connect.";
             $this->SetStatus(IS_INACTIVE);
             $this->UpdateFormField("Result", "caption", $errMsg);
             return $this->wrapReturn(false, $errMsg);
@@ -235,11 +235,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
     private function UpdateRoomData($testMode = false): string
     {
         $result = $this->checkConnectionPrerequisites();
-        $errMsg = "Missing information to connect.";
-        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        if (!$this->isSuccess($result))
         {
             $this->SetStatus(IS_INACTIVE);
-            return $this->wrapReturn(false, $errMsg);
+            return $this->wrapReturn(false, "Missing information to connect.");
         }
 
         $roomId   = $this->ReadPropertyInteger("RoomID");
@@ -276,7 +275,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->UpdateFormField("ResultTestRead", "caption", $errMsg);
             }
             $this->SetStatus(IS_BAD_JSON);
-            return $this->wrapReturn(false, $errMsg);
+            return $this->wrapReturn(false, $errMsg, $data);
         }
 
         // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
@@ -311,11 +310,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
     private function WriteSetpoint(float $value): string
     {
         $result = $this->checkConnectionPrerequisites();
-        $errMsg = "Missing information to connect.";
-        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        if (!$this->isSuccess($result))
         {
             $this->SetStatus(IS_INACTIVE);
-            return $this->wrapReturn(false, $errMsg);
+            return $this->wrapReturn(false, "Missing information to connect.");
         }
 
         $roomId  = $this->ReadPropertyInteger("RoomID");

@@ -9,7 +9,7 @@
  * @author        Kai J. Oey <kai.oey@synergetix.de>
  * @copyright     2025 Kai Oey
  * @link          https://github.com/AllardLiao
- * @license       MIT 
+ * @license       MIT
  */
 
 declare(strict_types=1);
@@ -32,8 +32,11 @@ trait ReturnWrapper
     {
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
         $prefix = $success ? "Success" : "Fail";
-        $this->SendDebug($caller, "$prefix: $msg", 0);
-        $this->LogMessage("$prefix: $msg / $caller", $success ? KL_DEBUG : KL_ERROR);
+        if (!$success)
+        {
+            $this->SendDebug($caller, "$prefix: $msg - payload: " . print_r($payload, true), 0);
+            $this->LogMessage("$prefix: $msg / $caller - payload: " . print_r($payload, true), $success ? KL_DEBUG : KL_ERROR);
+        }
         return json_encode(['success' => $success, 'message' => $msg, 'payload' => $payload]);
     }
 
