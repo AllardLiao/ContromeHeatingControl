@@ -333,6 +333,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'DataID'   => GUIDs::DATAFLOW,
             'Action'   => ACTIONs::GET_IP_ADDRESS
         ]));
+        $this->LogMessage("Gateway returned: " . print_r($result, true));
 
         if (!is_string($result) || empty($result)) {
             $errMsg = "Please check gateway! Gateway did not return any information.";
