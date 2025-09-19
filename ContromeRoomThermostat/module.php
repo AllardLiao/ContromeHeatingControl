@@ -229,7 +229,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
             // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
             if (!isset($data['temperatur']) || is_null($data['temperature'])) {
-                if ($this->GetValue('FallbackTempSensorUse'))
+                if ($this->ReadPropertyBoolean('FallbackTempSensorUse'))
                 {
                     if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
                     {
@@ -301,7 +301,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
             $msgSuffix = "";
             if (!isset($data['temperatur'])) {
-                if ($this->GetValue('FallbackTempSensorUse'))
+                if ($this->ReadPropertyBoolean('FallbackTempSensorUse'))
                 {
                     if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
                     {
