@@ -129,30 +129,73 @@
                 {
                     "type": "Label",
                     "italic": true,
-                    "caption": "Note:\nThis temperature value is only used for display within IPS.\nIt is currently not synchronized back to Controme."
+                    "caption": "Note: This temperature value is only used for display within IPS. It is currently not synchronized back to Controme."
+                },
+                {
+                    "type": "Label",
+                    "bold": true,
+                    "caption": "Temperature"
                 },
                 {
                     "type": "CheckBox",
                     "name": "FallbackTempSensorUse",
-                    "caption": "Use fallback temperature sensor",
+                    "caption": "Use fallback sensors",
                     "onChange": "IPS_RequestAction($id, 'form_toggleFallbackTempSensor', '$FallbackTempSensor');"
                 },
                 {
-                    "type": "SelectVariable",
-                    "name": "FallbackTempSensor",
-                    "caption": "Select fallback temperature variable",
-                    "value": 0
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectVariable",
+                            "name": "FallbackTempSensor",
+                            "caption": "Select fallback temperature variable",
+                            "value": 0
+                        },
+                        {
+                            "type": "NumberSpinner",
+                            "name": "FallbackTempValue",
+                            "caption": "Alternative fixed temperature to be displayed",
+                            "minimum": 15,
+                            "maximum": 25,
+                            "moreDigits": false,
+                            "value":    15,
+                            "digits":  1,
+                            "suffix":  "°C"
+                        }
+                    ]
                 },
                 {
-                    "type": "NumberSpinner",
-                    "name": "FallbackTempValue",
-                    "caption": "Alternative fixed temperature to be displayed",
-                    "minimum": 15,
-                    "maximum": 25,
-                    "moreDigits": false,
-                    "value":    15,
-                    "digits":  1,
-                    "suffix":  "°C"
+                    "type": "Label",
+                    "bold": true,
+                    "caption": "Humidity"
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "FallbackHumiditySensorUse",
+                    "caption": "Use fallback sensors",
+                    "onChange": "IPS_RequestAction($id, 'form_toggleFallbackHumiditySensor', '$FallbackHumiditySensor');"
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectVariable",
+                            "name": "FallbackHumiditySensor",
+                            "caption": "Select fallback humidity variable",
+                            "value": 0
+                        },
+                        {
+                            "type": "NumberSpinner",
+                            "name": "FallbackHumidityValue",
+                            "caption": "Alternative fixed humidity to be displayed",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "moreDigits": false,
+                            "value":    40,
+                            "digits":  1,
+                            "suffix":  "%"
+                        }
+                    ]
                 }
             ]
         }

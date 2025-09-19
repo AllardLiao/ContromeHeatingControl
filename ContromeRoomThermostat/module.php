@@ -44,6 +44,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyInteger("FallbackTempSensor", 0);
         $this->RegisterPropertyFloat("FallbackTempValue", 15);
 
+        //Fallback für Luftfeuchtigkeit
+        $this->RegisterPropertyBoolean("FallbackHumiditySensorUse", false);
+        $this->RegisterPropertyInteger("FallbackHumiditySensor", 0);
+        $this->RegisterPropertyFloat("FallbackHumidityValue", 40);
+
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
@@ -125,11 +130,14 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->WriteSetpoint((float)$value);
                 $this->updateVisualization();
                 break;
-            case 'form_toggleAutoUpdate': // Auskösung über onChange der Konfig-Forms
+            case 'form_toggleAutoUpdate': // Auslösung über onChange der Konfig-Forms
                 $this->toggleAutoUpdate($value==1);
                 break;
-            case 'form_toggleFallbackTempSensor': // Auskösung über onChange der Konfig-Forms
+            case 'form_toggleFallbackTempSensor': // Auslösung über onChange der Konfig-Forms
                 $this->toggleFallbackTempSensor($value==1);
+                break;
+            case 'form_toggleFallbackHumiditySensor': // Auslösung über onChange der Konfig-Forms
+                $this->toggleFallbackHumiditySensor($value==1);
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -155,6 +163,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
     private function toggleFallbackTempSensor(bool $toggleAutoUpdate)
     {
         $this->UpdateFormField('FallbackTempSensor', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
+        $this->UpdateFormField('FallbackTempValue', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
+    }
+
+    private function toggleFallbackHumiditySensor(bool $toggleAutoUpdate)
+    {
+        $this->UpdateFormField('FallbackHumiditySensor', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
+        $this->UpdateFormField('FallbackHumidityValue', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
     }
 
     /**
