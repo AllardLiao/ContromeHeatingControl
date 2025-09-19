@@ -327,6 +327,7 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $errMsg);
         }
+        $this->LogMessage("Gateway connected: " . $parentID);
 
         $result = $this->SendDataToParent(json_encode([
             'DataID'   => GUIDs::DATAFLOW,
