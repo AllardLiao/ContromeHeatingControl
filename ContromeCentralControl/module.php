@@ -364,7 +364,16 @@ class ContromeCentralControl extends IPSModuleStrict
     public function CheckConnection(): string
     {
         // Gibt keine Voraussetzungen zu prüfen - diese sind im Gateway gespeichert.
-        // Also direkt abrufen.
+
+        // Check, ob Gateway eingerichtet ist.
+        $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($parentID == 0) {
+            $errMsg = "No gateway connected!";
+            $this->UpdateFormField("ContromeIP", "caption", $errMsg);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $errMsg);
+        }
+        $this->LogMessage("Gateway connected: " . $parentID);
 
         // Abfrage über Gateway - das Gateway versucht im Standard für Raum 1 Daten zu bekommen und zu schreiben.
         $response = $this->SendDataToParent(json_encode([
