@@ -117,6 +117,44 @@
                     "value": 5
                 }
             ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Sensor fallback settings ...",
+            "items": [
+                {
+                    "type": "Label",
+                    "caption": "If Controme does not provide current temperature values, you can alternatively display another IPS temperature variable.\nThis is useful, for example, if the room thermostat's battery is empty."
+                },
+                {
+                    "type": "Label",
+                    "italic": true,
+                    "caption": "Note:\nThis temperature value is only used for display within IPS.\nIt is currently not synchronized back to Controme."
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "FallbackTempSensorUse",
+                    "caption": "Use fallback temperature sensor",
+                    "onChange": "IPS_RequestAction($id, 'form_toggleFallbackTempSensor', '$FallbackTempSensor');"
+                },
+                {
+                    "type": "SelectVariable",
+                    "name": "FallbackTempSensor",
+                    "caption": "Select fallback temperature variable",
+                    "value": 0
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "FallbackTempValue",
+                    "caption": "Alternative fixed temperature to be displayed",
+                    "minimum": 15,
+                    "maximum": 25,
+                    "moreDigits": false,
+                    "value":    15,
+                    "digits":  1,
+                    "suffix":  "°C"
+                }
+            ]
         }
     ],
     "actions": [

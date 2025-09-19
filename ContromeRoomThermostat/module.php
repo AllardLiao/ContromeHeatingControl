@@ -39,6 +39,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->RegisterPropertyInteger("RoomID", 0);
         $this->RegisterPropertyString("Room", "");
 
+        // Fallbaack für Temperatur
+        $this->RegisterPropertyBoolean("FallbackTempSensorUse", false);
+        $this->RegisterPropertyInteger("FallbackTempSensor", 0);
+        $this->RegisterPropertyFloat("FallbackTempValue", 15);
+
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
         $this->RegisterPropertyBoolean("AutoUpdate", true);
@@ -123,6 +128,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case 'form_toggleAutoUpdate': // Auskösung über onChange der Konfig-Forms
                 $this->toggleAutoUpdate($value==1);
                 break;
+            case 'form_toggleFallbackTempSensor': // Auskösung über onChange der Konfig-Forms
+                $this->toggleFallbackTempSensor($value==1);
+                break;
             default:
                 parent::RequestAction($ident, $value);
         }
@@ -142,6 +150,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
     private function toggleAutoUpdate(bool $toggleAutoUpdate)
     {
         $this->UpdateFormField('UpdateInterval', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
+    }
+
+    private function toggleFallbackTempSensor(bool $toggleAutoUpdate)
+    {
+        $this->UpdateFormField('FallbackTempSensor', 'enabled', $toggleAutoUpdate ? 'true' : 'false');
     }
 
     /**
@@ -211,24 +224,45 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
 
         $data = json_decode($result, true);
-        $errMsg = "Fetching data successfull, however no valid room or temperature data found for provided room! " . "(Id: " . $roomId . ")";
-        if (!(isset($data['name'])) || (!isset($data['temperatur']))) {
+        $msgSuffix = "";
+        if (isset($data['name'])) {
+            // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
+            // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
+            if (!isset($data['temperatur']) || is_null($data['temperature'])) {
+                if ($this->GetValue('FallbackTempSensorUse'))
+                {
+                    if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
+                    {
+                        $data['temperatur'] = floatval(GetValue($this->ReadPropertyInteger("FallbackTempSensor")));
+                        $msgSuffix = ", taken from fallback variable";
+                    }
+                    else {
+                        $data['temperatur'] = $this->ReadPropertyFloat("FallbackTempValue");
+                        $msgSuffix = ", taken from fallback value";
+                    }
+                }
+                else {
+                    $data['temperatur'] = "n/a";
+                }
+            }
+            // Bis hier ist alles gut :-)
+            $msg = "Data for provided room found and data seems valid. (" . $data['name'] . " - " . $data['temperatur'] . " °C" . $msgSuffix . ".)";
+            $this->SendDebug(__FUNCTION__, $msg, 0);
+            $outputText .= $msg;
+            $this->UpdateFormField("Result", "caption", $outputText);
+            $this->LogMessage($msg, KL_MESSAGE);
+            $this->SetStatus(IS_ACTIVE);
+            $this->saveDataToVariables($data);
+            return $this->wrapReturn(true, $msg);
+        }
+        else {
+            $errMsg = "Fetching data successfull, however no valid room or temperature data found for provided room! " . "(Id: " . $roomId . ")";
             $outputText .= $errMsg;
             $this->UpdateFormField("Result", "caption", $outputText);
             $this->SetStatus(IS_BAD_JSON);
             return $this->wrapReturn(false, $errMsg);
         }
 
-        // Bis hier ist alles gut :-)
-        $msg = "Data for provided room found and data seems valid. (" . $data['name'] . " - " . $data['temperatur'] . " °C.)";
-        $this->SendDebug(__FUNCTION__, $msg, 0);
-        $outputText .= $msg;
-        $this->UpdateFormField("Result", "caption", $outputText);
-        $this->LogMessage($msg, KL_MESSAGE);
-        $this->SetStatus(IS_ACTIVE);
-        $this->saveDataToVariables($data);
-
-        return $this->wrapReturn(true, $msg);
     }
 
     // Funktion die zyklisch durch den Timer aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert - hier keine User-Rückmeldungen!
@@ -262,8 +296,29 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         // Dann werden wohl Daten angekommen sein:
         $data = json_decode($result, true);
-        if (isset($data['name']) && (isset($data['temperatur']))) {
-            $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)";
+        if (isset($data['name'])) {
+            // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
+            // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
+            $msgSuffix = "";
+            if (!isset($data['temperatur'])) {
+                if ($this->GetValue('FallbackTempSensorUse'))
+                {
+                    if ($this->ReadPropertyInteger("FallbackTempSensor") > 0 && is_numeric(GetValue($this->ReadPropertyInteger("FallbackTempSensor"))))
+                    {
+                        $data['temperatur'] = floatval(GetValue($this->ReadPropertyInteger("FallbackTempSensor")));
+                        $msgSuffix = ", taken from fallback variable";
+                    }
+                    else {
+                        $data['temperatur'] = $this->ReadPropertyFloat("FallbackTempValue");
+                        $msgSuffix = ", taken from fallback value";
+                    }
+                }
+                else {
+                    $data['temperatur'] = "n/a";
+                }
+            }
+
+            $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C" . $msgSuffix . ")";
             $this->SendDebug(__FUNCTION__, $msg, 0);
             $this->LogMessage($msg, KL_MESSAGE);
             if ($testMode) {
