@@ -136,6 +136,8 @@ class ContromeGateway extends IPSModuleStrict
 
         switch ($data['Action']) {
             case ACTIONs::GET_IP_ADDRESS:
+                $this->SendDebug(__FUNCTION__, "IP Address delivered: " . $this->ReadPropertyString("IPAddress"), 0);
+                $this->LogMessage("IP Address delivered: " . $this->ReadPropertyString("IPAddress"), KL_DEBUG);
                 return $this->ReadPropertyString("IPAddress");
 
             case ACTIONs::CHECK_CONNECTION:
