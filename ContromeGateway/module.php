@@ -141,14 +141,7 @@ class ContromeGateway extends IPSModuleStrict
                 return $this->ReadPropertyString("IPAddress");
 
             case ACTIONs::CHECK_CONNECTION:
-                $result = $this->CheckConnection($data);
-                if ($this->isSuccess($result, KL_ERROR, "Connection to Controme Mini-Server."))
-                {
-                    return $this->wrapReturn(true, "Connection established.");
-                }
-                else {
-                    return $this->wrapReturn(false, "Connection to Controme Mini-Server failed. " . $this->getResponseMessage($result));
-                }
+                $return = $this->CheckConnection($data);
 
             case ACTIONs::GET_TEMP_DATA_FOR_ROOM: // liefert ein JSON mit den Räumen zurück.
                 if (!isset($data['RoomID'])) {

@@ -381,18 +381,18 @@ class ContromeCentralControl extends IPSModuleStrict
             "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
-        if ($this->isSuccess($response, KL_ERROR, "Connection to Controme Mini-Server."))
+        if ($this->isError($response))
         {
-            $msg = "Connection to gateway and Controme Mini-Server is working!";
-            $this->UpdateFormField("Result", "caption", $msg);
-            $this->SetStatus(IS_ACTIVE);
-            return $this->wrapReturn(true, $msg);
-        }
-        else {
             $msg = "Connection to gateway and Controme Mini-Server failed!";
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
+        }
+        else {
+            $msg = "Connection to gateway and Controme Mini-Server is working!";
+            $this->UpdateFormField("Result", "caption", $msg);
+            $this->SetStatus(IS_ACTIVE);
+            return $this->wrapReturn(true, $msg);
         }
     }
 
