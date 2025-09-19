@@ -78,13 +78,13 @@ class ContromeCentralControl extends IPSModuleStrict
             return;
         }
         $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        $this->SendDebug(__FUNCTION__, "Gateway Connection ID: " . $parentID, 0);
+        $this->LogMessage("Gateway Connection ID: " . $parentID, 0);
         if ($parentID == 0) {
-            $this->SendDebug(__FUNCTION__, "No gateway connected!", 0);
+            $this->LogMessage("No gateway connected!", 0);
             $this->SetStatus(IS_INACTIVE);
             return;
         }
-        
+
         // Link zum Controme Gateway anpassen
         $this->updateIPAddress();
 
