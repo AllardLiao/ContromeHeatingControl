@@ -1,9 +1,44 @@
 <?php
+declare(strict_types=1);
 
 /**
- * DebugHelper.php
+ * ReturnWrapper.php
  *
- * Part of the Trait-Libraray for IP-Symcon Modules.
+ * Part of the Allard-Liao Trait-Libraray for IP-Symcon Modules.
+ *
+ * Helper class for communicating results in the DataFlow and internal communication.
+ *
+ * NOTE: isSuccess and IsError have different purposes:
+ * isSuccess checks if the result is a success (true) or not (false) and
+ *          in case of false, it is a fail.
+ *          it will log messages in debug and logMessage if optional params are set.
+ * isError checks if the result is an error (false) or not (true) and
+ *          in case of true, it is a fail.
+ *          it will NOT log messages in debug and logMessage.
+ *          it only checks if the 'success'-Flag => false is set in the JSON string.
+ *
+ * The difference is that isSuccess expects a JSON encoded string as created by wrapReturn,
+ * while isError does NOT expect an JSON encoded string as created by wrapReturn!
+ *
+ * isError is useful to check if a result is an error, when you do not know
+ * if the result is created by wrapReturn or a expected other return set of data!
+ *
+ * Example:
+ *   someFunction is expected to contact an external system and return data.
+ *
+ *   If the external system is not reachable, it will return a JSON encoded string
+ *   created by wrapReturn with 'success' => false. (and if set with a message and payload
+ *   and it will have logged the error message in debug and logMessage already).
+ *
+ *   If the external system is reachable, it will return a JSON encoded string
+ *   with the expected data, which does NOT contain the 'success' flag.
+ *
+ *   In this case, you can use isError to check if the result is an error
+ *   without knowing if the result is created by wrapReturn or not.
+ *   If you would use isSuccess, it would throw an exception in case the
+ *   result is not created by wrapReturn!
+ *   This way, you can handle both cases gracefully - and if there is no error,
+ *   you can process the expected data.
  *
  * @package       traits
  * @author        Kai J. Oey <kai.oey@synergetix.de>
@@ -12,14 +47,9 @@
  * @license       MIT
  */
 
-declare(strict_types=1);
-
-/**
- * Helper class for DataFlow Results.
- */
 trait ReturnWrapper
 {
-    private const SALT = "WR_"; // Prefix to avoid conflicts with other JSON data - change if needed!
+    private const SALT = "RW88_"; // Prefix to avoid conflicts with other JSON data - change if needed!
 
     /**
      * Wrapper for standard return messages
@@ -48,25 +78,30 @@ trait ReturnWrapper
      *
      * If result is success, returns true otherwise false
      * If optional params are set, logs messages in debug and logMessage
+     * Note: isSuccess expects an JSON encoded string as created by wrapReturn! To check
+     * other JSON strings, use isError() instead.
      * Note: only for 'fail' status, the LogMessage errType is used, in case of 'success' KL_NOTIFY is used.
      *
-     * @param string    $result       Return message to be checked and created by wrapReturn!
+     * @param string    $result       Return message to be checked and has to be created by wrapReturn!
      * @param string    $errType      IPS error type for LogMessage in case of 'fail'. optional.
      * @param string    $msg          Message to be logged. optional.
      */
     protected function isSuccess(string $result, int $errType = 0, string $msg = ""): bool
     {
         $decoded = json_decode($result, true);
-        if (!is_array($decoded)) {
-            $this->SendDebug(__FUNCTION__, "Invalid JSON: " . substr($result, 0, 200), 0);
-            return false;
+        if (!is_array($decoded) ||
+            !array_key_exists(self::SALT . 'success', $decoded) ||
+            !array_key_exists(self::SALT . 'message', $decoded) ||
+            !array_key_exists(self::SALT . 'payload', $decoded)) {
+            $this->SendDebug(__FUNCTION__, "Invalid JSON: " . print_r($result, true), 0);
+            throw new Exception("Invalid JSON for return Wrapper - please check! (" . print_r($result, true) . ")");
         }
 
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
         $prefix = $decoded[self::SALT . 'success'] ? "Success" : "Fail";
 
         if ($errType !== 0) {
-            $fullMsg = "$prefix: " . ($msg !== "" ? "$msg " : "") . $decoded['message'];
+            $fullMsg = "$prefix: " . ($msg !== "" ? "$msg " : "") . $decoded[self::SALT . 'message'];
             $this->SendDebug($caller, $fullMsg, 0);
             $this->LogMessage("$fullMsg / $caller", $decoded['success'] ? KL_NOTIFY : $errType);
         }
@@ -79,6 +114,7 @@ trait ReturnWrapper
      *
      * If result is fail, returns true otherwise false
      * Different to isSuccess only the existence of 'success' => false is checked and respective reply given.
+     * Note: isError does NOT expect an JSON encoded string as created by wrapReturn!
      *
      * @param string    $msg          Return message to be checked and created by wrapReturn!
      * @param string    $errFunction  Function causing the request. optional.
@@ -87,7 +123,7 @@ trait ReturnWrapper
     {
         $decoded = json_decode($result, true);
         if (!is_array($decoded)) {
-            $this->SendDebug(__FUNCTION__, "Invalid JSON for return Wrapper - assuming NO ERROR, instead other data was returned (" . print_r($result, true), 0);
+            $this->SendDebug(__FUNCTION__, "Invalid JSON for return Wrapper, instead other data was returned (" . print_r($result, true) . ")", 0);
             return false;
         }
         // Only in case we can clearly say "Yes, it is an error", we return true
