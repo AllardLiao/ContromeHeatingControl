@@ -425,10 +425,9 @@ class ContromeGateway extends IPSModuleStrict
     public function GetTempDataForRoom(int $roomId): string
     {
         $result = $this->checkConnectionPrerequisites();
-        $msg = "Can not fetch data. Missing connection information.";
-        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        if (!$this->isSuccess($result))
         {
-            return $this->wrapReturn(false, $msg);
+            return $this->wrapReturn(false, "Can not fetch data. Missing connection information.");
         }
 
         $user    = $this->ReadPropertyString("User");
