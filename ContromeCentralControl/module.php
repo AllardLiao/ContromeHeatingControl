@@ -33,6 +33,7 @@ class ContromeCentralControl extends IPSModuleStrict
         parent::Create();
 
         // Properties für die Konfiguration des Moduls
+        $this->RegisterPropertyBoolean("ShowMainElements", true);
         $this->RegisterPropertyInteger("VisuColorMainTiles", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowSystemInfo", true);
         $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xf5f5f5);
