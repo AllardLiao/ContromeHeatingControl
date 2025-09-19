@@ -252,9 +252,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "FloorID"=> $floorId
         ]));
 
-        $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
         if ($this->isError($result))
         {
+            $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
             $this->UpdateFormField("Result", "caption", $errMsg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $errMsg);

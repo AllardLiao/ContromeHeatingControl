@@ -434,7 +434,7 @@ class ContromeGateway extends IPSModuleStrict
         $pass    = $this->ReadPropertyString("Password");
 
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
-        $this->SendDebug(__FUNCTION__, "Requesting URL for Room/Temp data: " . $url, 0);
+        $this->SendDebug(__FUNCTION__, "Requesting room/temp data: " . $url, 0);
         // Authentication hinzufügen
 
         $opts = [
@@ -472,6 +472,7 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         //Alle ist ok.
+        $this->SendDebug(__FUNCTION__, "Room $roomId data received: " . print_r($data, true), 0);
         $this->SetStatus(IS_ACTIVE);
         return (json_encode($data));
     }

@@ -18,7 +18,10 @@ declare(strict_types=1);
  * Helper class for DataFlow Results.
  */
 trait ReturnWrapper
-{    /**
+{
+    private const SALT = "WR_"; // Prefix to avoid conflicts with other JSON data - change if needed!
+
+    /**
      * Wrapper for standard return messages
      *
      * Sends $message to debug and Logger.
@@ -37,7 +40,7 @@ trait ReturnWrapper
             $this->SendDebug($caller, "$prefix: $msg - payload: " . print_r($payload, true), 0);
             $this->LogMessage("$prefix: $msg / $caller - payload: " . print_r($payload, true), $success ? KL_DEBUG : KL_ERROR);
         }
-        return json_encode(['success' => $success, 'message' => $msg, 'payload' => $payload]);
+        return json_encode([self::SALT . 'success' => $success, self::SALT . 'message' => $msg, self::SALT . 'payload' => $payload]);
     }
 
     /**
@@ -60,7 +63,7 @@ trait ReturnWrapper
         }
 
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
-        $prefix = $decoded['success'] ? "Success" : "Fail";
+        $prefix = $decoded[self::SALT . 'success'] ? "Success" : "Fail";
 
         if ($errType !== 0) {
             $fullMsg = "$prefix: " . ($msg !== "" ? "$msg " : "") . $decoded['message'];
@@ -68,7 +71,7 @@ trait ReturnWrapper
             $this->LogMessage("$fullMsg / $caller", $decoded['success'] ? KL_NOTIFY : $errType);
         }
 
-        return $decoded['success'] === true;
+        return $decoded[self::SALT . 'success'] === true;
     }
 
     /**
@@ -88,18 +91,18 @@ trait ReturnWrapper
             return false;
         }
         // Only in case we can clearly say "Yes, it is an error", we return true
-        return isset($decoded['success']) && ($decoded['success']===false);
+        return isset($decoded[self::SALT . 'success']) && ($decoded[self::SALT . 'success']===false);
     }
 
     protected function getResponseMessage(string $result): string
     {
         $decoded = json_decode($result, true);
-        return $decoded['message'];
+        return $decoded[self::SALT . 'message'];
     }
 
     protected function getResponsePayload(string $result): mixed
     {
         $decoded = json_decode($result, true);
-        return $decoded['payload'];
+        return $decoded[self::SALT . 'payload'];
     }
 }
