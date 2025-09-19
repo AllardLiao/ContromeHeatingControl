@@ -58,6 +58,7 @@ class ContromeGateway extends IPSModuleStrict
         // Never delete this line!
         parent::ApplyChanges();
 
+        // Falls irgendwas nicht klappt, Instanz auf inaktiv setzen. Genauere Status werden ggf. im Laufe des ApplyChanges gesetzt.
         $this->SetStatus(IS_INACTIVE);
 
         // Variablenprofile/Presentationtemplates sicherstellen
@@ -65,13 +66,14 @@ class ContromeGateway extends IPSModuleStrict
 
         $ip = $this->ReadPropertyString("IPAddress");
         if ($ip == "") {
-            $this->LogMessage("Keine IP-Adresse hinterlegt", KL_ERROR);
-            $this->SetStatus(IS_INACTIVE);
+            $this->LogMessage("Missing IP address.", KL_ERROR);
+            $this->SetStatus(IS_NO_CONNECTION);
             return;
         }
 
-        if (!$this->PingGateway($ip)) {
-            $this->LogMessage("Gateway $ip nicht erreichbar", KL_ERROR);
+        $result = $this->PingGateway($ip);
+        $msg = $ip . " not reachable. Please check.";
+        if (!$this->isSuccess($result, KL_ERROR, $msg)) {
             $this->SetStatus(IS_NO_CONNECTION);
             return;
         }
@@ -80,6 +82,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
+        // Alles hat geklappt - Instanze aktiv
         $this->SetStatus(IS_ACTIVE);
     }
 
@@ -123,11 +126,10 @@ class ContromeGateway extends IPSModuleStrict
         $data = json_decode($JSONString, true);
 
         if (!is_array($data) || ($data['DataID'] ?? '') !== GUIDs::DATAFLOW) {
-            $this->SendDebug(__FUNCTION__, 'Ungültiger Payload', 0);
-            return json_encode(false); // oder false je nach Pattern
+            return $this->wrapReturn(false, "Non-valid payload.");
         }
 
-        // JSON url anpassen
+        // JSON url anpassen (Sicherheitshalber...)
         $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
@@ -136,32 +138,34 @@ class ContromeGateway extends IPSModuleStrict
                 return $this->ReadPropertyString("IPAddress");
 
             case ACTIONs::CHECK_CONNECTION:
-                $ok = $this->CheckConnection($data); // <- deine bestehende Funktion
-                return json_encode([
-                    "success" => $ok,
-                    "message" => $ok ? "Connected" : "Connection failed"
-                ]);
+                $result = $this->CheckConnection($data);
+                if ($this->isSuccess($result, KL_ERROR, "Connection to Controme Mini-Server."))
+                {
+                    return $this->wrapReturn(true, "Connection established.");
+                }
+                else {
+                    return $this->wrapReturn(false, "Connection to Controme Mini-Server failed. " . $this->getResponseMessage($result));
+                }
 
-            case ACTIONs::GET_TEMP_DATA_FOR_ROOM:
+            case ACTIONs::GET_TEMP_DATA_FOR_ROOM: // liefert ein JSON mit den Räumen zurück.
                 if (!isset($data['RoomID'])) {
                     $this->SendDebug(__FUNCTION__, "Missing room id", 0);
                     return json_encode(false);
                 }
-
                 $roomId  = (int)$data['RoomID'];
-                $roomData = $this->GetTempDataForRoom($roomId);
-                return json_encode($roomData);
+                return $this->GetTempDataForRoom($roomId);
 
             case ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL:
                 // Wird von Child-Instanzen genutzt, aufruf ohne Parameter.
+                // Hier werden mehrere API-Aufrufe durchgeführt. Wenn einzelne davon fehlerhaft sind, enthält das zurückgegebene Array in jeweiligen Teil die Fehlermeldung.
                 $result = [];
                 if (!empty($data[ACTIONs::DATA_SYSTEM_INFO])) {
-                    $sysInfo = $this->fetchSystemInfo();
+                    $sysInfo = json_decode($this->fetchSystemInfo()); // Für den Fall, dass die SysInfo nicht gelesen werden können, wird das "Fehler"-JSON mit zurückgegeben.
                     $this->SendDebug(__FUNCTION__, "fetchSystemInfo returned: " . print_r($sysInfo, true), 0);
                     $result[ACTIONs::DATA_SYSTEM_INFO] = $sysInfo;
                 }
                 if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS])) {
-                    $rooms = $this->fetchRooms();
+                    $rooms = json_decode($this->fetchRooms()); // Für den Fall, dass die Räume nicht gelesen werden können, wird das "Fehler"-JSON mit zurückgegeben.
                     $this->SendDebug(__FUNCTION__, "fetchRooms returned: " . print_r($rooms, true), 0);
                     $result[ACTIONs::DATA_ROOMS] = $rooms;
                     if (!empty($data[ACTIONs::DATA_TEMPERATURS])) {
@@ -173,37 +177,36 @@ class ContromeGateway extends IPSModuleStrict
                 break;
 
             case ACTIONs::WRITE_SETPOINT:
-                return json_encode($this->WriteSetpoint($data));
+                return $this->WriteSetpoint($data);
 
             default:
-                $this->SendDebug(__FUNCTION__, "Unknown action: " . $data['Action'], 0);
-                return json_encode(false);
-
+                $msg = "Unknown action: " . $data['Action'];
+                return $this->wrapReturn(false, $msg);
         }
-
-        return json_encode([
-            "success" => false,
-            "message" => "Unknown action"
-        ]);
     }
 
     /**
-     * Is called by pressing the button "Check Connection" from the instance configuration
+     * Check connection status to Controme Mini-Server.
+     * Executes a reading and a writing attempt via Controme API.
+     * In case room id is provided with a number below 1, room id 1 is used.
      *
-     * @return boolean
+     *  @param mixed    $value      Expected is an array which includes assosciation 'RoomID' => X, x = the room id within Controme.
      */
-    public function CheckConnection(mixed $value): bool
+    public function CheckConnection(mixed $value): string
     {
         $ip   = $this->ReadPropertyString("IPAddress");
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
 
         // 1. Test: Daten da?
-        if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug(__FUNCTION__, "IP, User oder Passwort nicht gesetzt!", 0);
-            $this->UpdateFormField("Result", "caption", "Please set all 3 parameters (username, password and device IP).");
+        $result = $this->checkConnectionPrerequisites();
+        $msg = "Missing connection information.";
+        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        {
             $this->SetStatus(IS_INACTIVE);
-            return false;
+            return $this->wrapReturn(false, $msg);
+        } else {
+            $this->SendDebug(__FUNCTION__, "Check 1 - all information given. ($ip, $user, $pass)", 0);
         }
 
         // 2. Test: Verbindung zum Gateway erreichbar?
@@ -215,12 +218,11 @@ class ContromeGateway extends IPSModuleStrict
         $currentData = $this->GetTempDataForRoom($roomId);
 
         // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
-        if ($currentData === false){
-            $this->SendDebug(__FUNCTION__, "No connection to Controme Mini-Server at $ip - please check IP!", 0);
-            $this->LogMessage("No connection to Controme Mini-Server at $ip - please check IP!", KL_ERROR);
-            $this->UpdateFormField("Result", "caption", "No connection to Controme Mini-Server at $ip - please check IP!");
+        if ($currentData === false){ewqreerqw
+            $msg = "No connection to Controme Mini-Server, please check IP: " . $ip;
+            $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $msg);
         } else {
             $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. (" . $currentData["name"] . "=" . $currentData["temperatur"] . ")", 0);
         }
@@ -229,23 +231,17 @@ class ContromeGateway extends IPSModuleStrict
         $sendData = Array('RoomID' => $roomId, 'Setpoint' => $currentData['solltemperatur']);
         $result = $this->WriteSetpoint($sendData);
 
-        $decoded = json_decode($result, true);
-        if (is_string($decoded)) {
-            $decoded = json_decode($decoded, true);
-        }
-        $this->SendDebug(__FUNCTION__, "Decoded result: " . print_r($decoded, true), 0);
-        if (isset($decoded['success']) && $decoded['success'] === true) {
-            $this->SendDebug(__FUNCTION__, "Success - connection established for user " . $user . "!");
-            $this->LogMessage("Success - connection established for user " . $user . "!", KL_NOTIFY);
-            $this->UpdateFormField("Result", "caption", "Success - connection established for user " . $user . "!");
+        if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . "."))
+        {
+            $msg = "Success - connection established for user " . $user;
+            $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_ACTIVE);
-            return true;
+            return $this->wrapReturn(true, $msg);
         } else {
-            $this->SendDebug(__FUNCTION__, $decoded['message'] . "!", 0);
-            $this->LogMessage($decoded['message'] . "!", KL_NOTIFY);
-            $this->UpdateFormField("Result", "caption", $decoded['message'] . "!");
+            $msg = "Failed - could not establish connection for user " . $user . " (" . $this->getResponseMessage($result) . ")";
+            $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $msg);
         }
     }
 
@@ -255,18 +251,25 @@ class ContromeGateway extends IPSModuleStrict
      *  - array (decoded JSON) bei Erfolg
      *  - false bei Fehler
      */
-    public function FetchRooms(): array|false
+    /**
+     * Holt die Rohdaten der Räume vom Controme-API.
+     * Rückgabe:
+     *  - array (decoded JSON) bei Erfolg
+     *  - false bei Fehler
+     *
+     */
+    public function FetchRooms(): string
     {
-        $ip   = $this->ReadPropertyString("IPAddress");
+        $result = $this->checkConnectionPrerequisites();
+        $msg = "Missing connection information.";
+        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        {
+            $this->SetStatus(IS_INACTIVE);
+            return $this->wrapReturn(false, $msg);
+        }
+
         $user = $this->ReadPropertyString("User");
         $pass = $this->ReadPropertyString("Password");
-
-        if (empty($ip) || empty($user) || empty($pass)) {
-            $this->SendDebug(__FUNCTION__, "IP, user or password missing!", 0);
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to login - missing argument.");
-            $this->SetStatus(IS_INACTIVE);
-            return false;
-        }
 
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS;
         $opts = [
@@ -281,44 +284,44 @@ class ContromeGateway extends IPSModuleStrict
         $json = @file_get_contents($url, false, $context);
 
         if ($json === false) {
-            $message = "HTTP request failed and no response header available.";
+            $msg = "HTTP request failed and no response header available.";
             if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
-                $message = $this->CheckHttpReponseHeader($http_response_header);
+                $msg = $this->CheckHttpReponseHeader($http_response_header);
             }
-            $this->SendDebug(__FUNCTION__, "Error calling {$url}: {$message}", 0);
+            $msg = "Error calling {$url}: {$msg}";
             $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
-            $this->LogMessage("fetchRooms: Request failed for {$url} ({$message})", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $msg);
         }
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $this->SendDebug(__FUNCTION__, "Error: JSON-Decode", 0);
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to decode data.");
-            $this->LogMessage("fetchRooms: invalid JSON from {$url}", KL_ERROR);
+            $msg = "Failed to decode data (invalid JSON).";
+            $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
-            return false;
+            return $this->wrapReturn(false, $msg);
         }
 
         // Alles gut — zurückgeben (Rohdaten, Struktur wie API liefert)
-        return $data;
+        return json_encode($data);
     }
 
     /**
      * Build the form list and update the module/form UI.
      * Liefert true bei Erfolg, false bei Fehler.
      */
-    public function SetRoomList(): bool
+    public function SetRoomList(): string
     {
         $data = $this->FetchRooms();
 
-        if ($data === false) {
-            $this->SendDebug(__FUNCTION__, "No data received from Gateway!", 0);
-            // FetchRooms() hat bereits Status und FormCaption gesetzt, hier nur zusätzliche Info
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
+        if ($this->isError($data)) {
+            $msg = "No data received from Controme API.";
+            $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $msg);
+        }
+        else {
+            $data = json_decode($data);
         }
 
         $formListJson = [];
@@ -335,40 +338,37 @@ class ContromeGateway extends IPSModuleStrict
             }
         }
 
-        $this->SendDebug(__FUNCTION__, "Updated Controme Heating Data.", 0);
-
+        // Formular aktualisieren
+        $msg = "Room list updated.";
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
-        $this->UpdateFormField("StatusInstances", "caption", "Room list updated.");
+        $this->UpdateFormField("StatusInstances", "caption", $msg);
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
         $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
         $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
+        $this->SendDebug(__FUNCTION__, "Updated Controme Heating room data.", 0);
         $this->SetStatus(IS_ACTIVE);
-
-        return true;
+        return $this->wrapReturn(true, $msg);
     }
 
     public function fetchSystemInfo(): string
     {
-        $ip      = $this->ReadPropertyString("IPAddress");
-        $user    = $this->ReadPropertyString("User");
-        $pass    = $this->ReadPropertyString("Password");
-        $houseId = $this->ReadPropertyInteger("HouseID");
-
-        if (empty($ip) || empty($user) || empty($pass) || empty($houseId)) {
-            $this->SendDebug(__FUNCTION__, "IP, User, Passwort oder House-ID nicht gesetzt!", 0);
-            $this->UpdateFormField("StatusInstances", "caption", "Login fehlgeschlagen – fehlende Argumente.");
-            $this->SetStatus(IS_NO_CONNECTION);
-            return json_encode(false);
+        $result = $this->checkConnectionPrerequisites();
+        $msg = "Can not fetch data. Missing connection information.";
+        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        {
+            return $this->wrapReturn(false, $msg);
         }
 
         // URL zusammenbauen über Helper
         $url = $this->getJsonGet() . CONTROME_API::GET_SYSTEM_INFO;
-        $this->SendDebug(__FUNCTION__, "Requesting URL: " . $url, 0);
+        $this->SendDebug(__FUNCTION__, "Requesting URL for SysInfo: " . $url, 0);
 
         $opts = [
             'http' => [
                 'method'  => "GET",
-                'timeout' => 5
+                "header" => "Authorization: Basic " . base64_encode("$user:$pass"),
+                "timeout" => 5,
+                "ignore_errors" => true
             ]
         ];
         $context = stream_context_create($opts);
@@ -376,21 +376,18 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($json === false) {
             $error = error_get_last();
-            $msg   = $error['message'] ?? "Unknown error";
-            $this->SendDebug(__FUNCTION__, "Request failed: " . $msg, 0);
-            $this->LogMessage("fetchSystemInfo: Request failed for $ip ($msg)", KL_ERROR);
-            $this->UpdateFormField("StatusInstances", "caption", "Fehler beim Abrufen der Systeminfo.");
+            $msg   = "Request failed for " . "$url: " . $error['message'] ?? "Unknown error";
+            $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return json_encode(false);
+            return $this->wrapReturn(false, $msg);
         }
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $this->SendDebug(__FUNCTION__, "Invalid JSON: " . $json, 0);
-            $this->LogMessage("fetchSystemInfo: Ungültige JSON-Antwort von $ip", KL_ERROR);
-            $this->UpdateFormField("StatusInstances", "caption", "Ungültige Antwort vom Gateway.");
+            $msg = "Invalid/unexpected response from Controme API (non JSON provided).";
+            $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
-            return json_encode(false);
+            return $this->wrapReturn(false, $msg);
         }
         else {
             $this->SendDebug(__FUNCTION__, "Systeminfo received: " . print_r($data, true), 0);
@@ -400,40 +397,45 @@ class ContromeGateway extends IPSModuleStrict
         return json_encode($data);
     }
 
-    // --- Hilfsfunktionen ---
-    private function GetOrCreateCategory($ident, $name, $parentID)
+    private function checkConnectionPrerequisites()
     {
-        $id = @$this->GetIDForIdent($ident);
-        if ($id === false) {
-            $id = IPS_CreateCategory();
-            IPS_SetParent($id, $parentID);
-            IPS_SetIdent($id, $ident);
+        $ip      = $this->ReadPropertyString("IPAddress");
+        $user    = $this->ReadPropertyString("User");
+        $pass    = $this->ReadPropertyString("Password");
+        $houseId = $this->ReadPropertyInteger("HouseID");
+
+        if (empty($ip) || empty($user) || empty($pass) || empty($houseId)) {
+            $msg = "Conection check not possible: IP, User, Password or House-ID missing!";
+            $this->UpdateFormField("StatusInstances", "caption", $msg);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $msg);
         }
-        IPS_SetName($id, $name);
-        return $id;
+
+        return $this->wrapReturn(true, "All params existing.");
     }
 
-    private function GetOrCreateVariable($ident, $name, $profile, $parentID, $type)
+    /**
+     * Reads the temperature via Controme API for one room
+     *
+     * Returns a JSON wrapped data
+     *
+     * @param int    $roomID          Room id from Controme system
+     */
+    public function GetTempDataForRoom(int $roomId): string
     {
-        $id = @$this->GetIDForIdent($ident);
-        if ($id === false) {
-            $id = IPS_CreateVariable($type);
-            IPS_SetParent($id, $parentID);
-            IPS_SetIdent($id, $ident);
+        $result = $this->checkConnectionPrerequisites();
+        $msg = "Can not fetch data. Missing connection information.";
+        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        {
+            return $this->wrapReturn(false, $msg);
         }
-        IPS_SetName($id, $name);
-        if ($profile != "" && IPS_VariableProfileExists($profile)) {
-            IPS_SetVariableCustomProfile($id, $profile);
-        }
-        return $id;
-    }
 
-    public function GetTempDataForRoom(int $roomId)
-    {
+        $user    = $this->ReadPropertyString("User");
+        $pass    = $this->ReadPropertyString("Password");
+
         $url = $this->getJsonGet() . CONTROME_API::GET_TEMPERATURS . "$roomId/";
+        $this->SendDebug(__FUNCTION__, "Requesting URL for Room/Temp data: " . $url, 0);
         // Authentication hinzufügen
-        $user = $this->ReadPropertyString("User");
-        $pass = $this->ReadPropertyString("Password");
 
         $opts = [
             "http" => [
@@ -447,47 +449,47 @@ class ContromeGateway extends IPSModuleStrict
         $response = @file_get_contents($url);
 
         if ($response === false) {
+            $msg = "HTTP request failed and no response header available.";
             if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
-                $message = $this->CheckHttpReponseHeader($http_response_header);
+                $msg = $this->CheckHttpReponseHeader($http_response_header);
             }
-            else {
-                $message = "HTTP request failed and no response header available.";
-            }
-            $this->SendDebug(__FUNCTION__, "Failed to fetch room data from $url\n" . $message, 0);
-            $this->LogMessage("Failed to fetch room data from $url\n" . $message, KL_ERROR);
-            // Etwas stimmt nicht
+            $msg = "Failed to fetch room data from $url\n" . $msg;
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $msg);
         }
 
         $data = json_decode($response, true);
 
         if (!is_array($data)) {
-            // Etwas stimmt nicht
+            $msg = "Invalid JSON response from " . $url;
             $this->SetStatus(IS_NO_CONNECTION);
-            $this->SendDebug(__FUNCTION__, "Invalid JSON response from $url", 0);
-            $this->LogMessage("Invalid JSON response from $url", KL_ERROR);
-            return false;
+            return $this->wrapReturn(false, $msg);
         }
 
-        // Wenn ein Array mit Objekten kommt, das erste nehmen - das macht Controme i.d.R.
+        // Wenn ein Array mit Objekten kommt, das nur das erste nehmen (Controme API liefert momentan ein Array mit einem Array drin. Sollte sich das Verhalten in Zukunft ändern, sicherheitshalber dies ergänzt...)
         if (isset($data[0]) && is_array($data[0])) {
             $data = $data[0];
         }
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
-        return ($data);
+        return (json_encode($data));
     }
 
-    private function WriteSetpoint(mixed $data): string
+    /**
+     * Writes the set point temperature to Controme
+     *
+     * Returns an JSON wrapped return (see DebugHelper Trait)
+     *
+     * @param mixed    $data          Assoziative array with fields int 'RoomID' => X and float 'Setpoint' => xx.xx
+     */
+    private function WriteSetpoint(array $data): string
     {
         $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])   : null;
         $setpoint = isset($data['Setpoint']) ? floatval($data['Setpoint']) : null;
 
         if ($roomId === null || $setpoint === null) {
-            $this->SendDebug(__FUNCTION__, 'SETPOINT missing params', 0);
-            return json_encode(['success' => false, 'message' => 'Missing p arameter RoomID or Setpoint']);
+            return $this->wrapReturn(false, "Missing parameter RoomID or Setpoint");
         }
 
         $ip   = $this->ReadPropertyString('IPAddress');
@@ -495,14 +497,10 @@ class ContromeGateway extends IPSModuleStrict
         $pass = $this->ReadPropertyString('Password');
 
         if (empty($ip) || empty($user) || empty($pass)) {
-            // Etwas stimmt nicht
             $this->SetStatus(IS_NO_CONNECTION);
-            $this->SendDebug(__FUNCTION__, 'Missing gateway credentials', 0);
-            return json_encode(['success' => false, 'message' => 'Missing gateway credentials']);
+            return $this->wrapReturn(false, "Missing Controme API credentials");
         }
 
-        // URL laut Controme-Doku
-        //$url = "http://$ip/set/json/v1/1/soll/$roomId/";
         $url = $this->getJsonSet() . CONTROME_API::SET_SETPOINT . "$roomId/";
 
         // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
@@ -532,46 +530,48 @@ class ContromeGateway extends IPSModuleStrict
             else {
                 $message = "HTTP request failed and no response header available.";
             }
-            $this->SendDebug(__FUNCTION__, 'Request failed: ' . $message, 0);
-            // Etwas stimmt nicht
+            // Etwas stimmt nicht bei der Abfrage
             $this->SetStatus(IS_NO_CONNECTION);
-            return json_encode(['success' => false, 'message' => 'Request failed: ' . $message]);
+            return $this->wrapReturn(false, "Request failed: " . $message);
         }
 
         // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
         $json = json_decode($response, true);
         if ($json === null) {
-            // Wenn kein JSON, aber die API trotzdem success impliziert, akzeptieren wir das
-            $this->SendDebug(__FUNCTION__, 'Non-JSON response: ' . $response, 0);
-            $this->SetStatus(IS_ACTIVE);
-            // Optional: treat any non-empty response as success (oder decide otherwise)
-            return json_encode(['success' => true, 'message' => strlen(trim($response)) > 0 ? true : 'Empty response - guessing all good.']);
+            // Wenn kein JSON, aber die API etwas liefert, ist das i.d.R. die HTML-Rückmeldung von Controme, dass etwas nicht geklappt hat und der Techniker informiert ist
+            // Wir prüfen aber, ob Controme nicht ggf. "[]" oder "{}" oder "true" zurückgeleifert hat und implizieren für diesen Fall erfolg!
+            if (strlen(trim($response)) > 4){
+                $this->SetStatus(IS_INACTIVE);
+                return $this->wrapReturn(false, 'Long non-JSON response from Controme API. Assuming error state.', $response);
+            }
+            else {
+                $this->SetStatus(IS_ACTIVE);
+                return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
+            }
         }
 
         // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
-        $this->SendDebug(__FUNCTION__, 'API returned: ' . print_r($json, true), 0);
+        $this->SendDebug(__FUNCTION__, 'Controme-API returned: ' . print_r($json, true), 0);
 
         // Prüfe auf explizite Fehlermeldung in der JSON Response
         if (isset($json['error']) || isset($json['status']) && $json['status'] === 'error') {
             $errorMsg = $json['error'] ?? $json['message'] ?? 'Unknown API error';
-            $this->SendDebug(__FUNCTION__, 'API returned error: ' . $errorMsg, 0);
-            return json_encode(['success' => false, 'message' => 'API Error: ' . $errorMsg]);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $errorMsg, print_r($json, true));
         }
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
-        return json_encode(['success' => true, 'message' => 'Setpoint updated']);
-
+        return $this->wrapReturn(true, 'Setpoint updated.');
     }
 
-    private function CreateCentralControlInstance(): bool
+    private function CreateCentralControlInstance(): string
     {
         $parentId = $this->ReadPropertyInteger("TargetCategory"); // Gewählter Parent
         $instanceName = "Controme Central Control";
 
         if (!$parentId || !$instanceName) {
-            $this->SendDebug(__FUNCTION__, "Parent or name not set!", 0);
-            return false;
+            return $this->wrapReturn(false, "Parent or name not set!");
         }
 
         // Neue Central Control Instanz erstellen
@@ -580,22 +580,20 @@ class ContromeGateway extends IPSModuleStrict
         IPS_SetName($newId, $instanceName);
         IPS_ApplyChanges($newId);
 
-        $this->SendDebug(__FUNCTION__, "Central Control created with name '$instanceName' (ID $newId)!", 0);
-        $this->UpdateFormField("CCInstanceCreationResult", "caption", "Central Control created with name '$instanceName' (ID $newId)!");
-
-        return true;
+        $msg = "Central Control created with name '$instanceName' (ID $newId)!";
+        $this->UpdateFormField("CCInstanceCreationResult", "caption", $msg);
+        return $this->wrapReturn(true, $msg);
     }
 
-    private function CreateRoomThermostatInstance($roomRow)
+    private function CreateRoomThermostatInstance($roomRow): string
     {
         try {
             // Raumdaten aus der gespeicherten Liste holen
             $roomData = json_decode($roomRow, true);
-            $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
-
             if ($roomData === null) {
-                throw new Exception("Invalid JSON data received: " . $roomRow);
+                throw new Exception("Please select a room from the list to create an instance.");
             }
+            $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
 
             $floorId = $roomData['FloorID'];
             $floorName = $roomData['Floor'];
@@ -608,27 +606,20 @@ class ContromeGateway extends IPSModuleStrict
 
             // Validierung: Kategorie muss ausgewählt sein
             if ($targetCategoryId < 0) {
-                throw new Exception('Bitte wählen Sie eine Zielkategorie aus.');
+                throw new Exception('Please select target category to create instances to.');
             }
 
             // Instanz erstellen
             $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
 
             // Erfolgsmeldung
-            $this->UpdateFormField("InstanceCreationResult", "caption", "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!");
-
-            return json_encode([
-                'success' => true,
-                'message' => "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!",
-                'instanceId' => $instanceId
-            ]);
-
+            $msg = "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!";
+            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
+            return $this->wrapReturn(true, $msg, $instanceId);
         } catch (Exception $e) {
-            $this->UpdateFormField("InstanceCreationResult", "caption", "Fehler: " . $e->getMessage());
-            return json_encode([
-                'success' => false,
-                'message' => 'Error creating instance: ' . $e->getMessage()
-            ]);
+            $msg = "Error creating instance: " . $e->getMessage();
+            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
+            return $this->wrapReturn(false, $msg);
         }
     }
 
@@ -715,7 +706,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->JSON_SET = "http" . ($useHTTPS ? "s" : "") . "://$ip/set/json/v1/$houseID/";
     }
 
-    protected function PingGateway(string $ip, int $timeout = 1000): bool
+    protected function PingGateway(string $ip, int $timeout = 1000): string
     {
         // cURL verwenden, weil auf allen Systemen verfügbar
         $ch = curl_init();
@@ -732,12 +723,11 @@ class ContromeGateway extends IPSModuleStrict
         curl_close($ch);
 
         if ($error !== 0) {
-            $this->SendDebug(__FUNCTION__, "Fehler bei Verbindung zu $ip: $error", 0);
-            return false;
+            return $this->wrapReturn(false, "Error connecting to $ip: $error");
         }
 
-        $this->SendDebug(__FUNCTION__, "Antwort von $ip, HTTP Code: $httpCode", 0);
-        return $httpCode > 0;
+        $msg = "Response from $ip, HTTP Code: $httpCode";
+        return $this->wrapReturn(true, $msg);
     }
 
     private function CreateAndConfigureRoomInstance(int $parentCategoryId, int $floorId, string $floorName, int $roomId, string $roomName, string $icon = "temperature-list"): int

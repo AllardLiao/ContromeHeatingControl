@@ -144,7 +144,7 @@ class ContromeCentralControl extends IPSModuleStrict
         ]));
     }
 
-    public function TestReadRoomData(): bool
+    public function TestReadRoomData(): string
     {
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
@@ -180,6 +180,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->SetStatus(IS_ACTIVE);
         return true;
     }
+    
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Systems aktualisiert
     private function UpdateData(): bool
     {
@@ -196,6 +197,8 @@ class ContromeCentralControl extends IPSModuleStrict
             ACTIONs::DATA_CALENDAR    => $this->ReadPropertyBoolean("ShowCalendar")
         ]));
 
+        // Achtung - hier kommt ein ziemlich verschachteltes JSON zurück.
+        // denn z. B. konnten die SystemInfos geladen werden, aber nicht der Raum
         if ($result === false) {
             $this->SendDebug(__FUNCTION__, "No data received!", 0);
             $this->LogMessage("Fetching Data returned no data!", KL_ERROR);
@@ -361,9 +364,12 @@ class ContromeCentralControl extends IPSModuleStrict
      *
      * @return boolean
      */
-    public function CheckConnection(): bool
+    public function CheckConnection(): string
     {
-        // Einfache Abfrage über Gateway - das Gateway versucht für Raum 1 Daten zu bekommen und zu schreiben.
+        // Gibt keine Voraussetzungen zu prüfen - diese sind im Gateway gespeichert.
+        // Also direkt abrufen.
+
+        // Abfrage über Gateway - das Gateway versucht im Standard für Raum 1 Daten zu bekommen und zu schreiben.
         $response = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
             "Action" => ACTIONs::CHECK_CONNECTION
@@ -371,21 +377,19 @@ class ContromeCentralControl extends IPSModuleStrict
 
         $result = json_decode($response, true);
 
-        if ($result['success']) {
-            $this->SendDebug(__FUNCTION__, "Connection to Gateway and Controme Mini-Server is working!", 0);
-            $this->UpdateFormField("Result", "caption", "Connection to Gateway and Controme Mini-Server is working!\n");
-            $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
-        } else {
-            $this->SendDebug(__FUNCTION__, "Connection failed!", 0);
-            $this->UpdateFormField("Result", "caption", "Connection failed!\n");
-            $this->LogMessage("Connection failed!", KL_ERROR);
-            $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+        if ($this->isSuccess($result, KL_ERROR, "Connection to Controme Mini-Server."))
+        {
+            $msg = "Connection to gateway and Controme Mini-Server is working!";
+            $this->UpdateFormField("Result", "caption", $msg);
+            $this->SetStatus(IS_ACTIVE);
+            return $this->wrapReturn(true, $msg);
         }
-
-        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
-        $this->SetStatus(IS_ACTIVE);
-        return true;
+        else {
+            $msg = "Connection to gateway and Controme Mini-Server failed!";
+            $this->UpdateFormField("Result", "caption", $msg);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $msg);
+        }
     }
 
     public function GetVisualizationTile(): string
@@ -504,4 +508,5 @@ class ContromeCentralControl extends IPSModuleStrict
             'App kompatibel' => $this->GetValue('SysInfo_AppCompat')
         ];
     }
+
 }

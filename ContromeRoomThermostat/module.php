@@ -155,47 +155,46 @@ class ContromeRoomThermostat extends IPSModuleStrict
      *
      * @return boolean
      */
-    public function CheckConnection(): bool
+    public function CheckConnection(): string
     {
-        $outputText = "";
+        $result = $this->checkConnectionPrerequisites();
+        $errMsg = "Missing information to connect.";
+        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        {
+            $this->SetStatus(IS_INACTIVE);
+            $this->UpdateFormField("Result", "caption", $errMsg);
+            return $this->wrapReturn(false, $errMsg);
+        }
+
         // Wenn das lesen und schreiben klappt, liefern wir dem User noch Daten für den hier angelegten Raum
         $floorId = $this->ReadPropertyInteger("FloorID");
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
-        // Validierung: Floor und Room müssen > 0 sein
-        if ($floorId <= 0 || $roomId <= 0) {
-            $this->SendDebug(__FUNCTION__, "Invalid floor id ($floorId) or room id ($roomId)", 0);
-            $this->LogMessage("CHECK_CONNECTION fehlgeschlagen: FloorID=$floorId, RoomID=$roomId", KL_ERROR);
-            $this->UpdateFormField("Result", "caption", "Ungültige Konfiguration (Floor/Room nicht gesetzt)");
-            $this->SetStatus(IS_NOT_CREATED);
-            return false;
-        }
-
-        // Einfache Abfrage über Gateway - das Gateway versucht 1 Daten zu bekommen und zu schreiben.
-        $response = $this->SendDataToParent(json_encode([
+        // Abfrage über Gateway - das Gateway versucht Daten zu bekommen und zu schreiben.
+        $result = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
             "Action" => ACTIONs::CHECK_CONNECTION,
             "FloorID" => $floorId,
             "RoomID"  => $roomId
         ]));
 
-        $result = json_decode($response, true);
-
-        if ($result['success']) {
-            $this->SendDebug(__FUNCTION__, "Connection to Gateway and Controme Mini-Server is working!", 0);
-            $outputText .= "Connection to Gateway and Controme Mini-Server is working!\n";
+        // Da mehrere Abfragen durchgeführt werden, merken wir und den Stand zu jeder und geben beide Ergebnisse an den User aus.
+        $outputText = "";
+        $errMsg = "Please check Gateway. Error checking connection via IPS Controme Gateway for provided room id. " . "(Id: " . $roomId . ")";
+        if ($this->isError($result))
+        {
+            $outputText .= $errMsg;
             $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Connection to Gateway and Controme Mini-Server is working!", KL_MESSAGE);
-        } else {
-            $this->SendDebug(__FUNCTION__, "Connection failed!", 0);
-            $outputText .= "Connection failed!\n";
-            $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Connection failed!", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
+        }
+        else {
+            $outputText .= "Connection to Gateway and Controme Mini-Server is working!\n";
+            $this->SendDebug(__FUNCTION__, $outputText, 0);
+            $this->LogMessage($outputText, KL_MESSAGE);
         }
 
-        // Anfrage ans Gateway schicken
+        // Anfrage ans Gateway schicken um die Temperaturdaten zu lesen.
         $result = $this->SendDataToParent(json_encode([
             "DataID"  => GUIDs::DATAFLOW, // die gemeinsame DataFlow-GUID
             "Action"  => ACTIONs::GET_TEMP_DATA_FOR_ROOM,
@@ -203,37 +202,52 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "RoomID"  => $roomId
         ]));
 
-        if ($result === false) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
-            $outputText .= "Fetching Data: no response from gateway!\n";
+        $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
+        if ($this->isError($result))
+        {
+            $outputText .= $errMsg;
             $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Fetching Data: no response from gateway", KL_ERROR);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
+        }
+        else {
+            $outputText .= "Reading data for provided room returned results.\n";
+            $this->SendDebug(__FUNCTION__, $outputText, 0);
+            $this->LogMessage($outputText, KL_MESSAGE);
         }
 
         $data = json_decode($result, true);
-        if (isset($data['name'])) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $outputText .= "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)";
+        $errMsg = "Fetching data successfull, however no valid room/temperature data found for provided room! " . "(Id: " . $roomId . ")";
+        if (!(isset($data['name'])) && (isset($data['temperatur']))) {
+            $outputText .= $errMsg;
             $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Fetching Data: Room $roomId found and data seems valid.", KL_MESSAGE);
-        } else {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId data not valid!", 0);
-            $outputText .= "Fetching Data: Room $roomId data not valid!";
-            $this->UpdateFormField("Result", "caption", $outputText);
-            $this->LogMessage("Fetching Data: Room data not valid!", KL_ERROR);
             $this->SetStatus(IS_BAD_JSON);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
-        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
+        // Bis hier ist alles gut :-)
+        $msg = "Data for provided room found and data seems valid. (" . $data['name'] . " - " . $data['temperatur'] . " °C.)";
+        $this->SendDebug(__FUNCTION__, $msg, 0);
+        $outputText .= $msg;
+        $this->UpdateFormField("Result", "caption", $outputText);
+        $this->LogMessage($msg, KL_MESSAGE);
         $this->SetStatus(IS_ACTIVE);
-        return $this->saveDataToVariables($data);
+        $this->saveDataToVariables($data);
+
+        return $this->wrapReturn(true, $msg);
     }
 
-    public function TestReadRoomData(): bool
+    public function TestReadRoomData(): string
     {
+        $result = $this->checkConnectionPrerequisites();
+        $errMsg = "Missing information to connect.";
+        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        {
+            $this->SetStatus(IS_INACTIVE);
+            $this->UpdateFormField("Result", "caption", $errMsg);
+            return $this->wrapReturn(false, $errMsg);
+        }
+
         $floorId = $this->ReadPropertyInteger("FloorID");
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
@@ -245,34 +259,46 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "RoomID"  => $roomId
         ]));
 
-        if ($result === false) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
-            $this->LogMessage(__FUNCTION__ . ": Fetching Data: no response from gateway", KL_ERROR);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: no response from gateway");
+        $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
+        if ($this->isError($result))
+        {
+            $this->UpdateFormField("Result", "caption", $errMsg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
+        // Dann werden wohl Daten angekommen sein:
         $data = json_decode($result, true);
-        if (isset($data['name'])) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $this->LogMessage("Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)", KL_MESSAGE);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)");
+        if (isset($data['name']) && (isset($data['temperatur']))) {
+            $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)";
+            $this->SendDebug(__FUNCTION__, $msg, 0);
+            $this->LogMessage($msg, KL_MESSAGE);
+            $this->UpdateFormField("ResultTestRead", "caption", $msg);
         } else {
-            $this->SendDebug(__FUNCTION__, "Fetching Data ok, but room $roomId data not valid!", 0);
-            $this->LogMessage("Fetching Data ok, but room data not valid!", KL_ERROR);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data ok, but room data not valid");
+            $errMsg = "Fetching data successfull, however no valid room/temperature data found for provided room! " . "(Id: " . $roomId . ")";
+            $this->UpdateFormField("ResultTestRead", "caption", $errMsg);
+            $this->UpdateFormField("Result", "caption", $errMsg);
             $this->SetStatus(IS_BAD_JSON);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
         // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
         $this->SetStatus(IS_ACTIVE);
-        return $this->saveDataToVariables($data);
+        $this->saveDataToVariables($data);
+        return $this->wrapReturn(true, "Room and temperature data read successfully.");
     }
-    // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert
-    private function UpdateRoomData(): bool
+
+    // Funktion die zyklisch durch den Timer aufgerufen wird (wenn aktiv) und die Werte des Raums aktualisiert - hier keine User-Rückmeldungen!
+    private function UpdateRoomData(): string
     {
+        $result = $this->checkConnectionPrerequisites();
+        $errMsg = "Missing information to connect.";
+        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        {
+            $this->SetStatus(IS_INACTIVE);
+            return $this->wrapReturn(false, $errMsg);
+        }
+
         $roomId   = $this->ReadPropertyInteger("RoomID");
         $floorId  = $this->ReadPropertyInteger("FloorID");
 
@@ -284,28 +310,32 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "FloorID"=> $floorId
         ]));
 
-        if ($result === false) {
-            $this->SendDebug(__FUNCTION__, "No data received!", 0);
-            $this->LogMessage("Fetching Data for Room $roomId returned no data!", KL_ERROR);
+        $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
+        if ($this->isError($result))
+        {
+            $this->UpdateFormField("Result", "caption", $errMsg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
+        // Dann werden wohl Daten angekommen sein:
         $data = json_decode($result, true);
-        if (!is_array($data)) {
-            $this->SendDebug(__FUNCTION__, "Invalid data received: " . $result, 0);
-            $this->LogMessage("Fetching Data for Room $roomId returned invalid data!", KL_ERROR);
+        if (isset($data['name']) && (isset($data['temperatur']))) {
+            $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)";
+            $this->SendDebug(__FUNCTION__, $msg, 0);
+            $this->LogMessage($msg, KL_MESSAGE);
+        } else {
+            $errMsg = "Fetching data successfull, however no valid room/temperature data found for provided room! " . "(Id: " . $roomId . ")";
             $this->SetStatus(IS_BAD_JSON);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
-        $this->SendDebug(__FUNCTION__, "Room data updated", 0);
         $this->SetStatus(IS_ACTIVE);
-
-        return $this->saveDataToVariables($data);
+        $this->saveDataToVariables($data);
+        return $this->wrapReturn(true, "Update successfull (room " . $roomId . ")");
     }
 
-    private function saveDataToVariables($data): bool
+    private function saveDataToVariables($data)
     {
         // Variablen anlegen und updaten
         $this->MaintainVariable("Temperature", "Actual Temperature", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
@@ -326,53 +356,50 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (isset($data['betriebsart'])) {
             $this->SetValue("Mode", CONTROME_PROFILES::getValueBetriebsart($data['betriebsart']));
         }
-
-        return true;
     }
 
-    private function WriteSetpoint(float $value): bool
+    private function WriteSetpoint(float $value): string
     {
+        $result = $this->checkConnectionPrerequisites();
+        $errMsg = "Missing information to connect.";
+        if (!$this->isSuccess($result, KL_ERROR, $errMsg))
+        {
+            $this->SetStatus(IS_INACTIVE);
+            return $this->wrapReturn(false, $errMsg);
+        }
+
         $roomId  = $this->ReadPropertyInteger("RoomID");
         $floorId = $this->ReadPropertyInteger("FloorID");
 
-        $data = [
+        $result = $this->SendDataToParent(json_encode([
             "DataID"   => GUIDs::DATAFLOW,
             "Action"   => ACTIONs::WRITE_SETPOINT,
             "FloorID"  => $floorId,
             "RoomID"   => $roomId,
             "Setpoint" => number_format($value, 2, '.', '') // immer mit 2 Nachkommastellen senden
-        ];
+        ]));
 
-        $result = $this->SendDataToParent(json_encode($data));
-        $this->SendDebug(__FUNCTION__, 'Response: ' . $result, 0);
+        $this->SendDebug(__FUNCTION__, 'Response: ' . print_r($result, true), 0);
 
-        if ($result !== false) {
-            $decoded = json_decode($result, true);
-            if (is_string($decoded)) {
-                $decoded = json_decode($decoded, true);
-            }
-            $this->SendDebug(__FUNCTION__, "Decoded result: " . print_r($decoded, true), 0);
-            if (isset($decoded['success']) && $decoded['success'] === true) {
-                $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
-                $this->SendDebug(__FUNCTION__, "Solltemperatur erfolgreich gesetzt: " . $value, 0);
-            } else {
-                $msg = $decoded['message'] ?? 'Unbekannter Fehler';
-                $this->SendDebug(__FUNCTION__, "Fehler beim Setzen der Solltemperatur: " . $msg, 0);
-                $this->LogMessage("Setpoint-Fehler: " . $msg, KL_ERROR);
-                // Optional: User Feedback ins Frontend
-                $this->UpdateFormField("Result", "caption", "Fehler: " . $msg);
-                $this->SetStatus(IS_NO_CONNECTION);
-                throw new UserFriendlyException($decoded['message']);
-            }
-        } else {
-            $this->SendDebug(__FUNCTION__, "Fehler: Gateway hat einen Fehler zurückgegeben (siehe Debug)!", 0);
-            $this->LogMessage("Setpoint-Fehler: Gateway hat einen Fehler zurückgegeben!", KL_ERROR);
+        $errMsg = "Could not write setpoint for provided room! " . "(Id: " . $roomId . ")";
+        if ($this->isError($result))
+        {
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            $errMsg .= $this->getResponseMessage($result);
+            $this->SendDebug(__FUNCTION__, "Fehler beim Setzen der Solltemperatur: " . $errMsg, 0);
+            $this->LogMessage("Setpoint-Fehler: " . $errMsg, KL_ERROR);
+            throw new UserFriendlyException($errMsg);
+        }
+        else {
+            $msg = "Solltemperatur erfolgreich gesetzt: " . $value . " °C";
+            if ($this->isSuccess($result, KL_ERROR, $msg)){
+                $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
+
+            }
         }
 
         $this->SetStatus(IS_ACTIVE);
-        return true;
+        return $this->wrapReturn(true, "Setpoint set successfully.");
     }
 
     public function GetVisualizationTileCustom(): string
@@ -412,10 +439,27 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return $html;
     }
 
-//    public function GetVisualizationTile(): String
-//    {
-//        //$this->SendDebug("HTML:", $this->GetVisualizationTileCustom(), 0);
-//        return parent::GetVisualizationTile();
-//    }
+    private function checkConnectionPrerequisites()
+    {
+        $floorId = $this->ReadPropertyInteger("FloorID");
+        $roomId  = $this->ReadPropertyInteger("RoomID");
+
+        // Properties müssen gefüllt sein
+        if (empty($floorId) || empty($roomId)) {
+            $msg = "Floor id and/or room id missing!";
+            $this->UpdateFormField("Result", "caption", $msg);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $msg);
+        }
+
+        // Validierung: Floor und Room müssen > 0 sein
+        if ($floorId <= 0 || $roomId <= 0) {
+            $msg = "Invalid floor id ($floorId) or room id ($roomId) (floor/room <= 0)!";
+            $this->UpdateFormField("Result", "caption", $msg);
+            $this->SetStatus(IS_INACTIVE);
+            return $this->wrapReturn(false, $msg);
+        }
+        return $this->wrapReturn(true, "All params existing and valid.");
+    }
 
 }
