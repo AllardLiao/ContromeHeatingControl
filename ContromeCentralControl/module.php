@@ -156,7 +156,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $data = json_decode($result, true);
 
         if (isset($data['name']) && isset($data['temperatur']) && is_numeric($data['temperatur'])) {
-            $msg = "Room found and data seems valid. (Returned data: " . $data['name'] . " - " . $data['temperatur'] . " °C.)";
+            $msg = "Room found and data seems valid. (Returned data: " . $data['name'] . ", " . $data['temperatur'] . " °C.)";
             $this->UpdateFormField("ResultTestRead", "caption", $msg);
             $this->SetStatus(IS_ACTIVE);
             return $this->wrapReturn(true, "Fetching Data: Room $roomId found and data seems valid.", $data);
@@ -290,7 +290,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "Humidity",          floatval($room['luftfeuchte']));
                             $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "RemainingTime",     $room['remaining_time']);
+                            $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
                             $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
                         }
