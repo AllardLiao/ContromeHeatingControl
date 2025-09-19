@@ -73,6 +73,10 @@ class ContromeCentralControl extends IPSModuleStrict
         //Never delete this line!
         parent::ApplyChanges();
 
+        // Wenn die Instanz noch nicht fertigkonfiguriert ist - abbrechen.
+        if (IPS_GetKernelRunlevel() != KR_READY) {
+            return;
+        }
         // Link zum Controme Gateway anpassen
         $this->updateIPAddress();
 
