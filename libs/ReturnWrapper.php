@@ -103,7 +103,7 @@ trait ReturnWrapper
         if ($errType !== 0) {
             $fullMsg = "$prefix: " . ($msg !== "" ? "$msg " : "") . $decoded[self::SALT . 'message'];
             $this->SendDebug($caller, $fullMsg, 0);
-            $this->LogMessage("$fullMsg / $caller", $decoded['success'] ? KL_NOTIFY : $errType);
+            $this->LogMessage("$fullMsg / $caller", $decoded[self::SALT . 'success'] ? KL_NOTIFY : $errType);
         }
 
         return $decoded[self::SALT . 'success'] === true;
