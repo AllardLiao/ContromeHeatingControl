@@ -510,7 +510,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'Branch' => $this->GetValue('SysInfo_Branch'),
             'OS' => $this->GetValue('SysInfo_OS'),
             'Filesystem Build' => $this->GetValue('SysInfo_FBI'),
-            'App kompatibel' => $this->GetValue('SysInfo_AppCompat')
+            'App kompatibel' => $this->GetValue('SysInfo_AppCompat') ? 'Yes' : 'No'
         ];
     }
 
