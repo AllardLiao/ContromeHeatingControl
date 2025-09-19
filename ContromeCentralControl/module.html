@@ -3,6 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    margin-top: 10px;
 }
 
 .subtile {
@@ -17,6 +18,7 @@
 .subtile label {
     display: block;
     font-weight: bold;
+    font-size: 1.1em;
     margin-bottom: 5px;
 }
 
@@ -78,8 +80,9 @@
     padding: 8px;
 }
 
-.system-info h3 {
-    margin-top: 0;
+.system-info label {
+    font-weight: bold;
+    font-size: 1.1em;
     margin-bottom: 5px;
 }
 
@@ -149,13 +152,8 @@
 
 <!-- Systeminformationen -->
 <div class="system-info" id="system-info">
-    <h3>System Info</h3>
-    <div><strong>Hardware:</strong> <span id="sys-hw">--</span></div>
-    <div><strong>Software Datum:</strong> <span id="sys-swdate">--</span></div>
-    <div><strong>Branch:</strong> <span id="sys-branch">--</span></div>
-    <div><strong>OS:</strong> <span id="sys-os">--</span></div>
-    <div><strong>Filesystem Build:</strong> <span id="sys-fbi">--</span></div>
-    <div><strong>App kompatibel:</strong> <span id="sys-appcompat">--</span></div>
+    <label>System Info</label>
+    <!--SYSTEM_INFO-->
 </div>
 
 <script>

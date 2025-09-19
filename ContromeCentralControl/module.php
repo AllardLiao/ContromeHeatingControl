@@ -374,10 +374,6 @@ class ContromeCentralControl extends IPSModuleStrict
 
     public function GetVisualizationTile(): string
     {
-        $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
-        $sysInfo = $this->GetSystemInfo();
-        $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
-
         // ========================
         // 1. Mode-Options
         $modeOptions = '';
@@ -386,6 +382,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // ========================
         // 2. Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
+        $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
         $roomOptions = '<option value="all">Alle Räume</option>';
         $maxTemp = 15.0;
         foreach ($rooms as $room) {
@@ -398,9 +395,12 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // ========================
         // 3. Systeminfo HTML
+        $sysInfo = $this->GetSystemInfo();
+        $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
         $sysHtml = '<div class="system-info-values">';
         foreach ($sysInfo as $key => $value) {
             $sysHtml .= '<div><strong>' . $key . ':</strong><span>' . ($value ?? '--') . '</span></div>';
+            $this->SendDebug(__FUNCTION__, "Sysinfo Key: $key Value: $value", 0);
         }
         $sysHtml .= '</div>';
         // ========================
@@ -444,7 +444,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
         $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
-        $html = str_replace('<!--SYS_INFO-->', $sysHtml, $html);
+        $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
         $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
         $html = str_replace('<!--DURATION_OPTIONS-->', $durationOptions, $html);
         $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
