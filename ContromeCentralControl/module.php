@@ -59,7 +59,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "' . ACTIONs::UPDATE_DATA . '", true);');
 
         // Link zum Controme Gateway anpassen
-        $this->updateIPAddress();
+        //$this->updateIPAddress();
     }
 
     public function Destroy(): void
@@ -86,7 +86,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         // Link zum Controme Gateway anpassen
-        $this->updateIPAddress();
+        // $this->updateIPAddress();
 
         // Sicherstellen, dass die Variablen registriert sind
         // SystemInfo vorbereiten/anlegen
