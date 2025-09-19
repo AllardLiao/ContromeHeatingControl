@@ -25,6 +25,7 @@ class ContromeCentralControl extends IPSModuleStrict
     use VersionHelper;
     use FormatHelper;
     use WidgetHelper;
+    use ReturnWrapper;
 
     public function Create(): void
     {
@@ -57,12 +58,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "' . ACTIONs::UPDATE_DATA . '", true);');
 
         // Link zum Controme Gateway anpassen
-        $ip = $this->RequestGatewayIPAddress();
-        if ($ip !== null) {
-            $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
-        } else {
-            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
-        }
+        $this->updateIPAddress();
     }
 
     public function Destroy(): void
@@ -77,12 +73,7 @@ class ContromeCentralControl extends IPSModuleStrict
         parent::ApplyChanges();
 
         // Link zum Controme Gateway anpassen
-        $ip = $this->RequestGatewayIPAddress();
-        if ($ip !== null) {
-            $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
-        } else {
-            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
-        }
+        $this->updateIPAddress();
 
         // Sicherstellen, dass die Variablen registriert sind
         // SystemInfo vorbereiten/anlegen
@@ -155,32 +146,28 @@ class ContromeCentralControl extends IPSModuleStrict
             "RoomID"  => $roomId
         ]));
 
-        if ($result === false) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: no response from gateway!", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data: no response from gateway", KL_ERROR);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: no response from gateway");
+        $errMsg = "Error fetching Data for Room " . $roomId;
+        if ($this->isError($result)) {
+            $this->UpdateFormField("ResultTestRead", "caption", $errMsg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return false;
+            return $this->wrapReturn(false, $errMsg);
         }
 
         $data = json_decode($result, true);
-        if (isset($data['name'])) {
-            $this->SendDebug(__FUNCTION__, "Fetching Data: Room $roomId found and data seems valid.", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)", KL_MESSAGE);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C.)");
-        } else {
-            $this->SendDebug(__FUNCTION__, "Fetching Data ok, but room $roomId data not valid!", 0);
-            $this->LogMessage("TestReadRoomData: Fetching Data ok, but room data not valid!", KL_ERROR);
-            $this->UpdateFormField("ResultTestRead", "caption", "Fetching Data ok, but room data not valid");
-            $this->SetStatus(IS_BAD_JSON);
-            return false;
-        }
 
-        // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
-        $this->SetStatus(IS_ACTIVE);
-        return true;
+        if (isset($data['name']) && isset($data['temperatur']) && is_numeric($data['temperatur'])) {
+            $msg = "Room found and data seems valid. (Returned data: " . $data['name'] . " - " . $data['temperatur'] . " °C.)";
+            $this->UpdateFormField("ResultTestRead", "caption", $msg);
+            $this->SetStatus(IS_ACTIVE);
+            return $this->wrapReturn(true, "Fetching Data: Room $roomId found and data seems valid.", $data);
+        } else {
+            $msg = "Getting data but data seems not valid. (Returned data: " . print_r($data, true) . ")";
+            $this->UpdateFormField("ResultTestRead", "caption", $msg);
+            $this->SetStatus(IS_BAD_JSON);
+            return $this->wrapReturn(false, $msg);
+        }
     }
-    
+
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Systems aktualisiert
     private function UpdateData(): bool
     {
@@ -221,7 +208,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->saveDataToVariables($data);
     }
 
-    private function saveDataToVariables($data): bool
+    private function saveDataToVariables(array $data): bool
     {
         $this->SendDebug(__FUNCTION__, "Received data: " . print_r($data, true), 0);
 
@@ -317,35 +304,30 @@ class ContromeCentralControl extends IPSModuleStrict
         return true;
     }
 
-    private function RequestGatewayIPAddress(): ?string
+    private function RequestGatewayIPAddress(): string
     {
         // Check, ob Gateway eingerichtet ist.
         $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
         if ($parentID == 0) {
-            $this->SendDebug(__FUNCTION__, "Kein Gateway verbunden", 0);
-            $this->LogMessage("Kein Gateway verbunden", KL_NOTIFY);
-            $this->UpdateFormField("ContromeIP", "caption", "Kein Gateway verbunden...");
-            return null;
+            $errMsg = "No gateway connected!";
+            $this->UpdateFormField("ContromeIP", "caption", $errMsg);
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $errMsg);
         }
 
-        $data = [
+        $result = $this->SendDataToParent(json_encode([
             'DataID'   => GUIDs::DATAFLOW,
             'Action'   => ACTIONs::GET_IP_ADDRESS
-        ];
-
-        $result = $this->SendDataToParent(json_encode($data));
+        ]));
 
         if (!is_string($result) || empty($result)) {
-            $this->SendDebug(__FUNCTION__, "Keine IP-Adresse vom Gateway erhalten", 0);
-            $this->LogMessage("Fehler: Gateway hat keine IP-Adresse geliefert", KL_NOTIFY);
-            $this->UpdateFormField("ContromeIP", "caption", "IP konnte nicht abgerufen werden");
-            return null;
+            $errMsg = "Please check gateway! Gateway did not return any information.";
+            $this->UpdateFormField("ContromeIP", "caption", $errMsg);
+            return $this->wrapReturn(false, $errMsg);
         }
-
-        $this->SendDebug(__FUNCTION__, "IP-Adresse vom Gateway: " . $result, 0);
-        $this->LogMessage("Gateway-IP: " . $result, KL_MESSAGE);
-
-        return $result;
+        else {
+            return $this->wrapReturn(true, "IPAddress", $result);
+        }
     }
 
     private function registerSystemInfoVariables(): void
@@ -375,9 +357,7 @@ class ContromeCentralControl extends IPSModuleStrict
             "Action" => ACTIONs::CHECK_CONNECTION
         ]));
 
-        $result = json_decode($response, true);
-
-        if ($this->isSuccess($result, KL_ERROR, "Connection to Controme Mini-Server."))
+        if ($this->isSuccess($response, KL_ERROR, "Connection to Controme Mini-Server."))
         {
             $msg = "Connection to gateway and Controme Mini-Server is working!";
             $this->UpdateFormField("Result", "caption", $msg);
@@ -509,4 +489,23 @@ class ContromeCentralControl extends IPSModuleStrict
         ];
     }
 
+    private function updateIPAddress(): string
+    {
+        // Link zum Controme Gateway anpassen
+        $response = $this->RequestGatewayIPAddress();
+        if ($this->isError($response)) {
+            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
+            return $this->wrapReturn(false, "No valid IP from gateway.");
+        }
+        $ip = $this->getResponsePayload($response);
+
+        // Prüfen, ob es eine gültige IP-Adresse ist
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            $this->UpdateFormField("ContromeIP", "caption", "Invalid IP received from gateway!");
+            return $this->wrapReturn(false, "Invalid IP delivered: " . $ip);
+        }
+
+        $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
+        return $this->wrapReturn(true, "Valid IP delivered.", $ip);
+    }
 }

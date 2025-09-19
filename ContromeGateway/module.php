@@ -27,6 +27,7 @@ class ContromeGateway extends IPSModuleStrict
     use VersionHelper;
     use FormatHelper;
     use WidgetHelper;
+    use ReturnWrapper;
 
     private string $JSON_GET = "http://127.0.0.1/get/json/v1/1/"; // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
     private string $JSON_SET = "http://127.0.0.1/set/json/v1/1/";
@@ -149,8 +150,7 @@ class ContromeGateway extends IPSModuleStrict
 
             case ACTIONs::GET_TEMP_DATA_FOR_ROOM: // liefert ein JSON mit den Räumen zurück.
                 if (!isset($data['RoomID'])) {
-                    $this->SendDebug(__FUNCTION__, "Missing room id", 0);
-                    return json_encode(false);
+                    return $this->wrapReturn(false, "Missing room id");
                 }
                 $roomId  = (int)$data['RoomID'];
                 return $this->GetTempDataForRoom($roomId);
@@ -218,17 +218,21 @@ class ContromeGateway extends IPSModuleStrict
         $currentData = $this->GetTempDataForRoom($roomId);
 
         // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
-        if ($currentData === false){ewqreerqw
+        if ($this->isError($currentData))
+        {
             $msg = "No connection to Controme Mini-Server, please check IP: " . $ip;
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
-            return $this->wrapReturn(false, $msg);
-        } else {
-            $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. (" . $currentData["name"] . "=" . $currentData["temperatur"] . ")", 0);
+            return $this->wrapReturn(false, $this->getResponseMessage($currentData));
         }
 
+        $roomData = json_decode($currentData, true);
+        $roomName = $roomData['name'] ?? 'unknown';
+        $roomTemp = $roomData['temperatur'] ?? 'unknown';
+        $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. ($roomName, $roomTemp °C)", 0);
+
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
-        $sendData = Array('RoomID' => $roomId, 'Setpoint' => $currentData['solltemperatur']);
+        $sendData = Array('RoomID' => $roomId, 'Setpoint' => $roomTemp);
         $result = $this->WriteSetpoint($sendData);
 
         if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . "."))
@@ -245,12 +249,6 @@ class ContromeGateway extends IPSModuleStrict
         }
     }
 
-    /**
-     * Holt die Rohdaten der Räume vom Controme-API.
-     * Rückgabe:
-     *  - array (decoded JSON) bei Erfolg
-     *  - false bei Fehler
-     */
     /**
      * Holt die Rohdaten der Räume vom Controme-API.
      * Rückgabe:
@@ -363,6 +361,9 @@ class ContromeGateway extends IPSModuleStrict
         $url = $this->getJsonGet() . CONTROME_API::GET_SYSTEM_INFO;
         $this->SendDebug(__FUNCTION__, "Requesting URL for SysInfo: " . $url, 0);
 
+        $user = $this->ReadPropertyString("User");
+        $pass = $this->ReadPropertyString("Password");
+
         $opts = [
             'http' => [
                 'method'  => "GET",
@@ -446,7 +447,7 @@ class ContromeGateway extends IPSModuleStrict
             ]
         ];
         $context = stream_context_create($opts);
-        $response = @file_get_contents($url);
+        $response = @file_get_contents($url, false, $context);
 
         if ($response === false) {
             $msg = "HTTP request failed and no response header available.";
@@ -482,10 +483,16 @@ class ContromeGateway extends IPSModuleStrict
      * Returns an JSON wrapped return (see DebugHelper Trait)
      *
      * @param mixed    $data          Assoziative array with fields int 'RoomID' => X and float 'Setpoint' => xx.xx
+     * @return string                 JSON wrapped response
      */
-    private function WriteSetpoint(array $data): string
+    private function WriteSetpoint(mixed $data): string
     {
-        $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])   : null;
+        // Interne Validierung
+        if (!is_array($data)) {
+            return $this->wrapReturn(false, "Invalid data format - array expected");
+        }
+
+        $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])     : null;
         $setpoint = isset($data['Setpoint']) ? floatval($data['Setpoint']) : null;
 
         if ($roomId === null || $setpoint === null) {

@@ -1,0 +1,1 @@
+{"version":2,"defects":{"WrapperTest::testWrapReturnSuccess":8,"WrapperTest::testWrapReturnError":8,"WrapperTest::testInvalidJson":8},"times":{"WrapperTest::testWrapReturnSuccess":0,"WrapperTest::testWrapReturnError":0,"WrapperTest::testInvalidJson":0,"ExampleTest::testItWorks":0}}
