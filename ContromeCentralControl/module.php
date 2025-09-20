@@ -34,12 +34,12 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // Properties für die Konfiguration des Moduls
         $this->RegisterPropertyBoolean("ShowMainElements", true);
-        $this->RegisterPropertyInteger("VisuColorMainTiles", 0xf5f5f5);
+        $this->RegisterPropertyInteger("VisuColorMainTiles", 0xd0cdcd);
         $this->RegisterPropertyBoolean("ShowSystemInfo", true);
-        $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xf5f5f5);
+        $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xd6dbff);
         $this->RegisterPropertyBoolean("ShowRooms", true);
-        $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf5f5f5);
-        $this->RegisterPropertyInteger("VisuColorFloorTiles", 0xf1f1f1);
+        $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf0f0f0);
+        $this->RegisterPropertyInteger("VisuColorFloorTiles", 0xd9d9d9);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
         $this->RegisterPropertyBoolean("ShowRoomSensors", false);
@@ -447,36 +447,32 @@ class ContromeCentralControl extends IPSModuleStrict
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
                     . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>';
+                //$roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
+                $roomHtml .= '<div><strong>Soll:</strong><span>';
+                if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                    $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . '°C</s></span></div>';
+                    $hours = floor($room['remaining_time'] / 60);
+                    $minutes = $room['remaining_time'] % 60;
+                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                    $roomHtml .= ($room['target'] ?? '--') . '°C</span></div>';
+                    $roomHtml .= '<div class="room-temp-schedule">'
+                        . '<div><strong>Temporary:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
+                        . '<div><strong>Remaining time:</strong><span>' . $hoursMinutes . '</span></div>'
+                    . '</div>';
+                }
+                else {
+                    $roomHtml .= ($room['target'] ?? '--') . '°C<br>'
+                        . '<i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
+                        . '</span></div>';
+                }
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
-                    $roomHtml .= '<div><strong>Soll:</strong><span>';
-                    if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                        $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . '°C</s></span></div>';
-                        $hours = floor($room['remaining_time'] / 60);
-                        $minutes = $room['remaining_time'] % 60;
-                        $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                        $roomHtml .= ($room['target'] ?? '--') . '°C</span></div>';
-
-                        $roomHtml .= '<div class="room-temp-schedule">'
-                            . '<div><strong>Temporary:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
-                            . '<div><strong>Remaining time:</strong><span>' . $hoursMinutes . '</span></div>'
-                        . '</div>';
-
-                    }
-                    else {
-                        $roomHtml .= ($room['target'] ?? '--') . '°C<br>'
-                            . '<i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
-                            . '</span></div>';
-                    }
-
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
                                 . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                                 . '</div>';
                 }
-                else {
-                    $roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
-                    $roomHtml .= '</div>';
-                }
+                $roomHtml .= '</div>';
+
                 if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
                 {
                     //TO-DO
