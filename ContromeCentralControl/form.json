@@ -77,6 +77,12 @@
                             "name": "VisuColorRoomTiles",
                             "caption": "Dashboard background color for rooms",
                             "allowTransparent": true
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorFloorTiles",
+                            "caption": "Dashboard background color for floors",
+                            "allowTransparent": true
                         }
                     ]
                 },

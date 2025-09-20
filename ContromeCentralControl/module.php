@@ -39,6 +39,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowRooms", true);
         $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf5f5f5);
+        $this->RegisterPropertyInteger("VisuColorFloorTiles", 0xf1f1f1);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
         $this->RegisterPropertyBoolean("ShowRoomSensors", false);
@@ -445,29 +446,35 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>'
-                    . '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
+                    . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>';
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
-                    $roomHtml .= '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
-                                . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
-                                . '</div>';
+                    $roomHtml .= '<div><strong>Soll:</strong><span>';
                     if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                        $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . '°C</s></span></div>';
                         $hours = floor($room['remaining_time'] / 60);
                         $minutes = $room['remaining_time'] % 60;
                         $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                        $roomHtml .= ($room['target'] ?? '--') . '°C</span></div>';
+
                         $roomHtml .= '<div class="room-temp-schedule">'
-                            . '<div><strong>Remaining:</strong><span>' . $hoursMinutes . '</span></div>'
-                            . '<div><strong>Perm Soll:</strong><span>' . ($room['perm_solltemperatur'] ?? '--') . '°C</span></div>'
+                            . '<div><strong>Temporary:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
+                            . '<div><strong>Remaining time:</strong><span>' . $hoursMinutes . '</span></div>'
                         . '</div>';
+
                     }
                     else {
-                        $roomHtml .= '<div class="room-temp-schedule">'
-                            . '<div><italic>Currently no temporary setpoint</italic></div>'
-                        . '</div>';
+                        $roomHtml .= ($room['target'] ?? '--') . '°C<br>'
+                            . '<i  style="font-size: 0.8rem;">(Currently no temporary setpoint)</i>'
+                            . '</span></div>';
                     }
+
+                    $roomHtml .= '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
+                                . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
+                                . '</div>';
                 }
                 else {
+                    $roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
                     $roomHtml .= '</div>';
                 }
                 if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
@@ -508,6 +515,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--COLOR_MAIN_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorMainTiles")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_ROOM_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorRoomTiles")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_SYSTEM_INFO-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorSystemInfoTile")), 6, '0', STR_PAD_LEFT), $html);
+        $html = str_replace('<!--COLOR_FLOOR_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorFloorTiles")), 6, '0', STR_PAD_LEFT), $html);
 
         // Optionsauswahlfelder / Wertvorgaben einfügen
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
