@@ -422,12 +422,15 @@ class ContromeCentralControl extends IPSModuleStrict
         // 3. Systeminfo HTML
         $sysInfo = $this->GetSystemInfo();
         $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
-        $sysHtml = '<div class="system-info-values">';
+        $sysHtml = '<div class="system-info" id="system-info">'
+                    .'<label>System Info</label>'
+                    .'<div class="system-info-values">';
         foreach ($sysInfo as $key => $value) {
             $sysHtml .= '<div><strong>' . $key . ':</strong><span>' . ($value ?? '--') . '</span></div>';
             $this->SendDebug(__FUNCTION__, "Sysinfo Key: $key Value: $value", 0);
         }
-        $sysHtml .= '</div>';
+        $sysHtml .= '</div>'
+                    .'</div>';
         // ========================
         // 4. Raumtiles HTML mit Etagen-Gruppierung
         $floorGroups = [];
@@ -442,27 +445,46 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                        . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>'
-                        . '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
-                        . '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
-                        . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
-                    . '</div>';
-                if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                    $hours = floor($room['remaining_time'] / 60);
-                    $minutes = $room['remaining_time'] % 60;
-                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                    $roomHtml .= '<div class="room-temp-schedule">'
-                        . '<div><strong>Remaining:</strong><span>' . $hoursMinutes . '</span></div>'
-                        . '<div><strong>Perm Soll:</strong><span>' . ($room['perm_solltemperatur'] ?? '--') . '°C</span></div>'
-                    . '</div>';
+                    . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>'
+                    . '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
+                if ($this->ReadPropertyBoolean('ShowRoomData'))
+                {
+                    $roomHtml .= '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
+                                . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
+                                . '</div>';
+                    if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                        $hours = floor($room['remaining_time'] / 60);
+                        $minutes = $room['remaining_time'] % 60;
+                        $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                        $roomHtml .= '<div class="room-temp-schedule">'
+                            . '<div><strong>Remaining:</strong><span>' . $hoursMinutes . '</span></div>'
+                            . '<div><strong>Perm Soll:</strong><span>' . ($room['perm_solltemperatur'] ?? '--') . '°C</span></div>'
+                        . '</div>';
+                    }
+                    else {
+                        $roomHtml .= '<div class="room-temp-schedule">'
+                            . '<div><italic>Currently no temporary setpoint</italic></div>'
+                        . '</div>';
+                    }
                 }
+                else {
+                    $roomHtml .= '</div>';
+                }
+                if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
+                {
+                    //TO-DO
+                }
+                if ($this->ReadPropertyBoolean('ShowRoomSensors'))
+                {
+                    //TO-DO
+                }
+
                 $roomHtml .= '</div>'; // room-tile
                 $floorGroups[$floor]['roomsHtml'] .= $roomHtml; // dem entsprechenden floor hinzufügen.
             }
         }
-
         // Wrapper-HTML bauen
-        $roomTilesHtml = '';
+        $roomTilesHtml = '<div class="tile-container" id="floors-container">';
         foreach ($floorGroups as $floor => $oneFloor) {
             $roomTilesHtml .= '<div class="floor-tile" id="floor-' . $oneFloor['floor']['id'] . '">'
                 . '<label>' . htmlspecialchars($oneFloor['floor']['name']) . '</label>'
@@ -471,6 +493,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 . '</div>'
             . '</div>';
         }
+        $roomTilesHtml .= '</div>';
         // ========================
         // 5. Dropdown für Dauer in Stunden (0–24)
         $durationOptions = '';
@@ -480,15 +503,25 @@ class ContromeCentralControl extends IPSModuleStrict
         // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
+
+        // Farbinformationen einfügen
         $html = str_replace('<!--COLOR_MAIN_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorMainTiles")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_ROOM_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorRoomTiles")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_SYSTEM_INFO-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorSystemInfoTile")), 6, '0', STR_PAD_LEFT), $html);
+
+        // Optionsauswahlfelder / Wertvorgaben einfügen
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);
-        $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
-        $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
-        $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
         $html = str_replace('<!--DURATION_OPTIONS-->', $durationOptions, $html);
+        $html = str_replace('<!--MAX_TEMP-->', number_format($maxTemp, 2, '.', ''), $html);
+
+        // Informationen einfügen
+        if ($this->ReadPropertyBoolean("ShowRooms")) {
+            $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
+        }
+        if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
+            $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
+        }
         $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
         return $html;
     }

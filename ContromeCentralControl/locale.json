@@ -33,7 +33,11 @@
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal",
             "\\nControme Central Heating Control\\n": "\\nControme Zentrale Heizungssteuerung\\n",
-            "Symcon module for central heating system management.\\n\\nThis module displays the current system status, temperature, humidity, and operating mode for every room. You can also adjust global setpoints and monitor the overall system from this interface.": "Symcon-Modul zur Verwaltung zentraler Heizsysteme.\\n\\nDieses Modul zeigt den aktuellen Systemstatus, Temperatur, Luftfeuchtigkeit und Betriebsmodus für jeden Raum an. Sie können außerdem globale Sollwerte anpassen und das Gesamtsystem über diese Oberfläche überwachen."
+            "Symcon module for central heating system management.\\n\\nThis module displays the current system status, temperature, humidity, and operating mode for every room. You can also adjust global setpoints and monitor the overall system from this interface.": "Symcon-Modul zur Verwaltung zentraler Heizsysteme.\\n\\nDieses Modul zeigt den aktuellen Systemstatus, Temperatur, Luftfeuchtigkeit und Betriebsmodus für jeden Raum an. Sie können außerdem globale Sollwerte anpassen und das Gesamtsystem über diese Oberfläche überwachen.",
+            "Same tile as 'show room info'": "Gleiche Kachel wie 'Rauminformationen anzeigen'",
+            "Show room sensor data (room temperature, return flow temperature)": "Raumsensordaten anzeigen (Raumtemperatur, Rücklauftemperatur)",
+            "Show more room data (humidity & mode)": "Weitere Raumdaten anzeigen (Luftfeuchtigkeit & Modus)",
+            "Show room information (name, floor, termperature & setpoint)": "Rauminformationen anzeigen (Name, Etage, Temperatur & Sollwert)"
         }
     }
 }
