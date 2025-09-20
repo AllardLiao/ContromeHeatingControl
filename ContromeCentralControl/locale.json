@@ -38,7 +38,8 @@
             "Show room sensor data (room temperature, return flow temperature)": "Raumsensordaten anzeigen (Raumtemperatur, Rücklauftemperatur)",
             "Show more room data (humidity & mode)": "Weitere Raumdaten anzeigen (Luftfeuchtigkeit & Modus)",
             "Show room information (name, floor, termperature & setpoint)": "Rauminformationen anzeigen (Name, Etage, Temperatur & Sollwert)",
-            "Dashboard background color for floors": "x"
+            "Dashboard background color for floors": "x",
+            "Show room sensor data (room thermostat, return flow sensors)": "x"
         }
     }
 }

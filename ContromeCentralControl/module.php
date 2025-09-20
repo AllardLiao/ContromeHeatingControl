@@ -528,8 +528,6 @@ class ContromeCentralControl extends IPSModuleStrict
                                 . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                                 . '</div>';
                 }
-                $roomHtml .= '</div>';
-
                 if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
                 {
                     //TO-DO
@@ -598,18 +596,40 @@ class ContromeCentralControl extends IPSModuleStrict
                 $floorVar = "Floor{$floorID}";
                 $roomVar = "Floor{$floorID}Room{$roomID}";
 
-                $rooms[] = [
-                    'id' => $this->GetValue($roomVar . "ID"),
+                $roomData = [
+                    'id'   => $this->GetValue($roomVar . "ID"),
                     'name' => $this->GetValue($roomVar . "Name"),
-                    'floorid' => $this->GetValue($floorVar . "ID"),
+                    'floorid'   => $this->GetValue($floorVar . "ID"),
                     'floorname' => $this->GetValue($floorVar . "Name"),
-                    'temperature' => $this->GetValue($roomVar . "Temperature"),
-                    'target' => $this->GetValue($roomVar . "Target"),
-                    'humidity' => $this->GetValue($roomVar . "Humidity"),
-                    'state' => $this->GetValue($roomVar . "State"),
+                    'target'     => $this->GetValue($roomVar . "Target"),
                     'remaining_time' => $this->GetValue($roomVar . "RemainingTime") ?? 0,
-                    'perm_solltemperatur' => $this->GetValue($roomVar . "PermSolltemperatur") ?? 0
+                    'perm_solltemperatur' => $this->GetValue($roomVar . "PermSolltemperatur") ?? 0,
+                    'temperature' => $this->GetValue($roomVar . "Temperature")
                 ];
+
+                // Nur wenn ShowRoomData = true → Luftfeuchte und Betriebsmode
+                if ($this->ReadPropertyBoolean('ShowRoomData')) {
+                    $roomData['state']       = $this->GetValue($roomVar . "State");
+                    $roomData['humidity']    = $this->GetValue($roomVar . "Humidity");
+                }
+
+                // Nur wenn ShowRoomOffsets = true
+                if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
+                    $roomData['offset_total']        = $this->GetValue($roomVar . "OffsetTotal");
+                    $roomData['offsets']             = json_decode($this->GetValue($roomVar . "OffsetsJSON") ?? '[]', true);
+                    $roomData['offset_active_count'] = $this->GetValue($roomVar . "OffsetActiveCount");
+                }
+
+                // Nur wenn ShowRoomSensors = true
+                if ($this->ReadPropertyBoolean('ShowRoomSensors')) {
+                    $roomData['sensors']               = json_decode($this->GetValue($roomVar . "SensorsJSON") ?? '[]', true);
+                    $roomData['sensor_count']          = $this->GetValue($roomVar . "SensorCount");
+                    $roomData['primary_sensor_name']   = $this->GetValue($roomVar . "PrimarySensorName");
+                    $roomData['primary_sensor_value']  = $this->GetValue($roomVar . "PrimarySensorValue");
+                    $roomData['primary_sensor_last_info'] = $this->GetValue($roomVar . "PrimarySensorLastInfo");
+                }
+
+                $rooms[] = $roomData;
                 $roomID++;
             }
             $floorID++;

@@ -124,7 +124,7 @@
                         {
                             "type": "CheckBox",
                             "name": "ShowRoomSensors",
-                            "caption": "Show room sensor data (room temperature, return flow temperature)",
+                            "caption": "Show room sensor data (room thermostat, return flow sensors)",
                             "value": true,
                             "width": "800px"
                         },
