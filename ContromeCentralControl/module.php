@@ -80,9 +80,9 @@ class ContromeCentralControl extends IPSModuleStrict
             return;
         }
         $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        $this->LogMessage("Gateway Connection ID: " . $parentID, 0);
+        $this->LogMessage("Gateway Connection ID: " . $parentID, KL_NOTIFY);
         if ($parentID == 0) {
-            $this->LogMessage("No gateway connected!", 0);
+            $this->LogMessage("No gateway connected!", KL_WARNING);
             $this->SetStatus(IS_INACTIVE);
             return;
         }
@@ -465,7 +465,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     }
                     else {
                         $roomHtml .= ($room['target'] ?? '--') . '°C<br>'
-                            . '<i  style="font-size: 0.8rem;">(Currently no temporary setpoint)</i>'
+                            . '<i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
                             . '</span></div>';
                     }
 

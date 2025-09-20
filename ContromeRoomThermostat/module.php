@@ -74,6 +74,14 @@ class ContromeRoomThermostat extends IPSModuleStrict
     {
         //Never delete this line!
         parent::ApplyChanges();
+        
+        $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        $this->LogMessage("Gateway Connection ID: " . $parentID, KL_NOTIFY);
+        if ($parentID == 0) {
+            $this->LogMessage("No gateway connected!", KL_WARNING);
+            $this->SetStatus(IS_INACTIVE);
+            return;
+        }
 
         // Variablenprofile/Presentationtemplates sicherstellen
         CONTROME_PROFILES::registerAllContromeProfilesAndTemplates();
