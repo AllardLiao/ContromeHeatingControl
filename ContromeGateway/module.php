@@ -141,7 +141,7 @@ class ContromeGateway extends IPSModuleStrict
                 return $this->ReadPropertyString("IPAddress");
 
             case ACTIONs::CHECK_CONNECTION:
-                $return = $this->CheckConnection($data);
+                return $this->CheckConnection($data);
 
             case ACTIONs::GET_TEMP_DATA_FOR_ROOM: // liefert ein JSON mit den Räumen zurück.
                 if (!isset($data['RoomID'])) {
@@ -223,11 +223,12 @@ class ContromeGateway extends IPSModuleStrict
 
         $roomData = json_decode($currentData, true);
         $roomName = $roomData['name'] ?? 'unknown';
-        $roomTemp = floatval($roomData['solltemperatur']) ?? 22.1;
+        $roomSollTemp = floatval($roomData['solltemperatur']) ?? 22.1;
+        $roomTemp = floatval($roomData['temperatur']) ?? 22.2;
         $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. ($roomName, $roomTemp °C)", 0);
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
-        $sendData = Array('RoomID' => $roomId, 'Setpoint' => $roomTemp);
+        $sendData = Array('RoomID' => $roomId, 'Setpoint' => $roomSollTemp);
         $result = $this->WriteSetpoint($sendData);
 
         if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . "."))
