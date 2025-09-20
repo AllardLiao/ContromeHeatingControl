@@ -576,7 +576,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<div class="room-section-title">Thermostat</div>';
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
-                                . '<td><strong>' . htmlspecialchars($room['primary_sensor_name']) . '</strong></td>'
+                                . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
                                 . '<td>' . number_format(floatval($room['primary_sensor_value']), 2, ',', ''). ' °C</td>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_last_info'] ?? '--') . '</td>'
                                 . '</tr>';
