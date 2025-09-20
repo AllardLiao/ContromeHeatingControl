@@ -525,9 +525,9 @@ class ContromeCentralControl extends IPSModuleStrict
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
-                                . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
-                                . '</div>';
+                                . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>';
                 }
+                $roomHtml .= '</div>';
                 if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
                     if (!empty($room['offsets'])) {
                         $roomHtml .= '<hr class="room-separator" />';
