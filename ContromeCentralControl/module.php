@@ -528,13 +528,49 @@ class ContromeCentralControl extends IPSModuleStrict
                                 . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                                 . '</div>';
                 }
-                if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
-                {
-                    //TO-DO
-                }
-                if ($this->ReadPropertyBoolean('ShowRoomSensors'))
-                {
-                    //TO-DO
+                if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
+                    if (!empty($room['offsets'])) {
+                        $roomHtml .= '<hr class="room-separator" />';
+                        $roomHtml .= '<div class="room-offsets">';
+                        $roomHtml .= '<div class="room-section-title">Offsets</div>';
+                        $roomHtml .= '<table class="room-offsets-table">';
+                        foreach ($room['offsets'] as $offsetName => $values) {
+                            $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
+                            $roomHtml .= '<tr>'
+                                    . '<td>' . htmlspecialchars($offsetName) . '</td>'
+                                    . '<td>' . number_format($raumVal, 2, ',', '') . ' °C</td>'
+                                    . '</tr>';
+                        }
+                        $roomHtml .= '</table>';
+                        $roomHtml .= '</div>';
+                    }
+                }                }
+                if ($this->ReadPropertyBoolean('ShowRoomSensors')) {
+                    if (!empty($room['sensors'])) {
+                        $roomHtml .= '<hr class="room-separator" />';
+                        $roomHtml .= '<div class="room-sensors">';
+                        $roomHtml .= '<div class="room-section-title">Sensoren</div>';
+                        $roomHtml .= '<table class="room-sensors-table">';
+                        // Primary Sensor zuerst
+                        if (!empty($room['primary_sensor_name'])) {
+                            $roomHtml .= '<tr>'
+                                    . '<td><strong>' . htmlspecialchars($room['primary_sensor_name']) . '</strong></td>'
+                                    . '<td><strong>' . number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C</strong></td>'
+                                    . '<td><strong>' . htmlspecialchars($room['primary_sensor_last_info']) . '</strong></td>'
+                                    . '</tr>';
+                        }
+                        // Alle weiteren Sensoren
+                        foreach ($room['sensors'] as $sensor) {
+                            $roomHtml .= '<tr>'
+                                    . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
+                                    . '<td>' . number_format(floatval($sensor['wert']), 2, ',', '') . ' °C</td>'
+                                    . '<td>' . htmlspecialchars($sensor['letzte_uebertragung']) . '</td>'
+                                    . '</tr>';
+                        }
+
+                        $roomHtml .= '</table>';
+                        $roomHtml .= '</div>';
+                    }
                 }
 
                 $roomHtml .= '</div>'; // room-tile
