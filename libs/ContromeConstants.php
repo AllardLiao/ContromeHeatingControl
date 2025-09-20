@@ -53,6 +53,7 @@ class ACTIONs
     public const DATA_SYSTEM_INFO   = 'info';
     public const DATA_ROOMS         = 'rooms';
     public const DATA_ROOM_OFFSETS  = 'roomoffsets';
+    public const DATA_ROOM_SENSORS  = 'sensors';
     public const DATA_TEMPERATURS   = 'temps';
     public const DATA_VTR           = 'vtr';
     public const DATA_TIMER         = 'timer';
@@ -66,8 +67,8 @@ class ACTIONs
 class CONTROME_API
 {
     public const GET_SYSTEM_INFO    = "info/";
-    public const GET_ROOMS          = "rooms/";
-    public const GET_ROOM_OFFSETS   = "roomoffsets/";
+    public const GET_ROOMS          = "rooms/"; // wird in temps/ mitgeliefert
+    public const GET_ROOM_OFFSETS   = "roomoffsets/"; // wird in temps/ mitgeliefert
     public const GET_TEMPERATURS    = "temps/";
     public const GET_VTR            = "vtr/";
     public const GET_TIMER          = "timer/";

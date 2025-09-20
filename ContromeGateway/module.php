@@ -159,12 +159,16 @@ class ContromeGateway extends IPSModuleStrict
                     $this->SendDebug(__FUNCTION__, "fetchSystemInfo returned: " . print_r($sysInfo, true), 0);
                     $result[ACTIONs::DATA_SYSTEM_INFO] = $sysInfo;
                 }
-                if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS])) {
+                if (!empty($data[ACTIONs::DATA_ROOMS]) || !empty($data[ACTIONs::DATA_TEMPERATURS]) || !empty($data[ACTIONs::DATA_ROOM_OFFSETS])) {
                     $rooms = json_decode($this->fetchRooms()); // Für den Fall, dass die Räume nicht gelesen werden können, wird das "Fehler"-JSON mit zurückgegeben.
                     $this->SendDebug(__FUNCTION__, "fetchRooms returned: " . print_r($rooms, true), 0);
                     $result[ACTIONs::DATA_ROOMS] = $rooms;
                     if (!empty($data[ACTIONs::DATA_TEMPERATURS])) {
                         $result[ACTIONs::DATA_TEMPERATURS] = true; //Merker: er nutzt den gleichen Payload von rooms.
+                    }
+                    if (!empty($data[ACTIONs::DATA_ROOM_OFFSETS]))
+                    {
+                        $result[ACTIONs::DATA_ROOM_OFFSETS] = true; //Merker: er nutzt den gleichen Payload von rooms.
                     }
                 }
                 $this->SendDebug(__FUNCTION__, "Returning result: " . print_r($result, true), 0);

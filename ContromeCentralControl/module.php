@@ -190,13 +190,14 @@ class ContromeCentralControl extends IPSModuleStrict
         $result = $this->SendDataToParent(json_encode([
             "DataID" => GUIDs::DATAFLOW,
             "Action" => ACTIONs::GET_DATA_FOR_CENTRAL_CONTROL,
-            ACTIONs::DATA_SYSTEM_INFO => $this->ReadPropertyBoolean("ShowSystemInfo"),
-            ACTIONs::DATA_ROOMS       => $this->ReadPropertyBoolean("ShowRooms"),
-            ACTIONs::DATA_ROOM_OFFSETS=> $this->ReadPropertyBoolean("ShowRoomOffsets"),
-            ACTIONs::DATA_TEMPERATURS => $this->ReadPropertyBoolean("ShowRoomData"),
-            ACTIONs::DATA_VTR         => $this->ReadPropertyBoolean("ShowVTR"),
-            ACTIONs::DATA_TIMER       => $this->ReadPropertyBoolean("ShowTimer"),
-            ACTIONs::DATA_CALENDAR    => $this->ReadPropertyBoolean("ShowCalendar")
+            ACTIONs::DATA_SYSTEM_INFO   => $this->ReadPropertyBoolean("ShowSystemInfo"),
+            ACTIONs::DATA_ROOMS         => $this->ReadPropertyBoolean("ShowRooms"),
+            ACTIONs::DATA_ROOM_OFFSETS  => $this->ReadPropertyBoolean("ShowRoomOffsets"),
+            ACTIONs::DATA_ROOM_SENSORS  => $this->ReadPropertyBoolean("ShowRoomSensors"),
+            ACTIONs::DATA_TEMPERATURS   => $this->ReadPropertyBoolean("ShowRoomData"),
+            ACTIONs::DATA_VTR           => $this->ReadPropertyBoolean("ShowVTR"),
+            ACTIONs::DATA_TIMER         => $this->ReadPropertyBoolean("ShowTimer"),
+            ACTIONs::DATA_CALENDAR      => $this->ReadPropertyBoolean("ShowCalendar")
         ]));
 
         // Achtung - hier kommt ein ziemlich verschachteltes JSON zurück.
@@ -255,9 +256,9 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         // ======================
-        // Räume
+        // Räume, Temperaturen & Offsets
         // ======================
-        if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_TEMPERATURS])) {
+        if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_TEMPERATURS]) || isset($data[ACTIONs::DATA_ROOM_OFFSETS])) {
 
             //Für Reihenfolge im IPS-Baum. SysInfo 1-6
             $positionCounter = 10;
@@ -308,6 +309,63 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
                             $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
+                            $this->MaintainVariable($roomVar . "OffsetTotal",           $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "OffsetTotal",           isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
+                        }
+                        // ---------------------------
+                        // Offsets verarbeiten (wenn vorhanden)
+                        // API-Felder: 'offsets' (object mit Plugins => { "raum": x, "haus": y } oder {} ) =>> Offsets kommenals JSON!
+                        if (isset($data[ACTIONs::DATA_ROOM_OFFSETS])){
+                            // Offsets-JSON (komplette Struktur zur weiteren Auswertung)
+                            $offsetsArray = [];
+                            if (isset($room['offsets']) && is_array($room['offsets'])) {
+                                $offsetsArray = $room['offsets'];
+                            }
+                            $this->MaintainVariable($roomVar . "OffsetsJSON", $roomVar . "-Offsets", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                            $this->SetValue(        $roomVar . "OffsetsJSON", json_encode($offsetsArray, JSON_UNESCAPED_UNICODE));
+                            // Aktive Plugins: Anzahl und Summe der 'raum'-Offsets (nur die mit numerischem 'raum' zählen)
+                            $activeCount = 0;
+                            if (is_array($offsetsArray)) {
+                                foreach ($offsetsArray as $pluginName => $pluginData) {
+                                    if (is_array($pluginData) && isset($pluginData['raum']) && is_numeric($pluginData['raum']) && (abs($pluginData['raum']) > 0.00001)) $activeCount++;
+                                }
+                            }
+                            $this->MaintainVariable($roomVar . "OffsetActiveCount", $roomVar . "-ActiveOffsetPluginsCount", VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                            $this->SetValue($roomVar . "OffsetActiveCount", $activeCount);
+                        }
+                        // ---------------------------
+                        // Sensoren verarbeiten (wenn vorhanden)
+                        // API-Feld: 'sensoren' (array mit { name, beschreibung, wert, raumtemperatursensor, letzte_uebertragung }) =>> Offsets kommenals ARRAY!
+                        if (isset($data[ACTIONs::DATA_ROOM_SENSORS])){
+                            $sensorsArray = [];
+                            if (isset($room['sensoren']) && is_array($room['sensoren'])) {
+                                $sensorsArray = $room['sensoren'];
+                            } elseif (isset($room['sensor']) && is_array($room['sensor'])) {
+                                $sensorsArray = $room['sensor']; // fallback falls anders benannt
+                            }
+                            $sensorCount = count($sensorsArray);
+                            $this->MaintainVariable($roomVar . "SensorCount", $roomVar . "-SensorCount", VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                            $this->SetValue($roomVar . "SensorCount", $sensorCount);
+                            $this->MaintainVariable($roomVar . "SensorsJSON", $roomVar . "-Sensors", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                            $this->SetValue($roomVar . "SensorsJSON", json_encode($sensorsArray, JSON_UNESCAPED_UNICODE));
+                            // Wenn vorhanden, primären (Raum-)Temperatursensor extrahieren
+                            $primaryName = "";
+                            $primaryValue = 0.0;
+                            $primaryLastInfo = "";
+                            foreach ($sensorsArray as $s) {
+                                if (is_array($s) && (!empty($s['raumtemperatursensor']) || (isset($s['raumtemperatursensor']) && $s['raumtemperatursensor'] === true))) {
+                                    $primaryName = $s['beschreibung'] ?? ($s['name'] ?? "n/a");
+                                    $primaryValue = isset($s['wert']) ? floatval($s['wert']) : 0.0;
+                                    $primaryLastInfo = $s['letzte_uebertragung'] ?? "n/a";
+                                    break;
+                                }
+                            }
+                            $this->MaintainVariable($roomVar . "PrimarySensorName", $roomVar . "-PrimarySensorName", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                            $this->SetValue($roomVar . "PrimarySensorName", (string)$primaryName);
+                            $this->MaintainVariable($roomVar . "PrimarySensorValue", $roomVar . "-PrimarySensorValue", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                            $this->SetValue($roomVar . "PrimarySensorValue", $primaryValue);
+                            $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                            $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
                         }
                     }
                 }
@@ -446,23 +504,22 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>';
+                    . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . ' °C</span></div>';
                 //$roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
                 $roomHtml .= '<div><strong>Soll:</strong><span>';
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                    $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . '°C</s></span></div>';
+                    $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
                     $hours = floor($room['remaining_time'] / 60);
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                    $roomHtml .= ($room['target'] ?? '--') . '°C</span></div>';
                     $roomHtml .= '<div class="room-temp-schedule">'
-                        . '<div><strong>Temporary:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
-                        . '<div><strong>Remaining time:</strong><span>' . $hoursMinutes . '</span></div>'
-                    . '</div>';
+                                . '<div><strong>Temporär-Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
+                                . '<div><strong>Restzeit:</strong><span>' . $hoursMinutes . ' h</span></div>'
+                                . '</div>';
                 }
                 else {
-                    $roomHtml .= ($room['target'] ?? '--') . '°C<br>'
-                        . '<i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
+                    $roomHtml .= ($room['target'] ?? '--') . '°C'
+                        //. '<br><i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
                         . '</span></div>';
                 }
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
