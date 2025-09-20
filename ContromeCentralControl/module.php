@@ -528,13 +528,29 @@ class ContromeCentralControl extends IPSModuleStrict
                                 . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                                 . '</div>';
                 }
-                if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
-                {
+                if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
                     if (!empty($room['offsets'])) {
                         $roomHtml .= '<hr class="room-separator" />';
                         $roomHtml .= '<div class="room-offsets">';
                         $roomHtml .= '<div class="room-section-title">Offsets</div>';
                         $roomHtml .= '<table class="room-offsets-table">';
+
+                        // Summe berechnen
+                        $sum = 0.0;
+                        foreach ($room['offsets'] as $values) {
+                            $sum += isset($values['raum']) ? floatval($values['raum']) : 0;
+                        }
+
+                        // Erste Zeile: Gesamt-Offset
+                        $roomHtml .= '<tr class="offset-sum">'
+                                . '<td><strong>Gesamt-Offset</strong></td>'
+                                . '<td><strong>' . number_format($sum, 2, ',', '') . ' °C</strong></td>'
+                                . '</tr>';
+
+                        // Doppelstrich als Trenner
+                        $roomHtml .= '<tr><td colspan="2"><hr class="offset-sum-separator" /></td></tr>';
+
+                        // Details
                         foreach ($room['offsets'] as $offsetName => $values) {
                             $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
                             $roomHtml .= '<tr>'
@@ -542,6 +558,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                     . '<td>' . number_format($raumVal, 2, ',', '') . ' °C</td>'
                                     . '</tr>';
                         }
+
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';
                     }
