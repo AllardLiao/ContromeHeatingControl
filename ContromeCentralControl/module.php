@@ -575,7 +575,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
                                 . '<td><strong>' . htmlspecialchars($room['primary_sensor_name']) . '</strong></td>'
-                                . '<td>' . htmlspecialchars($room['primary_sensor_value'] ?? '--') . ' °C</td>'
+                                . '<td>' . number_format(floatval($room['primary_sensor_value']), 2, ',', ''). ' °C</td>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_last_info'] ?? '--') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
@@ -590,9 +590,9 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<table class="room-sensor-table">';
                         foreach ($otherSensors as $sensor) {
                             $roomHtml .= '<tr>'
-                                    . '<td>' . htmlspecialchars($sensor['name'] ?? '--') . '</td>'
-                                    . '<td>' . htmlspecialchars($sensor['value'] ?? '--') . ' °C</td>'
-                                    . '<td>' . htmlspecialchars($sensor['last_info'] ?? '--') . '</td>'
+                                    . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
+                                    . '<td>' . number_format(floatval($sensor['wert']), 2, ',', '') . ' °C</td>'
+                                    . '<td>' . htmlspecialchars($sensor['letzte_uebertragung']) . '</td>'
                                     . '</tr>';
                         }
                         $roomHtml .= '</table>';
