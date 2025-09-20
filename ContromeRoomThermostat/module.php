@@ -116,27 +116,27 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case ACTIONs::TEST_READ_ROOM_DATA:
                 $this->UpdateRoomData(true); // Mit Flag für Test-Modus
                 break;
-            case 'visu_inc':
+            case ACTIONs::VISU_RT_INC:
                 $new = $this->GetValue('Setpoint') + $this->ReadPropertyFloat('StepSize');
                 $this->WriteSetpoint($new);
                 $this->updateVisualization();
                 break;
-            case 'visu_dec':
+            case ACTIONs::VISU_RT_DEC:
                 $new = $this->GetValue('Setpoint') - $this->ReadPropertyFloat('StepSize');
                 $this->WriteSetpoint($new);
                 $this->updateVisualization();
                 break;
-            case 'visu_setpoint': // Änderung über Visu
+            case ACTIONs::VISU_RT_SETPOINT: // Änderung über Visu
                 $this->WriteSetpoint((float)$value);
                 $this->updateVisualization();
                 break;
-            case 'form_toggleAutoUpdate': // Auslösung über onChange der Konfig-Forms
+            case ACTIONs::FORM_RT_TOGGLEAUTOUPDATE: // Auslösung über onChange der Konfig-Forms
                 $this->toggleAutoUpdate($value==1);
                 break;
-            case 'form_toggleFallbackTempSensor': // Auslösung über onChange der Konfig-Forms
+            case ACTIONs::FORM_RT_TOGGLEFALLBACKTEMPSENSOR: // Auslösung über onChange der Konfig-Forms
                 $this->toggleFallbackTempSensor($value==1);
                 break;
-            case 'form_toggleFallbackHumiditySensor': // Auslösung über onChange der Konfig-Forms
+            case ACTIONs::FORM_RT_TOGGLEFALLBACKHUMIDITYSENSOR: // Auslösung über onChange der Konfig-Forms
                 $this->toggleFallbackHumiditySensor($value==1);
                 break;
             default:

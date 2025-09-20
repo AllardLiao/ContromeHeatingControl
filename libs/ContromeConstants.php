@@ -36,6 +36,19 @@ class ACTIONs
     public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
     public const GET_IP_ADDRESS                     = "GetIPAddress";
 
+    // Implementierte Visu-Actions
+    public const VISU_CC_SETPOINT                   = 'visu_CC_Setpoint';
+    public const VISU_CC_TEMPERATURE                = 'visu_CC_Temperature';
+    public const VISU_CC_MODE                       = 'visu_CC_Mode';
+    public const VISU_RT_SETPOINT                   = 'visu_RT_setpoint';
+    public const VISU_RT_INC                        = 'visu_RT_inc';
+    public const VISU_RT_DEC                        = 'visu_RT_dec';
+
+    // Implementierte Form-Actions
+    public const FORM_RT_TOGGLEAUTOUPDATE             = 'form_rt_toggleAutoUpdate';
+    public const FORM_RT_TOGGLEFALLBACKTEMPSENSOR     = 'form_rt_toggleFallbackTempSensor';
+    public const FORM_RT_TOGGLEFALLBACKHUMIDITYSENSOR = 'form_rt_toggleFallbackHumiditySensor';
+
     // Abzufragende Daten vom Gateway
     public const DATA_SYSTEM_INFO   = 'info';
     public const DATA_ROOMS         = 'rooms';

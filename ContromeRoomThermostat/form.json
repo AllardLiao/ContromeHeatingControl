@@ -106,7 +106,7 @@
                     "type": "CheckBox",
                     "name": "AutoUpdate",
                     "caption": "Automatically update values",
-                    "onChange": "IPS_RequestAction($id, 'form_toggleAutoUpdate', '$AutoUpdate');"
+                    "onChange": "IPS_RequestAction($id, 'form_rt_toggleAutoUpdate', '$AutoUpdate');"
                 },
                 {
                     "type": "NumberSpinner",
@@ -140,7 +140,7 @@
                     "type": "CheckBox",
                     "name": "FallbackTempSensorUse",
                     "caption": "Use fallback temperature sensors",
-                    "onChange": "IPS_RequestAction($id, 'form_toggleFallbackTempSensor', '$FallbackTempSensor');"
+                    "onChange": "IPS_RequestAction($id, 'form_rt_toggleFallbackTempSensor', '$FallbackTempSensor');"
                 },
                 {
                     "type": "RowLayout",
@@ -173,7 +173,7 @@
                     "type": "CheckBox",
                     "name": "FallbackHumiditySensorUse",
                     "caption": "Use fallback humidity sensors",
-                    "onChange": "IPS_RequestAction($id, 'form_toggleFallbackHumiditySensor', '$FallbackHumiditySensor');"
+                    "onChange": "IPS_RequestAction($id, 'form_rt_toggleFallbackHumiditySensor', '$FallbackHumiditySensor');"
                 },
                 {
                     "type": "RowLayout",

@@ -118,18 +118,18 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->CheckConnection();
                 break;
             case ACTIONs::WRITE_SETPOINT:
-                $result = $this->WriteSetpoint(floatval($value)); //TODO
+                $this->WriteSetpoint(floatval($value)); //TODO
                 break;
             case ACTIONs::TEST_READ_ROOM_DATA:
                 $this->TestReadRoomData();
                 break;
-            case 'Mode':
+            case ACTIONs::VISU_CC_MODE:
                 $this->SetRoomMode((int)$value['roomId'], (int)$value['mode']);  //TODO
                 break;
-            case 'Temperature':
+            case ACTIONs::VISU_CC_TEMPERATURE:
                 $this->SetRoomTemperature((int)$value['roomId'], floatval($value['temperature'])); //TODO
                 break;
-            case 'Target':
+            case ACTIONs::VISU_CC_TARGET:
                 $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration'])); //TODO
                 break;
             default:
