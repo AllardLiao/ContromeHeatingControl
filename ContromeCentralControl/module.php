@@ -571,7 +571,9 @@ class ContromeCentralControl extends IPSModuleStrict
 
                     // Primary Sensor zuerst (ohne Überschrift)
                     if ($hasPrimary) {
+                        $roomHtml .= '<hr class="room-separator" />';
                         $roomHtml .= '<div class="room-primary-sensor">';
+                        $roomHtml .= '<div class="room-section-title">Thermostat</div>';
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
                                 . '<td><strong>' . htmlspecialchars($room['primary_sensor_name']) . '</strong></td>'
