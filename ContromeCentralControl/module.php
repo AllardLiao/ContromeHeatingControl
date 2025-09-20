@@ -41,6 +41,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf5f5f5);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
+        $this->RegisterPropertyBoolean("ShowRoomSensors", false);
         $this->RegisterPropertyBoolean("ShowVTR", false);
         $this->RegisterPropertyBoolean("ShowTimer", false);
         $this->RegisterPropertyBoolean("ShowCalendar", false);
@@ -405,7 +406,7 @@ class ContromeCentralControl extends IPSModuleStrict
             $modeOptions .= '<option value="' . $id . '">' . $label . '</option>';
         }
         // ========================
-        // 2. Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
+        // 2.Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
         $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
         $roomOptions = '<option value="all">Alle Räume</option>';
         $maxTemp = 15.0;
@@ -428,11 +429,17 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         $sysHtml .= '</div>';
         // ========================
-        // 4. Raumtiles HTML
-        $roomTilesHtml = '';
+        // 4. Raumtiles HTML mit Etagen-Gruppierung
+        $floorGroups = [];
         foreach ($rooms as $room) {
             if (!empty($room['name'])) {
-                $roomTilesHtml .= '<div class="room-tile" id="room_' . $room['id'] . '">'
+                $floor = $room['floor'] ?? 'Unbekannt'; // fallback
+                if (!isset($floorGroups[$floor])) {
+                    $floorGroups[$floor] = array();
+                    $floorGroups[$floor]['floor'] = array('name' => $room['floorname'], 'id' => $room['floorid']);
+                    $floorGroups[$floor]['roomsHtml'] = '';
+                }
+                $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
                         . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . '°C</span></div>'
@@ -440,18 +447,29 @@ class ContromeCentralControl extends IPSModuleStrict
                         . '<div><strong>Luftfeuchte:</strong><span>' . ($room['humidity'] ?? '--') . '%</span></div>'
                         . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                     . '</div>';
-
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $hours = floor($room['remaining_time'] / 60);
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                    $roomTilesHtml .= '<div class="room-temp-schedule">'
+                    $roomHtml .= '<div class="room-temp-schedule">'
                         . '<div><strong>Remaining:</strong><span>' . $hoursMinutes . '</span></div>'
                         . '<div><strong>Perm Soll:</strong><span>' . ($room['perm_solltemperatur'] ?? '--') . '°C</span></div>'
                     . '</div>';
                 }
-                $roomTilesHtml .= '</div>';
+                $roomHtml .= '</div>'; // room-tile
+                $floorGroups[$floor]['roomsHtml'] .= $roomHtml; // dem entsprechenden floor hinzufügen.
             }
+        }
+
+        // Wrapper-HTML bauen
+        $roomTilesHtml = '';
+        foreach ($floorGroups as $floor => $oneFloor) {
+            $roomTilesHtml .= '<div class="floor-tile" id="floor-' . $oneFloor['floor']['id'] . '">'
+                . '<label>' . htmlspecialchars($oneFloor['floor']['name']) . '</label>'
+                . '<div class="rooms-container">'
+                    . $oneFloor['roomsHtml']
+                . '</div>'
+            . '</div>';
         }
         // ========================
         // 5. Dropdown für Dauer in Stunden (0–24)
@@ -483,11 +501,14 @@ class ContromeCentralControl extends IPSModuleStrict
         while (@IPS_GetObjectIDByIdent("Floor{$floorID}ID", $this->InstanceID) !== false) {
             $roomID = 1;
             while (@IPS_GetObjectIDByIdent("Floor{$floorID}Room{$roomID}ID", $this->InstanceID) !== false) {
+                $floorVar = "Floor{$floorID}";
                 $roomVar = "Floor{$floorID}Room{$roomID}";
 
                 $rooms[] = [
                     'id' => $this->GetValue($roomVar . "ID"),
                     'name' => $this->GetValue($roomVar . "Name"),
+                    'floorid' => $this->GetValue($floorVar . "ID"),
+                    'floorname' => $this->GetValue($floorVar . "Name"),
                     'temperature' => $this->GetValue($roomVar . "Temperature"),
                     'target' => $this->GetValue($roomVar . "Target"),
                     'humidity' => $this->GetValue($roomVar . "Humidity"),

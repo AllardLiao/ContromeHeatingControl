@@ -31,6 +31,23 @@
     box-sizing: border-box;
 }
 
+.floor-tile {
+    flex: 1 1 100%;
+    background: <!--COLOR_FLOOR_TILES-->;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+.floor-tile label {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 4px;
+}
+
 .rooms-container {
     display: flex;
     flex-wrap: wrap;
@@ -145,12 +162,18 @@
     </div>
 </div>
 
-<!-- Räume anzeigen -->
-<div class="rooms-container" id="rooms-container">
-    <!--ROOM_TILES-->
+<!-- Räume-Tiles anzeigen -->
+<!-- Etagen-Container -->
+<div class="tile-container" id="floors-container">
+    <!-- Etage 1 -->
+    <div class="floor-tile" id="floor-1">
+        <div class="floor-header">Erdgeschoss</div>
+        <div class="rooms-container" id="rooms-container">
+            <!--ROOM_TILES-->
+        </div>
+    </div>
 </div>
-
-<!-- Systeminformationen -->
+<!-- Systeminformationen-Tile -->
 <div class="system-info" id="system-info">
     <label>System Info</label>
     <!--SYSTEM_INFO-->
