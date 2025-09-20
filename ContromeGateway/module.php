@@ -170,6 +170,10 @@ class ContromeGateway extends IPSModuleStrict
                     {
                         $result[ACTIONs::DATA_ROOM_OFFSETS] = true; //Merker: er nutzt den gleichen Payload von rooms.
                     }
+                    if (!empty($data[ACTIONs::DATA_ROOM_SENSORS]))
+                    {
+                        $result[ACTIONs::DATA_ROOM_SENSORS] = true; //Merker: er nutzt den gleichen Payload von rooms.
+                    }
                 }
                 $this->SendDebug(__FUNCTION__, "Returning result: " . print_r($result, true), 0);
                 return json_encode($result);
