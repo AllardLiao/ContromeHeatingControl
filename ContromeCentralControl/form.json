@@ -110,7 +110,7 @@
                             "name": "ShowRoomOffsets",
                             "caption": "Show room offset information (weather, timer, etc.)",
                             "value": false,
-                            "width": "800px",
+                            "width": "800px"
                         },
                         {
                             "type": "Label",
