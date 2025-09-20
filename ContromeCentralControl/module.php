@@ -528,7 +528,8 @@ class ContromeCentralControl extends IPSModuleStrict
                                 . '<div><strong>Status:</strong><span>' . ($room['state'] ?? '--') . '</span></div>'
                                 . '</div>';
                 }
-                if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
+                if ($this->ReadPropertyBoolean('ShowRoomOffsets'))
+                {
                     if (!empty($room['offsets'])) {
                         $roomHtml .= '<hr class="room-separator" />';
                         $roomHtml .= '<div class="room-offsets">';
@@ -544,8 +545,9 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';
                     }
-                }                }
-                if ($this->ReadPropertyBoolean('ShowRoomSensors')) {
+                }
+                if ($this->ReadPropertyBoolean('ShowRoomSensors'))
+                {
                     if (!empty($room['sensors'])) {
                         $roomHtml .= '<hr class="room-separator" />';
                         $roomHtml .= '<div class="room-sensors">';
@@ -567,7 +569,6 @@ class ContromeCentralControl extends IPSModuleStrict
                                     . '<td>' . htmlspecialchars($sensor['letzte_uebertragung']) . '</td>'
                                     . '</tr>';
                         }
-
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';
                     }
