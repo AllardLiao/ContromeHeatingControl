@@ -2,7 +2,7 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "\nControme Central Heating Control\n ",
+            "caption": "\nControme Central Heating Control\n",
             "link": false,
             "bold": true
         },
@@ -12,12 +12,13 @@
         },
         {
             "type": "Label",
-            "caption": "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:"
+            "caption": "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface."
         },
         {
             "type": "Label",
             "name": "ContromeIP",
             "link": true,
+            "visible": false,
             "caption": "ip-address-of-your-controme-gateway/raumregelung-pro/"
         },
         {
@@ -38,7 +39,7 @@
                         {
                             "type": "SelectColor",
                             "name": "VisuColorMainTiles",
-                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
+                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point)",
                             "allowTransparent": true
                         }
                     ]
@@ -56,7 +57,7 @@
                         {
                             "type": "SelectColor",
                             "name": "VisuColorSystemInfoTile",
-                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point):",
+                            "caption": "Dashboard background color for main tiles (mode, set point and temp set point)",
                             "allowTransparent": true
                         }
                     ]
@@ -74,7 +75,7 @@
                         {
                             "type": "SelectColor",
                             "name": "VisuColorRoomTiles",
-                            "caption": "Dashboard background color for rooms:",
+                            "caption": "Dashboard background color for rooms",
                             "allowTransparent": true
                         }
                     ]

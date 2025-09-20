@@ -223,7 +223,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $roomData = json_decode($currentData, true);
         $roomName = $roomData['name'] ?? 'unknown';
-        $roomTemp = $roomData['temperatur'] ?? 'unknown';
+        $roomTemp = floatval($roomData['solltemperatur']) ?? 22.1;
         $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. ($roomName, $roomTemp °C)", 0);
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.

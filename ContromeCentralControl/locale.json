@@ -1,8 +1,39 @@
 {
     "translations": {
         "de": {
-            "Translation 1": "Übersetzung 1",
-            "Translation 2": "Übersetzung 2"
+            "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:": "Controme erlaubt das Setzen von Temperaturen und Modi über externe Anwendungen. Für andere Einstellungen nutzen Sie bitte die Controme-Oberfläche:",
+            "Visualisation ...": "Visualisierung ...",
+            "Show main elements (always on)": "Haupt-Elemente anzeigen (immer sichtbar)",
+            "Dashboard background color for main tiles (mode, set point and temp set point)": "Dashboard-Hintergrundfarbe für Hauptkacheln (Modus, Sollwert und Temperatur-Sollwert)",
+            "Show system information (Controme hardware & software)": "Systeminformationen anzeigen (Controme Hardware & Software)",
+            "Show room information (name, floor)": "Rauminformationen anzeigen (Name, Etage)",
+            "Dashboard background color for rooms": "Dashboard-Hintergrundfarbe für Räume",
+            "how room data (temperature, humidity, setpoint, mode)": "Raumdaten anzeigen (Temperatur, Luftfeuchtigkeit, Sollwert, Modus)",
+            "Same tile as above (show room info)...": "Gleiche Kachel wie oben (Rauminformationen anzeigen)...",
+            "Show room offset information (weather, timer, etc.) - not jet implemented :-(": "Raum-Offset-Informationen anzeigen (Wetter, Timer, etc.) – noch nicht implementiert :-(",
+            "Show flow temperature (actual, setpoint, termperature details) - not jet implemented :-(": "Vorlauftemperatur anzeigen (Istwert, Sollwert, Temperaturdetails) – noch nicht implementiert :-(",
+            "Show Controme timer (planned heating periods) - not jet implemented :-(": "Controme-Timer anzeigen (geplante Heizzeiten) – noch nicht implementiert :-(",
+            "Show Controme calendar (entries from installed/linked calendars - not jet implemented :-(": "Controme-Kalender anzeigen (Einträge aus installierten/verknüpften Kalendern) – noch nicht implementiert :-(",
+            "Automatically update system value": "Systemwert automatisch aktualisieren",
+            "Update interval": "Aktualisierungsintervall",
+            "\\nCheck connection to Controme Gateway and Controme Mini-Server.\\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work - check it using the \\\"Test read room data\\\"-button!\\n": "\\nVerbindung zum Controme Gateway und Controme Mini-Server prüfen.\\nHinweis: Es werden Lese- und Schreibzugriffe getestet. Lesen funktioniert auch ohne Controme-Lizenz, Schreiben erfordert eine gültige Lizenz! Wenn Sie nur lesen möchten, testen Sie dies mit dem Button \\\"Raumdaten lesen testen\\\"!\\n",
+            "Check connection": "Verbindung prüfen",
+            "Read Data Now": "Daten jetzt lesen",
+            "Test Controme data delivery...": "Controme-Datenübertragung testen ...",
+            "You can test data connection to Controme by setting a room id and try to fetch the data for that room from Controme Mini-Server.": "Sie können die Datenverbindung zu Controme testen, indem Sie eine Raum-ID angeben und versuchen, die Daten für diesen Raum vom Controme Mini-Server abzurufen.",
+            "Floor-ID": "Etagen-ID",
+            "Room-ID": "Raum-ID",
+            "Test read room data": "Raumdaten lesen testen",
+            "Source code, donation and licence ...": "Quellcode, Spende und Lizenz ...",
+            "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "Die Software ist für die nicht-kommerzielle Nutzung kostenlos. Über eine Spende würde ich mich freuen, wenn Ihnen das Modul gefällt.",
+            "\\nLicense ": "\\nLizenz ",
+            "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung-NichtKommerziell-Weitergabe unter gleichen Bedingungen 4.0 International Lizenz.",
+            "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Siehe https://creativecommons.org/licenses/by-nc-sa/4.0/ für Details.",
+            "No connection to Controme Mini-Server": "Keine Verbindung zum Controme Mini-Server",
+            "Authentication failed": "Authentifizierung fehlgeschlagen",
+            "Communication not normal": "Kommunikation nicht normal",
+            "\\nControme Central Heating Control\\n": "\\nControme Zentrale Heizungssteuerung\\n",
+            "Symcon module for central heating system management.\\n\\nThis module displays the current system status, temperature, humidity, and operating mode for every room. You can also adjust global setpoints and monitor the overall system from this interface.": "Symcon-Modul zur Verwaltung zentraler Heizsysteme.\\n\\nDieses Modul zeigt den aktuellen Systemstatus, Temperatur, Luftfeuchtigkeit und Betriebsmodus für jeden Raum an. Sie können außerdem globale Sollwerte anpassen und das Gesamtsystem über diese Oberfläche überwachen."
         }
     }
 }
