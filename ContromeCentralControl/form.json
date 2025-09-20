@@ -111,7 +111,6 @@
                             "caption": "Show room offset information (weather, timer, etc.)",
                             "value": false,
                             "width": "800px",
-                            "enabled": false
                         },
                         {
                             "type": "Label",
