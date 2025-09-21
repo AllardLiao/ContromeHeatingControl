@@ -618,7 +618,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // 5. Dropdown für Dauer in Stunden (0–24)
         $durationOptions = '';
         for ($h = 1; $h <= 168; $h++) {
-            if ($h > 12 && $h < 72) $h += 12; // ab 12h in 12h-Schritten
+            if ($h >= 12 && $h < 72) $h += 12; // ab 12h in 12h-Schritten
             if ($h >= 72) $h += 24; // ab 72h in 24h-Schritten
             $durationOptions .= '<option value="' . $h . '">' . $h . ' h (= ' . number_format(($h / 24), 3, '.', '') . ' Tage)</option>';
         }
@@ -737,7 +737,7 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         // Absicherung: immer Array
         if (!is_array($params)) {
-            $params = [$params];
+            $params = json_decode($params, true);;
         }
             // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['Target'], $params['Duration']))
