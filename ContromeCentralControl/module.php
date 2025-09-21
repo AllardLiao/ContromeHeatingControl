@@ -126,7 +126,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->SetRoomMode($value);  //TODO
                 break;
             case ACTIONs::VISU_CC_SETPOINT:
-                $this->SetRoomTemperature($value); //TODO
+                $this->SetRoomTemperature($value);
                 break;
             case ACTIONs::VISU_CC_TARGET:
                 $this->setRoomTemperatureTemp($value);
@@ -735,13 +735,13 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
     }
 
-    private function setRoomTemperatureTemp(mixed $params)
+    private function setRoomTemperatureTemp(mixed $params): string
     {
         // Absicherung: immer Array
         if (!is_array($params)) {
             $params = json_decode($params, true);;
         }
-            // Pflicht-Parameter prüfen
+        // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['Target'], $params['Duration']))
         {
             return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', print_r($params, true));
@@ -755,12 +755,10 @@ class ContromeCentralControl extends IPSModuleStrict
         $target     = (float) $params['Target'];
         $duration = (int) $params['Duration'];
         if ($target <= 0) {
-            $this->SendDebug(__FUNCTION__, "Ungültige Zieltemperatur: $target", 0);
-            return false;
+            return $this->wrapReturn(false, "Invalid target temperature: $target");
         }
         if ($duration < 0) {
-            $this->SendDebug(__FUNCTION__, "Ungültige Dauer: $duration", 0);
-            return false;
+            return $this->wrapReturn(false, "Invalid duration: $duration");
         }
         // Raumliste durchgehen und schreiben.
         foreach ($roomIds as $roomId) {
@@ -782,6 +780,46 @@ class ContromeCentralControl extends IPSModuleStrict
                 return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
             }
         }
+        return $this->wrapReturn(true, "Target setpoint set successfully.");
+    }
 
+    public function SetRoomTemperature(array $params): string
+    {
+        // Absicherung: immer Array
+        if (!is_array($params)) {
+            $params = json_decode($params, true);
+        }
+        // Pflicht-Parameter prüfen
+        if (!isset($params['RoomIDs'], $params['Target'])) {
+            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperature', print_r($params, true));
+        }
+        // Raumliste erstellen
+        $roomIds = $params['RoomIDs'];
+        if (!is_array($roomIds)) {
+            $roomIds = [$roomIds]; // falls aus Versehen nur eine Zahl übergeben wurde
+        }
+        $target  = floatval($params['Target']);
+        if ($target <= 0) {
+            return $this->wrapReturn(false, "Invalid target temperature: $target");
+        }
+        foreach ($roomIds as $roomId) {
+            $this->SendDebug(__FUNCTION__, "Setze permanente Temperatur für Raum $roomId auf $target °C", 0);
+
+            $response = $this->SendDataToParent(json_encode([
+                'DataID' => GUIDs::DATAFLOW, // ersetzen durch deine echte GUID
+                'action' => ACTIONS::SET_SETPOINT,
+                'roomId' => $roomId,
+                'target' => $target
+            ]));
+            if ($this->isError($response))
+            {
+                $payloadToVisu = [
+                    'action' => "ERROR",
+                    'msg' => "Error setting the temporary setpoint."
+                ];
+                $this->UpdateVisualizationValue(json_encode($payloadToVisu));
+                return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
+            }        }
+        return $this->wrapReturn(true, "Permanent setpoint set successfully.");
     }
 }

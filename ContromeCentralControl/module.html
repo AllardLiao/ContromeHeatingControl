@@ -231,10 +231,43 @@ document.getElementById('btn_set_mode').addEventListener('click', function() {
     RequestAction('Mode', { roomId: roomId, mode: mode });
 });
 
-document.getElementById('btn_set_temp').addEventListener('click', function() {
-    const temp = parseFloat(document.getElementById('input_temp').value);
-    const roomId = parseInt(document.getElementById('temp_room_select').value);
-    RequestAction('Temp', { roomId: roomId, temp: temp });
+document.addEventListener('DOMContentLoaded', function () {
+    const btnPerm = document.getElementById('btn_set_temp');
+    if (!btnPerm) return;
+
+    btnPerm.addEventListener('click', function () {
+        let ziel   = parseFloat(document.getElementById('input_temp')?.value ?? NaN);
+        let select = document.getElementById('temp_room_select');
+        let selectedValue = select.value;
+
+        let roomIds = [];
+        if (selectedValue === "all") {
+            // alle Räume, außer "all" selbst
+            roomIds = Array.from(select.options)
+                        .filter(opt => opt.value !== "all")
+                        .map(opt => parseInt(opt.value));
+        } else {
+            roomIds = [parseInt(selectedValue)];
+        }
+
+        if (!roomIds.length || isNaN(ziel)) {
+            alert("Bitte Raum und Temperatur auswählen!");
+            return;
+        }
+
+        const params = {
+            RoomIDs: roomIds,
+            Target: ziel
+        };
+
+        console.log("Sende permanente Parameter:", params);
+
+        try {
+            RequestAction('visu_CC_Setpoint', JSON.stringify(params));
+        } catch (e) {
+            console.error("Fehler beim Senden (Soll-Temperatur):", e);
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
