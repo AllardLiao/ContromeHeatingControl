@@ -765,20 +765,21 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, "Setze Temperatur $target °C für Raum-ID $roomId", 0);
             $response = $this->SendDataToParent(json_encode([
                 'DataID'    => GUIDs::DATAFLOW,
-                'Action'    => ACTIONS::VISU_CC_TARGET,
+                'Action'    => ACTIONS::SET_SETPOINT_TEMP,
                 'RoomID'    => $roomId,
                 'Target'    => $target,
                 'Duration'  => $duration
             ]));
+            if ($this->isError($response))
+            {
+                $payloadToVisu = [
+                    'action' => "ERROR",
+                    'msg' => "Error setting the temporary setpoint."
+                ];
+                $this->UpdateVisualizationValue(json_encode($payloadToVisu));
+                return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
+            }
         }
 
-        if ($this->isError($response))
-        {
-            $payloadToVisu = [
-                'action' => "ERROR",
-                'msg' => "Error setting the temporary setpoint."
-            ];
-            $this->UpdateVisualizationValue(json_encode($payloadToVisu));
-        }
     }
 }
