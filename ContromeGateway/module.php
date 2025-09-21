@@ -616,7 +616,8 @@ class ContromeGateway extends IPSModuleStrict
         $postData = http_build_query([
             'user'     => $user,
             'password' => $pass,
-            'soll'     => number_format($setpoint, 2, '.', '')
+            'ziel'     => number_format($setpoint, 2, '.', ''),
+            'duration' => intval($duration)
         ]);
 
         $opts = [
@@ -671,7 +672,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
-        return $this->wrapReturn(true, 'Setpoint updated.');
+        return $this->wrapReturn(true, 'Target updated.');
     }
 
     private function CreateCentralControlInstance(): string

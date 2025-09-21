@@ -758,7 +758,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // Raumliste durchgehen und schreiben.
         foreach ($roomIds as $roomId) {
-            $this->SendDebug(__FUNCTION__, "Setze Temperatur $ziel°C für Raum-ID $roomId", 0);
+            $this->SendDebug(__FUNCTION__, "Setze Temperatur $target °C für Raum-ID $roomId", 0);
             $response = $this->SendDataToParent(json_encode([
                 'DataID'    => GUIDs::DATAFLOW,
                 'action'    => ACTIONS::VISU_CC_TARGET,
