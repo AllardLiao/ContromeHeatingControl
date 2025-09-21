@@ -118,6 +118,8 @@ class ContromeGateway extends IPSModuleStrict
             default:
                 parent::RequestAction($ident, $value);
         }
+        // Hier kommen wir raus, wenn der Funktion "irgendwas" übergeben wurde
+        $this->wrapReturn(false, "ForwardData not executed", $ident . print_r($value, true));
     }
 
     //
@@ -126,7 +128,7 @@ class ContromeGateway extends IPSModuleStrict
         // Auswertung für Aufrufe von Child-Instanzen
         $data = json_decode($JSONString, true);
 
-        if (!is_array($data) || ($data['DataID'] ?? '') !== GUIDs::DATAFLOW) {
+        if (!is_array($data) || (($data['DataID'] ?? '') !== GUIDs::DATAFLOW) || (!isset($data['Action']))) {
             return $this->wrapReturn(false, "Non-valid payload.");
         }
 
