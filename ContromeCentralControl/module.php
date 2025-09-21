@@ -191,7 +191,7 @@ class ContromeCentralControl extends IPSModuleStrict
             ACTIONs::DATA_ROOMS         => $this->ReadPropertyBoolean("ShowRooms"),
             ACTIONs::DATA_ROOM_OFFSETS  => $this->ReadPropertyBoolean("ShowRoomOffsets"),
             ACTIONs::DATA_ROOM_SENSORS  => $this->ReadPropertyBoolean("ShowRoomSensors"),
-            ACTIONs::DATA_TEMPERATURS   => $this->ReadPropertyBoolean("ShowRoomData"),
+            ACTIONs::DATA_EXTENDED      => $this->ReadPropertyBoolean("ShowRoomData"),
             ACTIONs::DATA_VTR           => $this->ReadPropertyBoolean("ShowVTR"),
             ACTIONs::DATA_TIMER         => $this->ReadPropertyBoolean("ShowTimer"),
             ACTIONs::DATA_CALENDAR      => $this->ReadPropertyBoolean("ShowCalendar")
@@ -255,7 +255,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // ======================
         // Räume, Temperaturen & Offsets
         // ======================
-        if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_TEMPERATURS]) || isset($data[ACTIONs::DATA_ROOM_OFFSETS])) {
+        if (isset($data[ACTIONs::DATA_ROOMS]) || isset($data[ACTIONs::DATA_EXTENDED]) || isset($data[ACTIONs::DATA_ROOM_OFFSETS])) {
 
             //Für Reihenfolge im IPS-Baum. SysInfo 1-6
             $positionCounter = 10;
@@ -293,21 +293,22 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->MaintainVariable($roomVar . "Name", $roomVar . "-Name", VARIABLETYPE_STRING, "", $positionCounter++, true);
                         $this->SetValue        ($roomVar . "Name", (string) $roomName);
 
-                        if (isset($data[ACTIONs::DATA_TEMPERATURS])){
-                            $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "Temperature",       floatval($room['temperatur']));
-                            $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
+                        $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "Temperature",       floatval($room['temperatur']));
+                        $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
+                        $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
+                        $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
+                        $this->MaintainVariable($roomVar . "OffsetTotal",           $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "OffsetTotal",           isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
+
+                        if (isset($data[ACTIONs::DATA_EXTENDED])){
                             $this->MaintainVariable($roomVar . "State",             $roomVar . "-Status",           VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "Humidity",          floatval($room['luftfeuchte']));
-                            $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
-                            $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
-                            $this->MaintainVariable($roomVar . "OffsetTotal",           $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue(        $roomVar . "OffsetTotal",           isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
                         }
                         // ---------------------------
                         // Offsets verarbeiten (wenn vorhanden)

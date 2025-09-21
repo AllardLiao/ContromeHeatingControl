@@ -59,10 +59,10 @@ class ACTIONs
 
     // Abzufragende Daten vom Gateway
     public const DATA_SYSTEM_INFO   = 'info';
-    public const DATA_ROOMS         = 'rooms';
+    public const DATA_ROOMS         = 'rooms'; // inkl. Temps
     public const DATA_ROOM_OFFSETS  = 'roomoffsets';
     public const DATA_ROOM_SENSORS  = 'sensors';
-    public const DATA_TEMPERATURS   = 'temps';
+    public const DATA_EXTENDED      = 'extended'; // erweiterte Raumdaten inkl. Betriebsart und Luftfeuchte
     public const DATA_VTR           = 'vtr';
     public const DATA_TIMER         = 'timer';
     public const DATA_CALENDAR      = 'calendar';
