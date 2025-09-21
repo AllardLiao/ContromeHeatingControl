@@ -328,10 +328,10 @@ function handleMessage(data) {
 
         switch (action) {
             case "SUCCESS":
-                showMessage(msg.payload.msg || "Aktion erfolgreich", "success", message.payload.duration || 4);
+                showMessage(message.payload.msg || "Aktion erfolgreich", "success", message.payload.duration || 4);
                 break;
             case "ERROR":
-                showMessage(msg.payload.msg || "Fehler", "error", msg.payload.duration || 4);
+                showMessage(message.payload.msg || "Fehler", "error", message.payload.duration || 4);
                 break;
             case "REFRESH":
                 refreshRooms(payload);
