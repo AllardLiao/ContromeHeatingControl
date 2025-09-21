@@ -509,11 +509,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $temp = floatval($this->GetValue('Temperature'));
         if (is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature
             $temp = 0.0;
-            $payload = ["RoomID" => $this->GetValue('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->GetValue('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
+            return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->ReadPropertyInteger('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
         } else {
-            $payload = ["RoomID" => $this->GetValue('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn(true, "Temperature for room " . $this->GetValue('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C", $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
+            return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C", $payload);
         }
     }
 
