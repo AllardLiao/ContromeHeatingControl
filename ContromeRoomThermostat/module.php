@@ -517,7 +517,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
     }
 
-    private function checkRoomTermperatureForFallback(float $temperature): string
+    private function checkRoomTermperatureForFallback(mixed $temperature): string
     {
         if (is_nan($temperature)) { // Controm liefert null
             if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
