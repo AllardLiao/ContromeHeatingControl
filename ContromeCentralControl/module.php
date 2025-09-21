@@ -777,6 +777,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     'duration' => 8
                 ];
                 $this->sendVisuAction("ERROR", $payloadToVisu);
+                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
                 return $this->wrapReturn(false, "Temporary setpoint not set.", $payloadToVisu);
             }
         }
@@ -785,6 +786,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'duration' => 8
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
+        $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
 
@@ -823,6 +825,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     'duration' => 8
                 ];
                 $this->sendVisuAction("ERROR", $payloadToVisu);
+                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
                 return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
             }
         }
@@ -831,6 +834,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'duration' => 8
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
+        $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
         return $this->wrapReturn(true, "Permanent setpoint set successfully.");
     }
 

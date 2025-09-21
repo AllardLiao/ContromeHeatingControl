@@ -151,7 +151,7 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 18px;
     color: #fff;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!btnPerm) return;
 
     btnPerm.addEventListener('click', function () {
+        btn.disabled = true;
         let ziel   = parseFloat(document.getElementById('input_temp')?.value ?? NaN);
         let select = document.getElementById('temp_room_select');
         let selectedValue = select.value;
@@ -268,6 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!btn) return;
 
     btn.addEventListener('click', function () {
+        btn.disabled = true;
         let ziel     = parseFloat(document.getElementById('input_target_temp')?.value ?? NaN);
         let duration = parseInt(document.getElementById('duration_select')?.value ?? -1);
         let select   = document.getElementById('target_room_select');
@@ -335,6 +337,17 @@ function handleMessage(data) {
                 break;
             case "REFRESH":
                 refreshRooms(payload);
+                break;
+            case "ENABLE_BUTTON":
+                if (message.payload && message.payload.id) {
+                    const btn = document.getElementById(message.payload.id);
+                    if (btn) btn.disabled = false;
+                }
+                break;
+                if (msg.payload && msg.payload.id) {
+                    const btn = document.getElementById(msg.payload.id);
+                    if (btn) btn.disabled = false;
+                }
                 break;
             default:
                 console.warn("Unbekannte Action:", action, payload);
