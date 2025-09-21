@@ -295,7 +295,22 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue        ($roomVar . "Name", (string) $roomName);
 
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                        $this->SetValue(        $roomVar . "Temperature",       floatval($room['temperatur']));
+                        // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback fesetgelegt ist:
+                        if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
+                            $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
+                            foreach ($thermostats as $instID) {
+                                $response = CONRT_GetEffectiveTemperature($instID);
+                                $payload = $this->getResponsePayload($response);
+                                if ($this->isSuccess($response) && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
+                                    $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
+                                } else {
+                                    $this->SetValue($roomVar . "Temperature",       0.0);
+                                }
+                            }
+                        } else {
+                            $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
+                        }
+
                         $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
                         $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
@@ -465,7 +480,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // ========================
         // 2.Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
-        $rooms = $this->GetRoomData();  // holt alle Räume aus den Variablen
+        $rooms = $this->getRoomData();  // holt alle Räume aus den Variablen
         $roomOptions = '<option value="all">Alle Räume</option>';
         $maxTemp = 15.0;
         foreach ($rooms as $room) {
@@ -478,7 +493,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // ========================
         // 3. Systeminfo HTML
-        $sysInfo = $this->GetSystemInfo();
+        $sysInfo = $this->getSystemInfo();
         $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
         $sysHtml = '<div class="system-info" id="system-info">'
                     .'<label>System Info</label>'

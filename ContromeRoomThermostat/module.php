@@ -307,8 +307,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     private function UpdateRoomData($testMode = false): string
     {
         $result = $this->checkConnectionPrerequisites();
-        if (!$this->isSuccess($result))
-        {
+        if (!$this->isSuccess($result)){
             $this->SetStatus(IS_INACTIVE);
             return $this->wrapReturn(false, "Missing information to connect.");
         }
@@ -324,8 +323,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             "FloorID"=> $floorId
         ]));
 
-        if ($this->isError($result))
-        {
+        if ($this->isError($result)){
             $errMsg = "Please check Gateway. Fetching data results in no response from gateway for provided room! " . "(Id: " . $roomId . ")";
             $this->UpdateFormField("Result", "caption", $errMsg);
             $this->SetStatus(IS_NO_CONNECTION);
@@ -338,33 +336,20 @@ class ContromeRoomThermostat extends IPSModuleStrict
             // Controme liefert Temperatur = null, wenn keine Ist-Temperatur vorhanden ist.
             // In dem Fall das Backup als Temperatur heranziehen oder "unbekannt" setzen.
             $msgSuffix = "";
+            // Fallback for temperature
             if (!isset($data['temperatur']) || is_null($data['temperatur']) || $data['temperatur'] === '') {
-                if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
-                    $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
-                    if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
-                        $data['temperatur'] = floatval(GetValue($fallbackId));
-                        $msgSuffix = ", taken from fallback variable";
-                    } else {
-                        $data['temperatur'] = $this->ReadPropertyFloat("FallbackTempValue");
-                        $msgSuffix = ", taken from fallback value";
-                    }
-                } else {
-                    $data['temperatur'] = "n/a";
+                $checkTemp = $this->checkRoomTermperatureForFallback($data['temperatur']);
+                $data['temperatur'] = $this->getResponsePayload($checkTemp);
+                if ($this->isSuccess($checkTemp)) {
+                    $msgSuffix .= $this->getResponseMessage($checkTemp);
                 }
             }
             // Fallback for humidity
             if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || $data['luftfeuchte'] === '' || $data['luftfeuchte'] === 'kein aktueller Wert vorhanden') {
-                if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
-                    $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
-                    if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
-                        $data['luftfeuchte'] = floatval(GetValue($fallbackHumidityId));
-                        $msgSuffix .= ", humidity taken from fallback variable";
-                    } else {
-                        $data['luftfeuchte'] = $this->ReadPropertyFloat("FallbackHumidityValue");
-                        $msgSuffix .= ", humidity taken from fallback value";
-                    }
-                } else {
-                    $data['luftfeuchte'] = "n/a";
+                $checkHumidity = $this->checkHumidityForFallback($data['luftfeuchte']);
+                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
+                if ($this->isSuccess($checkHumidity)) {
+                    $msgSuffix .= $this->getResponseMessage($checkHumidity);
                 }
             }
             $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C" . $msgSuffix . ")";
@@ -519,4 +504,56 @@ class ContromeRoomThermostat extends IPSModuleStrict
         return $this->wrapReturn(true, "All params existing and valid.");
     }
 
+    public function getEffectiveTemperature(): string
+    {
+        $temp = floatval($this->GetValue('Temperature'));
+        if (is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature
+            $temp = 0.0;
+            $payload = ["RoomID" => $this->GetValue('RoomID'), "Temperature" => $temp];
+            return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->GetValue('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
+        } else {
+            $payload = ["RoomID" => $this->GetValue('RoomID'), "Temperature" => $temp];
+            return $this->wrapReturn(true, "Temperature for room " . $this->GetValue('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C", $payload);
+        }
+    }
+
+    private function checkRoomTermperatureForFallback(float $temperature): string
+    {
+        if (is_nan($temperature)) { // Controm liefert null
+            if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
+                $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
+                if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
+                    $newTemperature = floatval(GetValue($fallbackId));
+                    $msgSuffix = ", taken from fallback variable";
+                } else {
+                    $newTemperature = $this->ReadPropertyFloat("FallbackTempValue");
+                    $msgSuffix = ", taken from fallback value";
+                }
+                return $this->wrapReturn(true, $msgSuffix, floatval($newTemperature));
+            } else {
+                return $this->wrapReturn(false, "Fallback not activated.", 0.0);
+            }
+        }
+        return $this->wrapReturn(true, "No fallback needed.", $temperature);
+    }
+
+    private function checkHumidityForFallback(mixed $humidity): string
+    {
+        if (!isset($humidity) || is_nan($humidity) || is_null($humidity) || $humidity === '' || $humidity === 'kein aktueller Wert vorhanden') {
+            if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
+                $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
+                if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
+                    $newHumidity = floatval(GetValue($fallbackHumidityId));
+                    $msgSuffix = ", humidity taken from fallback variable";
+                } else {
+                    $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");
+                    $msgSuffix = ", humidity taken from fallback value";
+                }
+                return $this->wrapReturn(true, $msgSuffix, floatval($newHumidity));
+            } else {
+                return $this->wrapReturn(false, "Fallback not activated.", 0.0);
+            }
+        }
+        return $this->wrapReturn(true, "No fallback needed.", $humidity);
+    }
 }
