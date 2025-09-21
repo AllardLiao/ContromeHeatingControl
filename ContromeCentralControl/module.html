@@ -217,15 +217,6 @@
 
 <script>
 
-    function handleMessage(data) {
-        if (typeof data !== 'string') {
-            console.error("Unerwartete Daten:", data);
-            return;
-        }
-        console.log("Empfangene Daten:", data);
-    document.getElementById('info').textContent = translate(data);
-    }
-
 // EventListener zentralisiert
 document.getElementById('btn_set_mode').addEventListener('click', function() {
     const mode = parseInt(document.getElementById('mode_select').value);
@@ -312,14 +303,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-function showMessage(text, type = "success") {
+function showMessage(text, type = "success", duration = 4) {
     const box = document.getElementById("message_box");
     if (!box) return;
     box.textContent = text;
     box.className = "message-box show " + type;
+    box.style.display = "block";
     setTimeout(() => {
-        box.classList.remove("show");
-    }, 3000);
+        box.style.display = "none";
+    }, duration * 1000);
 }
 
 function handleMessage(data) {
@@ -331,20 +323,24 @@ function handleMessage(data) {
         return;
     }
 
-    const { action, payload } = message;
+    try {
+        const { action, payload } = message;
 
-    switch (action) {
-        case "SUCCESS":
-            showMessage(payload.msg, "success");
-            break;
-        case "ERROR":
-            showMessage(payload.msg, "error");
-            break;
-        case "REFRESH":
-            refreshRooms(payload);
-            break;
-        default:
-            console.warn("Unbekannte Action:", action, payload);
+        switch (action) {
+            case "SUCCESS":
+                showMessage(msg.payload.msg || "Aktion erfolgreich", "success", message.payload.duration || 4);
+                break;
+            case "ERROR":
+                showMessage(msg.payload.msg || "Fehler", "error", msg.payload.duration || 4);
+                break;
+            case "REFRESH":
+                refreshRooms(payload);
+                break;
+            default:
+                console.warn("Unbekannte Action:", action, payload);
+        }
+    } catch (e) {
+        console.error("Ungültige Nachricht an MessageHandler:", data, e);
     }
 }
 </script>

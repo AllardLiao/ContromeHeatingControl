@@ -773,14 +773,16 @@ class ContromeCentralControl extends IPSModuleStrict
             if ($this->isError($response))
             {
                 $payloadToVisu = [
-                    'msg' => "Error setting the temporarysetpoint for room id " . $roomId . " with temperature " . $target . "."
+                    'msg' => "Error setting the temporary setpoint for room id " . $roomId . " with temperature " . $target . ".",
+                    'duration' => 8
                 ];
                 $this->sendVisuAction("ERROR", $payloadToVisu);
                 return $this->wrapReturn(false, "Temporary setpoint not set.", $payloadToVisu);
             }
         }
         $payloadToVisu = [
-            'msg' => "Temporary setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . " for " . $duration . " minutes."
+            'msg' => "Temporary setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . " for " . $duration . " minutes.",
+            'duration' => 8
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
         return $this->wrapReturn(true, "Target setpoint set successfully.");
@@ -817,14 +819,16 @@ class ContromeCentralControl extends IPSModuleStrict
             if ($this->isError($response))
             {
                 $payloadToVisu = [
-                    'msg' => "Error setting the setpoint for room id " . $roomId . " with temperature " . $target . "."
+                    'msg' => "Error setting the setpoint for room id " . $roomId . " with temperature " . $target . ".",
+                    'duration' => 8
                 ];
                 $this->sendVisuAction("ERROR", $payloadToVisu);
                 return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
             }
         }
         $payloadToVisu = [
-            'msg' => "Setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . "."
+            'msg' => "Setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . ".",
+            'duration' => 8
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
         return $this->wrapReturn(true, "Permanent setpoint set successfully.");
