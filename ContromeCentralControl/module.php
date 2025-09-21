@@ -114,19 +114,19 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         switch($ident) {
             case ACTIONs::UPDATE_DATA:
-                $this->UpdateData();
+                $this->updateData();
                 break;
             case ACTIONs::CHECK_CONNECTION:
-                $this->CheckConnection();
+                $this->checkConnection();
                 break;
             case ACTIONs::TEST_READ_ROOM_DATA:
-                $this->TestReadRoomData();
+                $this->testReadRoomData();
                 break;
             case ACTIONs::VISU_CC_MODE:
-                $this->SetRoomMode($value);  //TODO
+                $this->setRoomMode($value);  //TODO
                 break;
             case ACTIONs::VISU_CC_SETPOINT:
-                $this->SetRoomTemperature($value);
+                $this->setRoomTemperature($value);
                 break;
             case ACTIONs::VISU_CC_TARGET:
                 $this->setRoomTemperatureTemp($value);
@@ -147,7 +147,7 @@ class ContromeCentralControl extends IPSModuleStrict
         ]));
     }
 
-    public function TestReadRoomData(): string
+    public function testReadRoomData(): string
     {
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
@@ -181,7 +181,7 @@ class ContromeCentralControl extends IPSModuleStrict
     }
 
     // Funktion die zyklisch aufgerufen wird (wenn aktiv) und die Werte des Systems aktualisiert
-    private function UpdateData(): bool
+    private function updateData(): bool
     {
         // Daten vom Gateway holen
         $result = $this->SendDataToParent(json_encode([
@@ -376,7 +376,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return true;
     }
 
-    private function RequestGatewayIPAddress(): string
+    private function requestGatewayIPAddress(): string
     {
         // Check, ob Gateway eingerichtet ist.
         $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
@@ -420,7 +420,7 @@ class ContromeCentralControl extends IPSModuleStrict
      *
      * @return boolean
      */
-    public function CheckConnection(): string
+    public function checkConnection(): string
     {
         // Gibt keine Voraussetzungen zu prüfen - diese sind im Gateway gespeichert.
 
@@ -455,7 +455,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
     }
 
-    public function GetVisualizationTile(): string
+    public function getVisualizationTile(): string
     {
         // ========================
         // 1. Mode-Options
@@ -576,7 +576,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
-                                . '<td>' . number_format(floatval($room['primary_sensor_value']), 2, ',', ''). ' °C</td>'
+                                . '<td>' . (isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : '--') . '</td>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_last_info'] ?? '--') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
@@ -592,8 +592,8 @@ class ContromeCentralControl extends IPSModuleStrict
                         foreach ($otherSensors as $sensor) {
                             $roomHtml .= '<tr>'
                                     . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
-                                    . '<td>' . number_format(floatval($sensor['wert']), 2, ',', '') . ' °C</td>'
-                                    . '<td>' . htmlspecialchars($sensor['letzte_uebertragung']) . '</td>'
+                                    . '<td>' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
+                                    . '<td>' . htmlspecialchars($sensor['letzte_uebertragung'] ?? '--') . '</td>'
                                     . '</tr>';
                         }
                         $roomHtml .= '</table>';
@@ -651,7 +651,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $html;
     }
 
-    private function GetRoomData(): array
+    private function getRoomData(): array
     {
         $rooms = [];
         $floorID = 1;
@@ -703,7 +703,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $rooms;
     }
 
-    private function GetSystemInfo(): array
+    private function getSystemInfo(): array
     {
         return [
             'Hardware' => $this->GetValue('SysInfo_HW'),
@@ -790,7 +790,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
 
-    public function SetRoomTemperature(mixed $params): string
+    public function setRoomTemperature(mixed $params): string
     {
         // Absicherung: immer Array
         if (!is_array($params)) {
