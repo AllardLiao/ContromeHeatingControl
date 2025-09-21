@@ -508,7 +508,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml .= '<div><strong>Soll:</strong><span>';
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
-                    $hours = floor($room['remaining_time'] / 60);
+                    $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                     $roomHtml .= '<div class="room-temp-schedule">'

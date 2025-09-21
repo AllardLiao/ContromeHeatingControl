@@ -90,6 +90,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Temperature", "Raumtemperatur", VARIABLETYPE_FLOAT, "~Temperature.Room", 1, true);
         $this->MaintainVariable("Humidity", "Luftfeuchtigkeit", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Betriebsart", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
+        $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
 
         // Variablen definieren - Anpassbar machen mit Rückschreibung an Controme
         $this->MaintainVariable("Setpoint", "Solltemperatur", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
@@ -394,6 +395,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
+        $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
         //$this->EnableAction("Setpoint");
 
         if (isset($data['temperatur'])) {
@@ -407,6 +409,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
         if (isset($data['betriebsart'])) {
             $this->SetValue("Mode", CONTROME_PROFILES::getValueBetriebsart($data['betriebsart']));
+        }
+        if (isset($data['remaining_time']) && intval($data['remaining_time'])>0){
+            $msg = "Temporäre Temperaturänderung bis " . date("H:i", time() + intval($data['remaining_time'])) . ". Danach wieder " . floatval($data['perm_solltemperatur']) . " °C";
+            $this->SetValue("Hinweis", $msg);
+        }
+        else {
+            $this->SetValue("Hinweis", "");
         }
     }
 
