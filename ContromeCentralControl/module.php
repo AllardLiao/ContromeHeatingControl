@@ -783,7 +783,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
 
-    public function SetRoomTemperature(array $params): string
+    public function SetRoomTemperature(mixed $params): string
     {
         // Absicherung: immer Array
         if (!is_array($params)) {
