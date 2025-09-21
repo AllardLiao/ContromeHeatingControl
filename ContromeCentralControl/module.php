@@ -808,8 +808,8 @@ class ContromeCentralControl extends IPSModuleStrict
             $response = $this->SendDataToParent(json_encode([
                 'DataID' => GUIDs::DATAFLOW, // ersetzen durch deine echte GUID
                 'Action' => ACTIONS::SET_SETPOINT,
-                'roomId' => $roomId,
-                'target' => $target
+                'RoomID' => $roomId,
+                'Setpoint' => $target
             ]));
             if ($this->isError($response))
             {
