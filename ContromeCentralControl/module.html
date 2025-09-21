@@ -214,6 +214,16 @@
 
 
 <script>
+
+    function handleMessage(data) {
+        if (typeof data !== 'string') {
+            console.error("Unerwartete Daten:", data);
+            return;
+        }
+        console.log("Empfangene Daten:", data);
+    document.getElementById('info').textContent = translate(data);
+    }
+
 // EventListener zentralisiert
 document.getElementById('btn_set_mode').addEventListener('click', function() {
     const mode = parseInt(document.getElementById('mode_select').value);
@@ -227,10 +237,35 @@ document.getElementById('btn_set_temp').addEventListener('click', function() {
     RequestAction('Temp', { roomId: roomId, temp: temp });
 });
 
-document.getElementById('btn_set_target').addEventListener('click', function() {
-    const temp = parseFloat(document.getElementById('input_target_temp').value);
-    const roomId = parseInt(document.getElementById('target_room_select').value);
-    const duration = parseInt(document.getElementById('duration_select').value);
-    RequestAction('TargetTemp', { roomId: roomId, temp: temp, duration: duration });
+document.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('btn_set_target');
+    if (!btn) return;
+
+    btn.addEventListener('click', function () {
+        const roomId   = document.getElementById('target_room_select')?.value;
+        const ziel     = document.getElementById('input_target_temp')?.value;
+        const duration = document.getElementById('duration_select')?.value;
+
+        if (!roomId || !ziel || duration === null) {
+            alert("Bitte Raum, Temperatur und Dauer auswählen!");
+            return;
+        }
+
+        // params Array bauen
+        const params = {
+            RoomID: roomId,
+            Target: parseFloat(ziel),
+            Duration: (parseInt(duration)*60)
+        };
+
+        console.log("Sende Parameter:", params);
+
+        try {
+            requestAction('visu_CC_Target', params);
+        } catch (e) {
+            console.error("Fehler beim Senden:", e);
+        }
+    });
 });
+
 </script>

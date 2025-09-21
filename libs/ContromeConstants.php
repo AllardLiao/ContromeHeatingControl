@@ -23,26 +23,34 @@ class GUIDs
 
 class ACTIONs
 {
-    // Implementierte Actions (alle Module)
+    // Implementierte Actions (alle Module) die nur Daten empfangen
     public const CHECK_CONNECTION                   = 'CheckConnection';
-    public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
-    public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
-    public const WRITE_SETPOINT                     = 'Setpoint';
-    public const UPDATE_DATA                        = 'UpdateData';
-    public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
-    public const FETCH_ROOM_LIST                    = "FetchRoomList";
     public const CREATE_CENTRAL_CONTROL_INSTANCE    = "CreateCentralControlInstance";
     public const CREATE_ROOM_THERMOSTAT_INSTANCE    = "CreateRoomThermostatInstance";
-    public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
+    public const FETCH_ROOM_LIST                    = "FetchRoomList";
+    public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
+    public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
     public const GET_IP_ADDRESS                     = "GetIPAddress";
+    public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
+    public const UPDATE_DATA                        = 'UpdateData';
+    public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
+
+    // Implementierte Actions (nur CentralControl) die Daten senden
+    public const SET_SETPOINT                       = 'SetSetpoint'; // Permanente Temperaturänderung
+    public const SET_MODE                           = 'SetRoomMode';
+    public const SET_SETPOINT_TEMP                  = 'SetRoomTemperatureTemp'; // Temporäre Temperaturänderung
 
     // Implementierte Visu-Actions
     public const VISU_CC_SETPOINT                   = 'visu_CC_Setpoint';
-    public const VISU_CC_TEMPERATURE                = 'visu_CC_Temperature';
+    public const VISU_CC_TARGET                     = 'visu_CC_Target';
     public const VISU_CC_MODE                       = 'visu_CC_Mode';
     public const VISU_RT_SETPOINT                   = 'visu_RT_setpoint';
     public const VISU_RT_INC                        = 'visu_RT_inc';
     public const VISU_RT_DEC                        = 'visu_RT_dec';
+
+    // Implementierte Actions, durch Änderung von Variablen, die editierbar (via EnableAction) gemacht wurden
+    // Die Aktion ist dann der Name der Variablen
+    public const VISU_RT_VAR_SETPOINT               = "Setpoint";
 
     // Implementierte Form-Actions
     public const FORM_RT_TOGGLEAUTOUPDATE             = 'form_rt_toggleAutoUpdate';

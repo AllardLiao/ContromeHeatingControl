@@ -119,20 +119,17 @@ class ContromeCentralControl extends IPSModuleStrict
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
                 break;
-            case ACTIONs::WRITE_SETPOINT:
-                $this->WriteSetpoint(floatval($value)); //TODO
-                break;
             case ACTIONs::TEST_READ_ROOM_DATA:
                 $this->TestReadRoomData();
                 break;
             case ACTIONs::VISU_CC_MODE:
-                $this->SetRoomMode((int)$value['roomId'], (int)$value['mode']);  //TODO
+                $this->SetRoomMode($value);  //TODO
                 break;
-            case ACTIONs::VISU_CC_TEMPERATURE:
-                $this->SetRoomTemperature((int)$value['roomId'], floatval($value['temperature'])); //TODO
+            case ACTIONs::VISU_CC_SETPOINT:
+                $this->SetRoomTemperature($value); //TODO
                 break;
             case ACTIONs::VISU_CC_TARGET:
-                $this->SetRoomTemperatureTemp((int)$value['roomId'], floatval($value['target']), intval($value['duration'])); //TODO
+                $this->SetRoomTemperatureTemp($value);
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -620,8 +617,10 @@ class ContromeCentralControl extends IPSModuleStrict
         // ========================
         // 5. Dropdown für Dauer in Stunden (0–24)
         $durationOptions = '';
-        for ($h = 0; $h <= 24; $h++) {
-            $durationOptions .= '<option value="' . $h . '">' . $h . 'h</option>';
+        for ($h = 1; $h <= 168; $h++) {
+            if ($h > 12 && $h < 72) $h += 12; // ab 12h in 12h-Schritten
+            if ($h >= 72) $h += 24; // ab 72h in 24h-Schritten
+            $durationOptions .= '<option value="' . $h . '">' . $h . ' h (= ' . number_format(($h / 24), 3, '.', '') . ' Tage)</option>';
         }
         // ========================
         // 6. HTML Template laden & Platzhalter ersetzen
@@ -732,5 +731,34 @@ class ContromeCentralControl extends IPSModuleStrict
 
         $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
         return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
+    }
+
+    private function SetRoomTemperatureTemp(array $params)
+    {
+        // Pflicht-Parameter prüfen
+        if (!isset($params['RoomID'], $params['Target'], $params['Duration']))
+        {
+            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', print_r($params, true));
+        }
+
+        $roomId   = (int) $params['RoomID'];
+        $target     = (float) $params['Target'];
+        $duration = (int) $params['Duration'];
+
+        $response = $this->SendDataToParent(json_encode([
+            'DataID'    => ACTIONS::VISU_CC_TARGET,
+            'RoomID'    => $roomId,
+            'Target'    => $target,
+            'Duration'  => $duration
+        ]));
+
+        if ($this->isError($response))
+        {
+            $payloadToVisu = [
+                'action' => "ERROR",
+                'msg' => "Error setting the temporary setpoint."
+            ];
+            $this->UpdateVisualizationValue(json_encode($payloadToVisu));
+        }
     }
 }

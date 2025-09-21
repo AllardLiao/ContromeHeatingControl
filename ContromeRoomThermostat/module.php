@@ -74,7 +74,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     {
         //Never delete this line!
         parent::ApplyChanges();
-        
+
         $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
         $this->LogMessage("Gateway Connection ID: " . $parentID, KL_NOTIFY);
         if ($parentID == 0) {
@@ -118,7 +118,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection();
                 break;
-            case ACTIONs::WRITE_SETPOINT:
+            case ACTIONs::SET_SETPOINT:
                 $result = $this->WriteSetpoint(floatval($value));
                 break;
             case ACTIONs::TEST_READ_ROOM_DATA:
@@ -134,18 +134,22 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $this->WriteSetpoint($new);
                 $this->updateVisualization();
                 break;
-            case ACTIONs::VISU_RT_SETPOINT: // Änderung über Visu
+            case ACTIONs::VISU_RT_VAR_SETPOINT: // Änderung über Visu - Direkt an der Variablen
+            case ACTIONs::VISU_RT_SETPOINT:     //  - über ein custom Tile
                 $this->WriteSetpoint((float)$value);
                 $this->updateVisualization();
                 break;
             case ACTIONs::FORM_RT_TOGGLEAUTOUPDATE: // Auslösung über onChange der Konfig-Forms
                 $this->toggleAutoUpdate($value==1);
+                $this->updateVisualization();
                 break;
             case ACTIONs::FORM_RT_TOGGLEFALLBACKTEMPSENSOR: // Auslösung über onChange der Konfig-Forms
                 $this->toggleFallbackTempSensor($value==1);
+                $this->updateVisualization();
                 break;
             case ACTIONs::FORM_RT_TOGGLEFALLBACKHUMIDITYSENSOR: // Auslösung über onChange der Konfig-Forms
                 $this->toggleFallbackHumiditySensor($value==1);
+                $this->updateVisualization();
                 break;
             default:
                 parent::RequestAction($ident, $value);
