@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!btnPerm) return;
 
     btnPerm.addEventListener('click', function () {
-        btn.disabled = true;
+        btnPerm.disabled = true;
         let ziel   = parseFloat(document.getElementById('input_temp')?.value ?? NaN);
         let select = document.getElementById('temp_room_select');
         let selectedValue = select.value;
@@ -246,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!roomIds.length || isNaN(ziel)) {
             alert("Bitte Raum und Temperatur auswählen!");
+            btnPerm.disabled = false;
             return;
         }
 
@@ -260,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAction('visu_CC_Setpoint', JSON.stringify(params));
         } catch (e) {
             console.error("Fehler beim Senden (Soll-Temperatur):", e);
+            btnPerm.disabled = false;
         }
     });
 });
@@ -286,6 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!roomIds.length || isNaN(ziel) || duration < 0) {
             alert("Bitte Raum, Temperatur und Dauer auswählen!");
+            btn.disabled = false;
             return;
         }
 
@@ -301,6 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAction('visu_CC_Target', JSON.stringify(params));
         } catch (e) {
             console.error("Fehler beim Senden:", e);
+            btn.disabled = false;
         }
     });
 });
@@ -341,11 +345,6 @@ function handleMessage(data) {
             case "ENABLE_BUTTON":
                 if (message.payload && message.payload.id) {
                     const btn = document.getElementById(message.payload.id);
-                    if (btn) btn.disabled = false;
-                }
-                break;
-                if (msg.payload && msg.payload.id) {
-                    const btn = document.getElementById(msg.payload.id);
                     if (btn) btn.disabled = false;
                 }
                 break;
