@@ -295,13 +295,15 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue        ($roomVar . "Name", (string) $roomName);
 
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                        // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback fesetgelegt ist:
+                        // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback festgelegt ist:
                         if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
+                            $this->SendDebug("Checking Fallback Temp room: " . $roomID, "Room " . $roomID, 0);
                             $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                             foreach ($thermostats as $instID) {
+                                $this->SendDebug("Checking Fallback with instance: " . $instID, "instance " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
-                                if ($this->isSuccess($response) && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
+                                if ($this->isSuccess($response, KL_DEBUG, "Checking response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
                                     $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
                                 } else {
                                     $this->SetValue($roomVar . "Temperature",       0.0);
