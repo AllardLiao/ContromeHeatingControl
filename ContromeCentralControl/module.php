@@ -765,7 +765,7 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, "Setze Temperatur $target °C für Raum-ID $roomId", 0);
             $response = $this->SendDataToParent(json_encode([
                 'DataID'    => GUIDs::DATAFLOW,
-                'action'    => ACTIONS::VISU_CC_TARGET,
+                'Action'    => ACTIONS::VISU_CC_TARGET,
                 'RoomID'    => $roomId,
                 'Target'    => $target,
                 'Duration'  => $duration

@@ -188,6 +188,8 @@ class ContromeGateway extends IPSModuleStrict
                 $msg = "Unknown action: " . $data['Action'];
                 return $this->wrapReturn(false, $msg);
         }
+        // Hier kommen wir raus, wenn der Funktion "irgendwas" übergeben wurde
+        return $this->wrapReturn(false, "ForwardData not executed", $JSONString);
     }
 
     /**
