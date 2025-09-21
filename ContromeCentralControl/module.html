@@ -5,7 +5,6 @@
     gap: 10px;
     margin-top: 10px;
 }
-
 .subtile {
     flex: 1 1 30%;
     min-width: 250px;
@@ -14,14 +13,12 @@
     padding: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
 .subtile label {
     display: block;
     font-weight: bold;
     font-size: 1.1em;
     margin-bottom: 5px;
 }
-
 .subtile input,
 .subtile select {
     width: 100%;
@@ -39,7 +36,6 @@
     margin-bottom: 15px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
-
 .floor-tile label {
     font-weight: bold;
     font-size: 1.1em;
@@ -47,14 +43,12 @@
     border-bottom: 1px solid rgba(0,0,0,0.1);
     padding-bottom: 4px;
 }
-
 .rooms-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
 }
-
 .room-tile {
     flex: 1 1 150px;
     min-width: 150px;
@@ -63,62 +57,51 @@
     padding: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 .room-header {
     font-weight: bold;
     font-size: 1.1em;
     margin-bottom: 5px;
 }
-
 .room-values, .room-temp-schedule {
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
-
 .room-values div, .room-temp-schedule div {
     display: flex;
     justify-content: space-between;
 }
-
 .room-values div strong, .room-temp-schedule div strong {
     flex: 1; /* linke Spalte */
 }
-
 .room-values div span, .room-temp-schedule div span {
     flex: 1; /* rechte Spalte, linksbündig */
 }
-
 .room-separator {
     border: none;
     border-top: 1px solid #ccc;
     margin: 8px 0;
 }
-
 .room-section-title {
     font-weight: bold;
     margin: 4px 0;
     font-size: 0.9rem;
 }
-
 .room-offsets-table, .room-sensors-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.85rem;
 }
-
 .room-offsets-table td,
 .room-sensors-table td {
     padding: 2px 4px;
     vertical-align: top;
 }
-
 .offset-sum-separator {
     border: none;
     border-top: 2px double #aaa;
     margin: 2px 0;
 }
-
 .room-sensor-table {
     width: 100%;
     border-collapse: collapse;
@@ -140,30 +123,48 @@
     border-radius: 6px;
     padding: 8px;
 }
-
 .system-info label {
     font-weight: bold;
     font-size: 1.1em;
     margin-bottom: 5px;
 }
-
 .system-info-values {
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
-
 .system-info-values div {
     display: flex;
     justify-content: space-between;
 }
-
 .system-info-values div strong {
     flex: 1;
 }
-
 .system-info-values div span {
     flex: 1;
+}
+
+/* User-Rückmeldungen */
+.message-box {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 9999;
+}
+.message-box.show {
+    opacity: 1;
+}
+.message-box.success {
+    background: #28a745; /* grün */
+}
+.message-box.error {
+    background: #dc3545; /* rot */
 }
 </style>
 
@@ -310,4 +311,39 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function showMessage(text, type = "success") {
+    const box = document.getElementById("message_box");
+    if (!box) return;
+    box.textContent = text;
+    box.className = "message-box show " + type;
+    setTimeout(() => {
+        box.classList.remove("show");
+    }, 3000);
+}
+
+function handleMessage(data) {
+    let message;
+    try {
+        message = JSON.parse(data);
+    } catch (e) {
+        console.error("Ungültiges JSON:", data);
+        return;
+    }
+
+    const { action, payload } = message;
+
+    switch (action) {
+        case "SUCCESS":
+            showMessage(payload.msg, "success");
+            break;
+        case "ERROR":
+            showMessage(payload.msg, "error");
+            break;
+        case "REFRESH":
+            refreshRooms(payload);
+            break;
+        default:
+            console.warn("Unbekannte Action:", action, payload);
+    }
+}
 </script>

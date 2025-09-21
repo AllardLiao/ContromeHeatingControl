@@ -773,13 +773,16 @@ class ContromeCentralControl extends IPSModuleStrict
             if ($this->isError($response))
             {
                 $payloadToVisu = [
-                    'action' => "ERROR",
-                    'msg' => "Error setting the temporary setpoint."
+                    'msg' => "Error setting the temporarysetpoint for room id " . $roomId . " with temperature " . $target . "."
                 ];
-                $this->UpdateVisualizationValue(json_encode($payloadToVisu));
-                return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
+                $this->sendVisuAction("ERROR", $payloadToVisu);
+                return $this->wrapReturn(false, "Temporary setpoint not set.", $payloadToVisu);
             }
         }
+        $payloadToVisu = [
+            'msg' => "Temporary setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . " for " . $duration . " minutes."
+        ];
+        $this->sendVisuAction("SUCCESS", $payloadToVisu);
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
 
@@ -814,12 +817,26 @@ class ContromeCentralControl extends IPSModuleStrict
             if ($this->isError($response))
             {
                 $payloadToVisu = [
-                    'action' => "ERROR",
-                    'msg' => "Error setting the temporary setpoint."
+                    'msg' => "Error setting the setpoint for room id " . $roomId . " with temperature " . $target . "."
                 ];
-                $this->UpdateVisualizationValue(json_encode($payloadToVisu));
+                $this->sendVisuAction("ERROR", $payloadToVisu);
                 return $this->wrapReturn(false, "Target setpoint not set.", $payloadToVisu);
-            }        }
+            }
+        }
+        $payloadToVisu = [
+            'msg' => "Setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . "."
+        ];
+        $this->sendVisuAction("SUCCESS", $payloadToVisu);
         return $this->wrapReturn(true, "Permanent setpoint set successfully.");
+    }
+
+    private function sendVisuAction(string $action, array $payload)
+    {
+        $payload = array_merge([
+            'action'   => $action,
+            'payload'  => $payload
+        ]);
+        $json = json_encode($payload);
+        $this->UpdateVisualizationValue($json);
     }
 }
