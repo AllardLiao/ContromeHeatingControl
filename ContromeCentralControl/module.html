@@ -242,18 +242,30 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!btn) return;
 
     btn.addEventListener('click', function () {
-        const roomId   = document.getElementById('target_room_select')?.value;
         const ziel     = document.getElementById('input_target_temp')?.value;
         const duration = document.getElementById('duration_select')?.value;
+        const select = document.getElementById('target_room_select');
+        const selectedValue = select.value;
 
-        if (!roomId || !ziel || duration === null) {
+        let roomIds = [];
+
+        if (selectedValue === "all") {
+            // alle Optionen durchgehen, außer "all"
+            roomIds = Array.from(select.options)
+                        .filter(opt => opt.value !== "all")
+                        .map(opt => parseInt(opt.value));
+        } else {
+            roomIds = [parseInt(selectedValue)];
+        }
+
+        if (!roomIds || !ziel || duration === null) {
             alert("Bitte Raum, Temperatur und Dauer auswählen!");
             return;
         }
 
         // params Array bauen
         const params = {
-            RoomID: roomId,
+            RoomIDs: roomIds,
             Target: parseFloat(ziel),
             Duration: (parseInt(duration)*60)
         };

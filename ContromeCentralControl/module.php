@@ -736,21 +736,37 @@ class ContromeCentralControl extends IPSModuleStrict
     private function SetRoomTemperatureTemp(array $params)
     {
         // Pflicht-Parameter prüfen
-        if (!isset($params['RoomID'], $params['Target'], $params['Duration']))
+        if (!isset($params['RoomIDs'], $params['Target'], $params['Duration']))
         {
             return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', print_r($params, true));
         }
 
-        $roomId   = (int) $params['RoomID'];
+        // Raumliste erstellen
+        $roomIds = $params['RoomIDs'];
+        if (!is_array($roomIds)) {
+            $roomIds = [$roomIds]; // falls aus Versehen nur eine Zahl übergeben wurde
+        }
         $target     = (float) $params['Target'];
         $duration = (int) $params['Duration'];
-
-        $response = $this->SendDataToParent(json_encode([
-            'DataID'    => ACTIONS::VISU_CC_TARGET,
-            'RoomID'    => $roomId,
-            'Target'    => $target,
-            'Duration'  => $duration
-        ]));
+        if ($target <= 0) {
+            $this->SendDebug(__FUNCTION__, "Ungültige Zieltemperatur: $target", 0);
+            return false;
+        }
+        if ($duration < 0) {
+            $this->SendDebug(__FUNCTION__, "Ungültige Dauer: $duration", 0);
+            return false;
+        }
+        // Raumliste durchgehen und schreiben.
+        foreach ($roomIds as $roomId) {
+            $this->SendDebug(__FUNCTION__, "Setze Temperatur $ziel°C für Raum-ID $roomId", 0);
+            $response = $this->SendDataToParent(json_encode([
+                'DataID'    => GUIDs::DATAFLOW,
+                'action'    => ACTIONS::VISU_CC_TARGET,
+                'RoomID'    => $roomId,
+                'Target'    => $target,
+                'Duration'  => $duration
+            ]));
+        }
 
         if ($this->isError($response))
         {
