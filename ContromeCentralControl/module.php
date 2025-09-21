@@ -192,6 +192,7 @@ class ContromeCentralControl extends IPSModuleStrict
             ACTIONs::DATA_ROOM_OFFSETS  => $this->ReadPropertyBoolean("ShowRoomOffsets"),
             ACTIONs::DATA_ROOM_SENSORS  => $this->ReadPropertyBoolean("ShowRoomSensors"),
             ACTIONs::DATA_EXTENDED      => $this->ReadPropertyBoolean("ShowRoomData"),
+            ACTIONs::DATA_ROOM_SENSORS  => $this->ReadPropertyBoolean("ShowRoomSensors"),
             ACTIONs::DATA_VTR           => $this->ReadPropertyBoolean("ShowVTR"),
             ACTIONs::DATA_TIMER         => $this->ReadPropertyBoolean("ShowTimer"),
             ACTIONs::DATA_CALENDAR      => $this->ReadPropertyBoolean("ShowCalendar")
