@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Sende Parameter:", params);
 
         try {
-            RequestAction('visu_CC_Target', JSON.stringify(params));
+            requestAction('visu_CC_Target', JSON.stringify(params));
         } catch (e) {
             console.error("Fehler beim Senden:", e);
         }
