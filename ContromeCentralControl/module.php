@@ -129,7 +129,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->SetRoomTemperature($value); //TODO
                 break;
             case ACTIONs::VISU_CC_TARGET:
-                $this->SetRoomTemperatureTemp($value);
+                $this->setRoomTemperatureTemp($value);
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -733,9 +733,13 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
     }
 
-    private function SetRoomTemperatureTemp(array $params)
+    private function setRoomTemperatureTemp(mixed $params)
     {
-        // Pflicht-Parameter prüfen
+        // Absicherung: immer Array
+        if (!is_array($params)) {
+            $params = [$params];
+        }
+            // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['Target'], $params['Duration']))
         {
             return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', print_r($params, true));
