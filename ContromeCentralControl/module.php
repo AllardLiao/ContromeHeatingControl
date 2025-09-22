@@ -822,6 +822,7 @@ class ContromeCentralControl extends IPSModuleStrict
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
         $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
+        $this->updateData();
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
 
@@ -870,6 +871,7 @@ class ContromeCentralControl extends IPSModuleStrict
         ];
         $this->sendVisuAction("SUCCESS", $payloadToVisu);
         $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
+        $this->updateData();
         return $this->wrapReturn(true, "Permanent setpoint set successfully.");
     }
 
