@@ -507,8 +507,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function getEffectiveTemperature(): string
     {
         $temp = floatval($this->GetValue('Temperature'));
-        if (is_null($temp) || is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature
+        if (is_null($temp) || is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature.Room
             $temp = 0.0;
+            $fallbackCheck = $this->checkRoomTermperatureForFallback($temp);
+            if ($this->isSuccess($fallbackCheck)) {
+                $temp = $this->getResponsePayload($fallbackCheck);
+            }
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
             return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->ReadPropertyInteger('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
         } else {
@@ -535,6 +539,23 @@ class ContromeRoomThermostat extends IPSModuleStrict
             }
         }
         return $this->wrapReturn(true, "No fallback needed.", $temperature);
+    }
+
+    public function getEffectiveHumidity(): string
+    {
+        $humidity = floatval($this->GetValue('Humidity'));
+        if (is_null($humidity) || is_nan($humidity) || $humidity < 0 || $humidity > 100) {   // Out of range for VariableProfile Humidity
+            $humidity = 0.0;
+            $fallbackCheck = $this->checkHumidityForFallback($humidity);
+            if ($this->isSuccess($fallbackCheck)) {
+                $humidity = $this->getResponsePayload($fallbackCheck);
+            }
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
+            return $this->wrapReturn(false, "Not able to deliver valid humidity for room " . $this->ReadPropertyInteger('RoomID') . " with humidity " . number_format($humidity, 2, '.', '') . " %", $payload);
+        } else {
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
+            return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %", $payload);
+        }
     }
 
     private function checkHumidityForFallback(mixed $humidity): string
