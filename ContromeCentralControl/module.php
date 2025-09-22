@@ -315,19 +315,25 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C"];
                         }
-
                         $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C"];
                         $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_remaining_time", 'value' => intval($room['remaining_time']) . " min"];
                         $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_perm_target", 'value' => floatval($room['perm_solltemperatur']) . " °C"];
                         $this->MaintainVariable($roomVar . "OffsetTotal",           $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "OffsetTotal",           isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
+
+                        // In der Anzeige wird bei temporärer Änderung die Darstellung gedreht und die Solltemp durchgestrichen
+                        if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>"];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C"];
+                        } else {
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C"];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['perm_solltemperatur']) . " °C"];
+                        }
                         $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0 . " °C"];
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => intval($room['remaining_time']) . " min"];
 
                         if (isset($data[ACTIONs::DATA_EXTENDED])){
                             $this->MaintainVariable($roomVar . "State",             $roomVar . "-Status",           VARIABLETYPE_STRING, "", $positionCounter++, true);
