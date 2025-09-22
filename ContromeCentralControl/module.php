@@ -332,7 +332,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C"];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['perm_solltemperatur']) . " °C"];
                         }
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0 . " °C"];
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format(isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0, 2, ',', '') . " °C"];
                         $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => intval($room['remaining_time']) . " min"];
 
                         if (isset($data[ACTIONs::DATA_EXTENDED])){
