@@ -623,11 +623,13 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<div class="room-section-title">Rücklaufsensoren</div>';
                         $roomHtml .= '<table class="room-sensor-table">';
                         foreach ($otherSensors as $sensor) {
-                            $roomHtml .= '<tr>'
-                                    . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
-                                    . '<td>' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
-                                    . '<td>' . htmlspecialchars($sensor['letzte_uebertragung'] ?? '--') . '</td>'
-                                    . '</tr>';
+                            if (!$sensor['raumtemperatursensor']) {
+                                $roomHtml .= '<tr>'
+                                        . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
+                                        . '<td>' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
+                                        . '<td>' . htmlspecialchars($sensor['letzte_uebertragung'] ?? '--') . '</td>'
+                                        . '</tr>';
+                            }
                         }
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';
