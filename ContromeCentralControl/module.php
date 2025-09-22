@@ -293,14 +293,13 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue        ($roomVar . "ID", (int) $roomID);
                         $this->MaintainVariable($roomVar . "Name", $roomVar . "-Name", VARIABLETYPE_STRING, "", $positionCounter++, true);
                         $this->SetValue        ($roomVar . "Name", (string) $roomName);
-
-                        $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback festgelegt ist:
+                        $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
-                            $this->SendDebug("Checking Fallback Temp room: " . $roomID, "Room " . $roomID, 0);
+                            $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback room: " . $roomID, 0);
                             $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                             foreach ($thermostats as $instID) {
-                                $this->SendDebug("Checking Fallback with instance: " . $instID, "instance " . $instID, 0);
+                                $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
                                 if ($this->isSuccess($response, KL_DEBUG, "Checking response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
@@ -326,6 +325,23 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->MaintainVariable($roomVar . "State",             $roomVar . "-Status",           VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
+                            // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
+                            if (!isset($room['Humidity']) || is_null($room['Humidity']) || !is_numeric($room['Humidity']) || (floatval($room['Humidity']) <= 0) || (floatval($room['Humidity']) > 100)) {
+                                $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback room: " . $roomID, 0);
+                                $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
+                                foreach ($thermostats as $instID) {
+                                    $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback with instance: " . $instID, 0);
+                                    $response = CONRT_GetEffectiveTemperature($instID);
+                                    $payload = $this->getResponsePayload($response);
+                                    if ($this->isSuccess($response, KL_DEBUG, "Checking response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
+                                        $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
+                                    } else {
+                                        $this->SetValue($roomVar . "Temperature",       0.0);
+                                    }
+                                }
+                            } else {
+                                $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
+                            }
                             $this->SetValue(        $roomVar . "Humidity",          floatval($room['luftfeuchte']));
                         }
                         // ---------------------------
