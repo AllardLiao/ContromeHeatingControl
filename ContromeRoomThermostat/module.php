@@ -351,7 +351,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     $msgSuffix .= $this->getResponseMessage($checkHumidity);
                     $data['fallback_humidity'] = true;
                 }
-                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
+                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);sfgf
             }
             $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C" . $msgSuffix . ")";
             $this->SendDebug(__FUNCTION__, $msg, 0);
@@ -371,7 +371,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         // Alles ok - also können wir auch direkt die Daten in Variablen Speichern.
         $this->SetStatus(IS_ACTIVE);
         $this->saveDataToVariables($data);
-        return $this->wrapReturn(true, "Room data successfully " . ($testMode ? "tested." : "updated."));
+        return $this->wrapReturn(true, "Room data successfully " . ($testMode ? "tested & updated." : "updated."));
     }
 
     private function saveDataToVariables($data)
@@ -575,13 +575,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");
                     $msgSuffix = ", humidity taken from fallback value";
                 }
-                $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => floatval($newHumidity)];
-                return $this->wrapReturn(true, $msgSuffix, $payload);
+                return $this->wrapReturn(true, $msgSuffix, floatval($newHumidity));
             } else {
                 return $this->wrapReturn(false, "Fallback not activated.", 0.0);
             }
         }
-        $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => floatval($humidity)];
-        return $this->wrapReturn(true, "No fallback needed.", $payload);
+        return $this->wrapReturn(true, "No fallback needed.", floatval($humidity));
     }
 }
