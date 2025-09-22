@@ -348,14 +348,18 @@ function showMessage(text, type = "success", duration = 4) {
     }, duration * 1000);
 }
 
-function refreshRooms($msg) {
-    if (msg.payload && msg.payload.updates) {
-        msg.payload.updates.forEach(update => {
+function refreshRooms(msg) {
+    if (msg && msg.updates) {
+        msg.updates.forEach(update => {
             const el = document.getElementById(update.id);
-            if (el) el.textContent = update.value;
+            if (el) {
+                el.textContent = update.value;
+                console.log("Updated:", update.id, "→", update.value);
+            } else {
+                console.warn("Kein Element mit ID:", update.id);
+            }
         });
     }
-    return;
 }
 
 function handleMessage(data) {
