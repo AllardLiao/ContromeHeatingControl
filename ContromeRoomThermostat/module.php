@@ -340,6 +340,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $checkTemp = $this->checkRoomTermperatureForFallback($data['temperatur']);
                 if ($this->isSuccess($checkTemp)) {
                     $msgSuffix .= $this->getResponseMessage($checkTemp);
+                    $data['fallback_temperature'] = true;
                 }
                 $data['temperatur'] = $this->getResponsePayload($checkTemp);
             }
@@ -348,6 +349,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $checkHumidity = $this->checkHumidityForFallback($data['luftfeuchte']);
                 if ($this->isSuccess($checkHumidity)) {
                     $msgSuffix .= $this->getResponseMessage($checkHumidity);
+                    $data['fallback_humidity'] = true;
                 }
                 $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
             }
@@ -403,7 +405,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (isset($data['fallback_temperature'])){
             $hinweis .= "Temperatur vom Fallback-Termperaturmesser. ";
         }
-        if ((isset($data['remaining_time']) && intval($data['remaining_time'])>0) || (isset($data['fallback_temperature']) || isset($data['fallback_humidity'])>0)){
+        if (isset($data['fallback_humidity'])){
             $hinweis .= "Luftfeuchtigkeit vom Fallback-Luftfeuchtigkeitsmesser. ";
         }
         $this->SetValue("Hinweis", $hinweis);
