@@ -339,16 +339,18 @@ class ContromeRoomThermostat extends IPSModuleStrict
             // Fallback for temperature
             if (!isset($data['temperatur']) || is_null($data['temperatur']) || $data['temperatur'] === '') {
                 $checkTemp = $this->checkRoomTermperatureForFallback($data['temperatur']);
-                $data['temperatur'] = $this->getResponsePayload($checkTemp);
                 if ($this->isSuccess($checkTemp)) {
+                    $payload = $this->getResponsePayload($checkTemp);
+                    $data['temperatur'] = $payload['Temperature'];
                     $msgSuffix .= $this->getResponseMessage($checkTemp);
                 }
             }
             // Fallback for humidity
             if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || !is_numeric($data['luftfeuchte'])) {
                 $checkHumidity = $this->checkHumidityForFallback($data['luftfeuchte']);
-                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
                 if ($this->isSuccess($checkHumidity)) {
+                    $payload = $this->getResponsePayload($checkHumidity);
+                    $data['luftfeuchte'] = $payload['Humidity'];
                     $msgSuffix .= $this->getResponseMessage($checkHumidity);
                 }
             }
