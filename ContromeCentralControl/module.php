@@ -302,10 +302,10 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
-                                if ($this->isSuccess($response, KL_DEBUG, "Checking temperature response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
+                                if ($this->isSuccess($response, KL_DEBUG, "Checking temperature response. ") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
                                     $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
                                 } else {
-                                    $this->SetValue($roomVar . "Temperature",       0.0);
+                                    $this->SetValue($roomVar . "Temperature",       floatval($room['temperatur']));
                                 }
                             }
                         } else {
@@ -333,10 +333,11 @@ class ContromeCentralControl extends IPSModuleStrict
                                     $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback with instance: " . $instID, 0);
                                     $response = CONRT_GetEffectiveHumidity($instID);
                                     $payload = $this->getResponsePayload($response);
+                                    $this->SendDebug("Humidity payload:", print_r($payload, true), 0);
                                     if ($this->isSuccess($response, KL_DEBUG, "Checking humidity response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
                                         $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
                                     } else {
-                                        $this->SetValue($roomVar . "Humidity",       0.0);
+                                        $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
                                     }
                                 }
                             } else {

@@ -560,11 +560,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     private function checkHumidityForFallback(mixed $humidity): string
     {
-        if (!isset($humidity) || is_null($humidity)|| $humidity === '' || $humidity === 'kein aktueller Wert vorhanden' || is_nan($humidity) ) {
+        if (!isset($humidity) || is_null($humidity) || !is_numeric($humidity) || is_nan($humidity) ) {
             if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
                 $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
-                if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
-                    $newHumidity = floatval(GetValue($fallbackHumidityId));
+                if ($fallbackHumidityId > 0 && is_numeric(GetValueFloat($fallbackHumidityId))) {
+                    $newHumidity = floatval(GetValueFloat($fallbackHumidityId));
                     $msgSuffix = ", humidity taken from fallback variable";
                 } else {
                     $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");
