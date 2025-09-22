@@ -334,15 +334,14 @@ class ContromeCentralControl extends IPSModuleStrict
                                     $response = CONRT_GetEffectiveTemperature($instID);
                                     $payload = $this->getResponsePayload($response);
                                     if ($this->isSuccess($response, KL_DEBUG, "Checking response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
-                                        $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
+                                        $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
                                     } else {
-                                        $this->SetValue($roomVar . "Temperature",       0.0);
+                                        $this->SetValue($roomVar . "Humidity",       0.1);
                                     }
                                 }
                             } else {
-                                $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
+                                $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
                             }
-                            $this->SetValue(        $roomVar . "Humidity",          floatval($room['luftfeuchte']));
                         }
                         // ---------------------------
                         // Offsets verarbeiten (wenn vorhanden)

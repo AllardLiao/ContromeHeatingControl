@@ -570,11 +570,13 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");
                     $msgSuffix = ", humidity taken from fallback value";
                 }
-                return $this->wrapReturn(true, $msgSuffix, floatval($newHumidity));
+                $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => floatval($newHumidity)];
+                return $this->wrapReturn(true, $msgSuffix, $payload);
             } else {
                 return $this->wrapReturn(false, "Fallback not activated.", 0.0);
             }
         }
-        return $this->wrapReturn(true, "No fallback needed.", $humidity);
+        $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => floatval($humidity)];
+        return $this->wrapReturn(true, "No fallback needed.", $payload);
     }
 }
