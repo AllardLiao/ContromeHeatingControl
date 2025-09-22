@@ -901,6 +901,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'action'   => $action,
             'payload'  => $payload
         ]);
+        $this->SendDebug(__FUNCTION__, "Sending updates to visu. Data: " . print_r($payload, true));
         $json = json_encode($payload);
         $this->UpdateVisualizationValue($json);
     }
