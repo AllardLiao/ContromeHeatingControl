@@ -537,7 +537,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
                     . '<div><strong>Ist:</strong><span>' . ($room['temperature'] ?? '--') . ' °C</span></div>';
-                //$roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>';
+                //$roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . ' °C</span></div>';
                 $roomHtml .= '<div><strong>Soll:</strong><span>';
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
@@ -545,12 +545,12 @@ class ContromeCentralControl extends IPSModuleStrict
                     $minutes = $room['remaining_time'] % 60;
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                     $roomHtml .= '<div class="room-temp-schedule">'
-                                . '<div><strong>Temporär-Soll:</strong><span>' . ($room['target'] ?? '--') . '°C</span></div>'
+                                . '<div><strong>Temporär-Soll:</strong><span>' . ($room['target'] ?? '--') . ' °C</span></div>'
                                 . '<div><strong>Restzeit:</strong><span>' . $hoursMinutes . ' h</span></div>'
                                 . '</div>';
                 }
                 else {
-                    $roomHtml .= ($room['target'] ?? '--') . '°C'
+                    $roomHtml .= ($room['target'] ?? '--') . ' °C'
                         //. '<br><i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
                         . '</span></div>';
                 }
