@@ -326,7 +326,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
-                            if (!isset($room['Humidity']) || is_null($room['Humidity']) || !is_numeric($room['Humidity']) || (floatval($room['Humidity']) <= 0) || (floatval($room['Humidity']) > 100)) {
+                            if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
                                 $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback room: " . $roomID, 0);
                                 $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                                 foreach ($thermostats as $instID) {
