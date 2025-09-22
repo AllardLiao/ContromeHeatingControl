@@ -395,7 +395,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->MaintainVariable($roomVar . "PrimarySensorName", $roomVar . "-PrimarySensorName", VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue($roomVar . "PrimarySensorName", (string)$primaryName);
                             $this->MaintainVariable($roomVar . "PrimarySensorValue", $roomVar . "-PrimarySensorValue", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue($roomVar . "PrimarySensorValue", $primaryValue);
+                            $this->SetValue($roomVar . "PrimarySensorValue", is_null($primaryValue) ? 0.0 : $primaryValue);
                             $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
                         }
@@ -609,7 +609,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
-                                . '<td>' . (isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : '--') . '</td>'
+                                . '<td>' . ((isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) && ($room['primary_sensor_value'] > 0)) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_last_info'] ?? '--') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
