@@ -348,6 +348,16 @@ function showMessage(text, type = "success", duration = 4) {
     }, duration * 1000);
 }
 
+function refreshRooms($msg) {
+    if (msg.payload && msg.payload.updates) {
+        msg.payload.updates.forEach(update => {
+            const el = document.getElementById(update.id);
+            if (el) el.textContent = update.value;
+        });
+    }
+    return;
+}
+
 function handleMessage(data) {
     let message;
     try {
