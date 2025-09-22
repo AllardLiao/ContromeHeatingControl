@@ -507,7 +507,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function getEffectiveTemperature(): string
     {
         $temp = floatval($this->GetValue('Temperature'));
-        if (is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature
+        if (is_null($temp) || is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature
             $temp = 0.0;
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
             return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->ReadPropertyInteger('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
@@ -519,7 +519,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     private function checkRoomTermperatureForFallback(mixed $temperature): string
     {
-        if (is_nan($temperature)) { // Controm liefert null
+        if (!isset($temperature) || is_null($temperature) || is_nan($temperature)) { // Controm liefert null
             if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
                 $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
                 if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
@@ -539,7 +539,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     private function checkHumidityForFallback(mixed $humidity): string
     {
-        if (!isset($humidity) || is_nan($humidity) || is_null($humidity) || $humidity === '' || $humidity === 'kein aktueller Wert vorhanden') {
+        if (!isset($humidity) || is_null($humidity)|| $humidity === '' || $humidity === 'kein aktueller Wert vorhanden' || is_nan($humidity) ) {
             if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
                 $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
                 if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
