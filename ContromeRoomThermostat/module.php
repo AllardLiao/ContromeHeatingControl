@@ -273,13 +273,12 @@ class ContromeRoomThermostat extends IPSModuleStrict
             if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || $data['luftfeuchte'] === '' || $data['luftfeuchte'] === 'kein aktueller Wert vorhanden') {
                 if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
                     $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
-                    if ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId))) {
-                        $data['luftfeuchte'] = floatval(GetValue($fallbackHumidityId));
-                        $msgSuffix .= ", humidity taken from fallback variable";
-                    } else {
-                        $data['luftfeuchte'] = $this->ReadPropertyFloat("FallbackHumidityValue");
-                        $msgSuffix .= ", humidity taken from fallback value";
-                    }
+                    $data['luftfeuchte'] = ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId)))
+                        ? floatval(GetValue($fallbackHumidityId))
+                        : $this->ReadPropertyFloat("FallbackHumidityValue");
+                    $msgSuffix = ($fallbackHumidityId > 0 && is_numeric(GetValue($fallbackHumidityId)))
+                        ? ", taken from fallback variable"
+                        : ", taken from fallback value";
                 } else {
                     $data['luftfeuchte'] = "n/a";
                 }
@@ -397,13 +396,17 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (isset($data['betriebsart'])) {
             $this->SetValue("Mode", CONTROME_PROFILES::getValueBetriebsart($data['betriebsart']));
         }
-        if (isset($data['remaining_time']) && intval($data['remaining_time'])>0){
-            $msg = "Temporäre Temperaturänderung bis " . date("H:i", time() + intval($data['remaining_time'])) . ". Danach wieder " . floatval($data['perm_solltemperatur']) . " °C";
-            $this->SetValue("Hinweis", $msg);
+        $hinweis = "";
+        if ((isset($data['remaining_time']) && intval($data['remaining_time'])>0)){
+            $hinweis .= "Temporäre Temperaturänderung bis " . date("H:i", time() + intval($data['remaining_time'])) . ". Danach wieder " . floatval($data['perm_solltemperatur']) . " °C. ";
         }
-        else {
-            $this->SetValue("Hinweis", "");
+        if (isset($data['fallback_temperature'])){
+            $hinweis .= "Temperatur vom Fallback-Termperaturmesser. ";
         }
+        if ((isset($data['remaining_time']) && intval($data['remaining_time'])>0) || (isset($data['fallback_temperature']) || isset($data['fallback_humidity'])>0)){
+            $hinweis .= "Luftfeuchtigkeit vom Fallback-Luftfeuchtigkeitsmesser. ";
+        }
+        $this->SetValue("Hinweis", $hinweis);
     }
 
     private function WriteSetpoint(float $value): string
