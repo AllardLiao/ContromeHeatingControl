@@ -351,7 +351,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     $msgSuffix .= $this->getResponseMessage($checkHumidity);
                     $data['fallback_humidity'] = true;
                 }
-                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);sfgf
+                $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
             }
             $msg = "Fetching Data: Room $roomId found and data seems valid. (Returned room name \"" . $data['name'] . "\" with temperature " . $data['temperatur'] . " °C" . $msgSuffix . ")";
             $this->SendDebug(__FUNCTION__, $msg, 0);
