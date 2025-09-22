@@ -345,7 +345,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 }
             }
             // Fallback for humidity
-            if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || $data['luftfeuchte'] === '' || $data['luftfeuchte'] === 'kein aktueller Wert vorhanden') {
+            if (!isset($data['luftfeuchte']) || is_null($data['luftfeuchte']) || !is_numeric($data['luftfeuchte'])) {
                 $checkHumidity = $this->checkHumidityForFallback($data['luftfeuchte']);
                 $data['luftfeuchte'] = $this->getResponsePayload($checkHumidity);
                 if ($this->isSuccess($checkHumidity)) {
