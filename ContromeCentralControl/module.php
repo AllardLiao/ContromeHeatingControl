@@ -422,7 +422,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
                             //Visu-Update für Sensoren
                             $otherSensors = array_filter($sensorsArray, function($s) use ($room) {
-                                return $s['name'] !== $room['primary_sensor_name'];
+                                return $s['name'] !== $this->GetValue('primary_sensor_name');
                             });
                             foreach ($otherSensors as $sensor) {
                                 if (!$sensor['raumtemperatursensor']) {
