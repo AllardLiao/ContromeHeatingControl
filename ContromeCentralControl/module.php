@@ -440,8 +440,8 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
                             //Visu-Update für Sensoren
-                            $otherSensors = array_filter($sensorsArray, function($s) use ($room) {
-                                return $s['name'] !== $this->GetValue('primary_sensor_name');
+                            $otherSensors = array_filter($sensorsArray, function($s) use ($room, $primaryName) {
+                                return $s['name'] !== $primaryName;
                             });
                             foreach ($otherSensors as $sensor) {
                                 if (!$sensor['raumtemperatursensor']) {
