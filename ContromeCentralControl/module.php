@@ -308,11 +308,11 @@ class ContromeCentralControl extends IPSModuleStrict
                                     $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => $payload["Temperature"] . " °C", "allowHtml" => true];
                                 } else {
                                     $this->SetValue($roomVar . "Temperature",       floatval($room['temperatur']));
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C", "allowHtml" => true]];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C", "allowHtml" => true];
                                 }
                             }
                         } else {
-                            $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']), "allowHtml" => true]);
+                            $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C"];
                         }
                         $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
@@ -326,14 +326,14 @@ class ContromeCentralControl extends IPSModuleStrict
 
                         // In der Anzeige wird bei temporärer Änderung die Darstellung gedreht und die Solltemp durchgestrichen
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>", "allowHtml" => true]];
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true]];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>", "allowHtml" => true];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
                         } else {
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['perm_solltemperatur']) . " °C", "allowHtml" => true]];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['perm_solltemperatur']) . " °C", "allowHtml" => true];
                         }
 
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format(isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0, 2, ',', '') . " °C", "allowHtml" => true]];
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format(isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0, 2, ',', '') . " °C", "allowHtml" => true];
 
                         $hoursMinutes = "00:00";
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
@@ -341,12 +341,12 @@ class ContromeCentralControl extends IPSModuleStrict
                             $minutes = $room['remaining_time'] % 60;
                             $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                         }
-                        $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => $hoursMinutes . " h", "allowHtml" => true]];
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => $hoursMinutes . " h", "allowHtml" => true];
 
                         if (isset($data[ACTIONs::DATA_EXTENDED])){
                             $this->MaintainVariable($roomVar . "State",             $roomVar . "-Status",           VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_state", 'value' => $room['betriebsart'], "allowHtml" => true]];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_state", 'value' => $room['betriebsart'], "allowHtml" => true];
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
                             if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
@@ -359,15 +359,15 @@ class ContromeCentralControl extends IPSModuleStrict
                                     $this->SendDebug("Humidity payload:", print_r($payload, true), 0);
                                     if ($this->isSuccess($response, KL_DEBUG, "Checking humidity response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
                                         $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
-                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($payload["Humidity"]) . "%", "allowHtml" => true]];
+                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($payload["Humidity"]) . "%", "allowHtml" => true];
                                     } else {
                                         $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
-                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true]];
+                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true];
                                     }
                                 }
                             } else {
                                 $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
-                                $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true]];
+                                $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true];
                             }
                         }
                         // ---------------------------
@@ -387,7 +387,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             foreach ($offsetsArray as $values) {
                                 $sum += isset($values['raum']) ? floatval($values['raum']) : 0;
                             }
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format($sum, 2, ',', '') . " °C", "allowHtml" => true]];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format($sum, 2, ',', '') . " °C", "allowHtml" => true];
                             // Offsets-Details für Visu-Update
                             foreach ($room['offsets'] as $offsetName => $values) {
                                 $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
