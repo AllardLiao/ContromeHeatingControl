@@ -315,12 +315,13 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue(        $roomVar . "OffsetTotal",        isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
 
                         // In der Anzeige wird bei temporärer Änderung die Darstellung gedreht und die Solltemp durchgestrichen
+                        $hoursMinutes = "00:00";
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+                            $hours = floor($room['remaining_time'] / 3600); // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
+                            $minutes = floor(($room['remaining_time'] % 3600) / 60);
+                            $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
-                            $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
-                            $minutes = $room['remaining_time'] % 60;
-                            $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => $hoursMinutes . " h", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_block", 'show' => true];
                         } else {
@@ -331,12 +332,6 @@ class ContromeCentralControl extends IPSModuleStrict
 
                         $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format(isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0, 2, ',', '') . " °C", "allowHtml" => true];
 
-                        $hoursMinutes = "00:00";
-                        if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                            $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
-                            $minutes = $room['remaining_time'] % 60;
-                            $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                        }
                         $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => $hoursMinutes . " h", "allowHtml" => true];
 
                         if (isset($data[ACTIONs::DATA_EXTENDED])){
