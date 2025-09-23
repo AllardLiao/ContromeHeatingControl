@@ -215,15 +215,7 @@ class ContromeCentralControl extends IPSModuleStrict
     {
         $this->SendDebug(__FUNCTION__, "Received data: " . print_r($data, true), 0);
 
-        /***  Message an Visu vorbereiten
-            $this->SendVisuMessage("REFRESH", [
-                'updates' => [
-                    [ 'id' => "room_{$roomId}_temperature", 'value' => $newTemp . "°C" ],
-                    [ 'id' => "room_{$roomId}_target",      'value' => $newTarget . "°C" ],
-                    [ 'id' => "room_{$roomId}_humidity",    'value' => $newHumidity . "%" ]
-                ]
-            ]);
-        */
+        //  Message an Visu vorbereiten
         $updatesVisu = [];
 
         // ======================
@@ -753,11 +745,11 @@ class ContromeCentralControl extends IPSModuleStrict
         $rooms = [];
         $floorID = 1;
 
-        while (@IPS_GetObjectIDByIdent("Floor{$floorID}ID", $this->InstanceID) !== false) {
+        while (@IPS_GetObjectIDByIdent("Floor" . $floorID, $this->InstanceID) !== false) {
             $roomID = 1;
-            while (@IPS_GetObjectIDByIdent("Floor{$floorID}Room{$roomID}ID", $this->InstanceID) !== false) {
-                $floorVar = "Floor{$floorID}";
-                $roomVar = "Floor{$floorID}Room{$roomID}";
+            while (@IPS_GetObjectIDByIdent("Floor" . $floorID . "Room" . $roomID . "ID", $this->InstanceID) !== false) {
+                $floorVar = "Floor" . $floorID;
+                $roomVar = $floorVar . "Room" . $roomID;
 
                 $roomData = [
                     'id'   => $this->GetValue($roomVar . "ID"),
