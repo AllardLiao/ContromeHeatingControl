@@ -595,7 +595,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                 }
 
-                // safe values
+/***                // safe values
                 $roomId = (int)$room['id'];
                 $roomName = htmlspecialchars($room['name'] ?? 'Unbekannt', ENT_QUOTES);
 
@@ -634,7 +634,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
                 // Ende room-values & room-tile
                 $roomHtml .= '</div></div>';
-/***
+*/
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
@@ -656,7 +656,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         //. '<br><i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
                         . '</span></div>';
                 }
-*/
+
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity">' . ($room['humidity'] ?? '--') . '%</span></div>'
