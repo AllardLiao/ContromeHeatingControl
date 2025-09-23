@@ -595,24 +595,45 @@ class ContromeCentralControl extends IPSModuleStrict
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                 }
 
-                $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
-                    . '<div class="room-header">' . $room['name'] . '</div>'
+                // safe values
+                $roomId = (int)$room['id'];
+                $roomName = htmlspecialchars($room['name'] ?? 'Unbekannt', ENT_QUOTES);
+
+                // Determine if there is a temporary target (remaining_time > 0)
+                $hasTempSchedule = isset($room['remaining_time']) && intval($room['remaining_time']) > 0;
+                $hoursMinutes = '00:00';
+                if ($hasTempSchedule) {
+                    $rt = intval($room['remaining_time']); // API liefert Sekunden
+                    $hours = floor($rt / 3600);
+                    $minutes = floor(($rt % 3600) / 60);
+                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                }
+
+                // build html
+                $roomHtml = '<div class="room-tile" id="room_' . $roomId . '">'
+                    . '<div class="room-header">' . $roomName . '</div>'
                     . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong> <span id="room_' . $room['id'] . '_temperature">'
-                        . ($room['temperature'] ?? '--') . ' °C</span></div>'
-                    . '<div><strong>Soll:</strong> '
-                        . '<span id="room_' . $room['id'] . '_target">' . ($room['target'] ?? '--') . ' °C</span>'
-                        . '<span id="room_' . $room['id'] . '_perm_target" style="display:none;"><s>'
-                            . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span>'
-                    . '</div>'
-                    . '<div id="room_' . $room['id'] . '_temp_block" style="display:none;">'
-                        . '<div><strong>Temporär-Soll:</strong> <span id="room_' . $room['id'] . '_target_temp">'
-                            . ($room['target'] ?? '--') . ' °C</span></div>'
-                        . '<div><strong>Restzeit:</strong> <span id="room_' . $room['id'] . '_target_temp_time">'
-                            . $hoursMinutes . ' h</span></div>'
-                    . '</div>'
-                    . '</div>'
+                        // Ist
+                        . '<div><strong>Ist:</strong> <span id="room_' . $roomId . '_temperature">'
+                            . (isset($room['temperature']) ? number_format((float)$room['temperature'], 2, '.', ',') : '--') . ' °C</span></div>'
+                        // Soll (permanent) + durchgestrichenes perm Soll (falls temporär aktiv)
+                        . '<div><strong>Soll:</strong> '
+                            . '<span id="room_' . $roomId . '_target">'
+                                . (isset($room['target']) ? number_format((float)$room['target'], 2, '.', ',') : '--') . ' °C</span>'
+                            . '<span id="room_' . $roomId . '_perm_target" style="' . ($hasTempSchedule ? '' : 'display:none;') . '"><s>'
+                                . (isset($room['perm_solltemperatur']) ? number_format((float)$room['perm_solltemperatur'], 2, '.', ',') : '--') . ' °C</s></span>'
+                        . '</div>';
+
+
+                // Temporärer-Block (immer im DOM, bei Bedarf versteckt)
+                $roomHtml .= '<div class="room-temp-schedule" id="room_' . $roomId . '_temp_block" style="' . ($hasTempSchedule ? '' : 'display:none;') . '">'
+                    . '<div><strong>Temporär-Soll:</strong> <span id="room_' . $roomId . '_target_temp">'
+                        . (isset($room['target']) ? number_format((float)$room['target'], 2, '.', ',') : '--') . ' °C</span></div>'
+                    . '<div><strong>Restzeit:</strong> <span id="room_' . $roomId . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
                     . '</div>';
+
+                // Ende room-values & room-tile
+                $roomHtml .= '</div></div>';
 /***
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
