@@ -323,6 +323,10 @@ class ContromeCentralControl extends IPSModuleStrict
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
+                            $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
+                            $minutes = $room['remaining_time'] % 60;
+                            $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_time", 'value' => $hoursMinutes . " h", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_block", 'show' => true];
                         } else {
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
