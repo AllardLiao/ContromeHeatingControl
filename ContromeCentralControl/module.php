@@ -600,9 +600,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showNormal . '>' . ($room['target'] ?? '--') . ' °C</span></div>';
                 }
 
-                $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
-                $minutes = $room['remaining_time'] % 60;
-                $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                 $roomHtml .= '<div class="room-temp-schedule"' . $showTemp . ' id="room_' . $room['id'] . '_target_temp_block">'
                             . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp">' . ($room['target'] ?? '--') . ' °C</span></div>'
                             . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
@@ -732,6 +729,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // Informationen einfügen
         if ($this->ReadPropertyBoolean("ShowRooms")) {
             $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
+            $this->SendDebug(__FUNCTION__, "HTML: " . $roomTilesHtml, 0);
         }
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
@@ -789,7 +787,6 @@ class ContromeCentralControl extends IPSModuleStrict
             }
             $floorID++;
         }
-        $this->SendDebug(__FUNCTION__, "Data delivered: " . print_r($rooms, true), 0);
         return $rooms;
     }
 
