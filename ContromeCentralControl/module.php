@@ -595,47 +595,40 @@ class ContromeCentralControl extends IPSModuleStrict
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                 }
 
-/***                // safe values
-                $roomId = (int)$room['id'];
-                $roomName = htmlspecialchars($room['name'] ?? 'Unbekannt', ENT_QUOTES);
 
-                // Determine if there is a temporary target (remaining_time > 0)
-                $hasTempSchedule = isset($room['remaining_time']) && intval($room['remaining_time']) > 0;
-                $hoursMinutes = '00:00';
-                if ($hasTempSchedule) {
-                    $rt = intval($room['remaining_time']); // API liefert Sekunden
-                    $hours = floor($rt / 3600);
-                    $minutes = floor(($rt % 3600) / 60);
-                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                }
+$roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
+    . '<div class="room-header">' . $room['name'] . '</div>'
+    . '<div class="room-values">'
+        // Ist
+        . '<div><strong>Ist:</strong> <span id="room_' . $room['id'] . '_temperature">'
+            . ($room['temperature'] ?? '--') . ' °C</span></div>';
 
-                // build html
-                $roomHtml = '<div class="room-tile" id="room_' . $roomId . '">'
-                    . '<div class="room-header">' . $roomName . '</div>'
-                    . '<div class="room-values">'
-                        // Ist
-                        . '<div><strong>Ist:</strong> <span id="room_' . $roomId . '_temperature">'
-                            . (isset($room['temperature']) ? number_format((float)$room['temperature'], 2, '.', ',') : '--') . ' °C</span></div>'
-                        // Soll (permanent) + durchgestrichenes perm Soll (falls temporär aktiv)
-                        . '<div><strong>Soll:</strong> '
-                            . '<span id="room_' . $roomId . '_target">'
-                                . (isset($room['target']) ? number_format((float)$room['target'], 2, '.', ',') : '--') . ' °C</span>'
-                            . '<span id="room_' . $roomId . '_perm_target" style="' . ($hasTempSchedule ? '' : 'display:none;') . '"><s>'
-                                . (isset($room['perm_solltemperatur']) ? number_format((float)$room['perm_solltemperatur'], 2, '.', ',') : '--') . ' °C</s></span>'
-                        . '</div>';
+// Soll + temporäre Logik
+$roomHtml .= '<div><strong>Soll:</strong> <span id="room_' . $room['id'] . '_target">';
+if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
+    // 1. Permanent-Wert durchgestrichen
+    $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
 
+    // 2. temporär-block anhängen
+    $hours = floor($room['remaining_time'] / 3600);
+    $minutes = $room['remaining_time'] % 60;
+    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
 
-                // Temporärer-Block (immer im DOM, bei Bedarf versteckt)
-                $roomHtml .= '<div class="room-temp-schedule" id="room_' . $roomId . '_temp_block" style="' . ($hasTempSchedule ? '' : 'display:none;') . '">'
-                    . '<div><strong>Temporär-Soll:</strong> <span id="room_' . $roomId . '_target_temp">'
-                        . (isset($room['target']) ? number_format((float)$room['target'], 2, '.', ',') : '--') . ' °C</span></div>'
-                    . '<div><strong>Restzeit:</strong> <span id="room_' . $roomId . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
-                    . '</div>';
+    $roomHtml .= '<div class="room-temp-schedule">'
+        . '<div><strong>Temporär-Soll:</strong> <span id="room_' . $room['id'] . '_target_temp">'
+            . ($room['target'] ?? '--') . ' °C</span></div>'
+        . '<div><strong>Restzeit:</strong> <span id="room_' . $room['id'] . '_target_temp_time">'
+            . $hoursMinutes . ' h</span></div>'
+        . '</div>';
+} else {
+    // 3. kein temporär, einfach Zielwert
+    $roomHtml .= ($room['target'] ?? '--') . ' °C</span></div>';
+}
 
-                // Ende room-values & room-tile
-                $roomHtml .= '</div></div>';
-*/
-                $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
+// Wrapper schließen
+$roomHtml .= '</div></div>';
+
+/***                $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
                     . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature">' . ($room['temperature'] ?? '--') . ' °C</span></div>';
@@ -656,7 +649,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         //. '<br><i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
                         . '</span></div>';
                 }
-
+*/
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity">' . ($room['humidity'] ?? '--') . '%</span></div>'
