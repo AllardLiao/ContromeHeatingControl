@@ -82,6 +82,9 @@
         .room-values div span, .room-temp-schedule div span {
             flex: 1; /* rechte Spalte, linksbündig */
         }
+        .room-temp-schedule.hidden {
+            display: none !important;
+        }
         .room-separator {
             border: none;
             border-top: 1px solid #ccc;
@@ -149,7 +152,7 @@
             flex: 1;
         }
 
-        .hidden { display: none !important; }
+        .hidden { display: none; }
         .visible { display: block; }
 
         /* User-Rückmeldungen */
