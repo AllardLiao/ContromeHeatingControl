@@ -296,6 +296,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue        ($roomVar . "Name", (string) $roomName);
                         // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback festgelegt ist:
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $temperature = isset($room['temperatur']) && is_numeric($room['temperatur']) ? floatval($room['temperatur']) : 0.0;
                         if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
                             $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback room: " . $roomID, 0);
                             $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
@@ -303,13 +304,15 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
-                                $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
-                                $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => $payload["Temperature"] . " °C", "allowHtml" => true];
+                                if ($payload["RoomID"] != $roomID){
+                                    // Es gibt eine Instanz das uns "korrektere" daten liefern kann
+                                    $temperature = $payload["Temperature"];
+                                }
                             }
-                        } else {
-                            $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C"];
                         }
+                        $this->SetValue($roomVar . "Temperature",       $temperature);
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => $temperature . " °C", "allowHtml" => true];
+
                         $this->MaintainVariable($roomVar . "Target",            $roomVar . "-Solltemperatur",  VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "Target",            floatval($room['solltemperatur']));
                         $this->MaintainVariable($roomVar . "RemainingTime",     $roomVar . "-Restzeit",           VARIABLETYPE_INTEGER, "", $positionCounter++, true);
@@ -349,22 +352,22 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue(        $roomVar . "State",             $room['betriebsart']);
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_state", 'value' => $room['betriebsart'], "allowHtml" => true];
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
+                            $humidity = isset($room['luftfeuchte']) && is_numeric($room['luftfeuchte']) ? floatval($room['luftfeuchte']) : 0.0;
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
                             if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
                                 $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback room: " . $roomID, 0);
                                 $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                                 foreach ($thermostats as $instID) {
-                                    $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback with instance: " . $instID, 0);
                                     $response = CONRT_GetEffectiveHumidity($instID);
                                     $payload = $this->getResponsePayload($response);
-                                    $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($payload["Humidity"]) . "%", "allowHtml" => true];
-                                    $this->SendDebug("Humidity payload:", print_r($payload, true), 0);
+                                    if ($payload["RoomID"] != $roomID){
+                                        // Es gibt eine Instanz das uns "korrektere" daten liefern kann
+                                        $humidity = $payload["Humidity"];
+                                    }
                                 }
-                            } else {
-                                $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
-                                $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true];
                             }
+                            $this->SetValue(    $roomVar . "Humidity",       $humidity);
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => $humidity . "%", "allowHtml" => true];
                         }
                         // ---------------------------
                         // Offsets verarbeiten (wenn vorhanden)
