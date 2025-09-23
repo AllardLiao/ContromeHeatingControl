@@ -323,11 +323,11 @@ class ContromeCentralControl extends IPSModuleStrict
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => "<s>" . floatval($room['perm_solltemperatur']) . " °C</s>", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'show' => true];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_block", 'show' => true];
                         } else {
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target", 'value' => floatval($room['solltemperatur']) . " °C", "allowHtml" => true];
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'value' => floatval($room['perm_solltemperatur']) . " °C", "allowHtml" => true];
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp", 'show' => false];
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_target_temp_block", 'show' => false];
                         }
 
                         $updatesVisu[] = ['id' => "room_" . $roomID . "_offset_sum", 'value' => number_format(isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0, 2, ',', '') . " °C", "allowHtml" => true];
@@ -596,40 +596,19 @@ class ContromeCentralControl extends IPSModuleStrict
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $showNormal = "style='display:none;'";
                     $showTemp = "style='display:block;'";
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showTemp . '><s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
+                } else {
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showNormal . '>' . ($room['target'] ?? '--') . ' °C</span></div>';
                 }
-                $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showNormal . '>' . ($room['target'] ?? '--') . ' °C</span></div>';
-                $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showTemp . '><s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
 
                 $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
                 $minutes = $room['remaining_time'] % 60;
                 $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                $roomHtml .= '<div class="room-temp-schedule"' . $showTemp . '>'
+                $roomHtml .= '<div class="room-temp-schedule"' . $showTemp . ' id="room_' . $room['id'] . '_target_temp_block">'
                             . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp">' . ($room['target'] ?? '--') . ' °C</span></div>'
                             . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
                             . '</div>';
 
-/***                $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
-                    . '<div class="room-header">' . $room['name'] . '</div>'
-                    . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature">' . ($room['temperature'] ?? '--') . ' °C</span></div>';
-                //$roomHtml .= '<div><strong>Soll:</strong><span>' . ($room['target'] ?? '--') . ' °C</span></div>';
-                $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target">';
-                if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
-                    $roomHtml .= '<s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
-                    $hours = floor($room['remaining_time'] / 3600);  // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
-                    $minutes = $room['remaining_time'] % 60;
-                    $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
-                    $roomHtml .= '<div class="room-temp-schedule">'
-                                . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp">' . ($room['target'] ?? '--') . ' °C</span></div>'
-                                . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
-                                . '</div>';
-                }
-                else {
-                    $roomHtml .= ($room['target'] ?? '--') . ' °C'
-                        //. '<br><i  style="font-size: 0.8rem;">(keine temp. Soll-Temperatur)</i>'
-                        . '</span></div>';
-                }
-*/
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity">' . ($room['humidity'] ?? '--') . '%</span></div>'
