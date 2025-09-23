@@ -304,7 +304,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
-                                if ($payload["RoomID"] === $roomID){
+                                if ((int)$payload["RoomID"] === (int)$roomID){
                                     // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                     $temperature = $payload["Temperature"];
                                 }
@@ -360,7 +360,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 foreach ($thermostats as $instID) {
                                     $response = CONRT_GetEffectiveHumidity($instID);
                                     $payload = $this->getResponsePayload($response);
-                                    if ($payload["RoomID"] === $roomID){
+                                    if ((int)$payload["RoomID"] === (int)$roomID){
                                         // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                         $humidity = $payload["Humidity"];
                                     }
