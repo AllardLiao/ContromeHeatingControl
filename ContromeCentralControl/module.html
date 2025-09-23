@@ -354,28 +354,57 @@ function showMessage(text, type = "success", duration = 4) {
     }, duration * 1000);
 }
 
-function refreshRooms(msg) {
-    if (msg.payload && msg.payload.updates) {
-        msg.payload.updates.forEach(update => {
-            const el = document.getElementById(update.id);
-            if (el) {
-                // Prüfen ob HTML erlaubt sein soll
+// erwartet: message = { action: "REFRESH", payload: { updates: [ { id, value?, allowHtml?, show? }, ... ] } }
+
+function refreshRooms(payload) {
+    if (!payload || !Array.isArray(payload.updates)) {
+        console.warn("refreshRooms: kein gültiger payload oder keine updates:", payload);
+        return;
+    }
+
+    payload.updates.forEach(update => {
+        if (!update || !update.id) return;
+
+        const el = document.getElementById(update.id);
+        if (!el) {
+            console.warn("refreshRooms: Element nicht gefunden:", update.id, update);
+            return;
+        }
+
+        // Falls eine value geliefert wird: entweder HTML oder Text setzen
+        if (Object.prototype.hasOwnProperty.call(update, 'value')) {
+            try {
                 if (update.allowHtml) {
                     el.innerHTML = update.value;
                 } else {
                     el.textContent = update.value;
                 }
+            } catch (e) {
+                console.error("refreshRooms: Fehler beim Setzen value für", update.id, e);
             }
+        }
 
-            // Block ein-/ausblenden.
-            if (update.hasOwnProperty("show")) {
-                el.style.display = update.show ? "block" : "none";
+        // Falls show geliefert wird: sichtbar/unsichtbar schalten
+        if (Object.prototype.hasOwnProperty.call(update, 'show')) {
+            // wir nutzen nur .hidden (und entfernen optional .visible)
+            if (update.show) {
+                el.classList.remove('hidden');
+                el.classList.add('visible'); // optional
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('visible'); // optional
             }
-            if (update.hasOwnProperty("value")) {
-                el.innerHTML = update.value;
+        }
+
+        // Falls enable/disable (für Buttons) - optional
+        if (Object.prototype.hasOwnProperty.call(update, 'disabled')) {
+            try {
+                el.disabled = !!update.disabled;
+            } catch (e) {
+                // falls el kein input/button ist
             }
-        });
-    }
+        }
+    });
 }
 
 function handleMessage(data) {
