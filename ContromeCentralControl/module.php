@@ -789,6 +789,7 @@ class ContromeCentralControl extends IPSModuleStrict
             }
             $floorID++;
         }
+        $this->SendDebug(__FUNCTION__, "Data delivered: " . print_r($rooms, true), 0);
         return $rooms;
     }
 
