@@ -745,11 +745,11 @@ class ContromeCentralControl extends IPSModuleStrict
         $rooms = [];
         $floorID = 1;
 
-        while (@IPS_GetObjectIDByIdent("Floor" . $floorID, $this->InstanceID) !== false) {
+        while (@IPS_GetObjectIDByIdent("Floor{$floorID}ID", $this->InstanceID) !== false) {
             $roomID = 1;
-            while (@IPS_GetObjectIDByIdent("Floor" . $floorID . "Room" . $roomID . "ID", $this->InstanceID) !== false) {
-                $floorVar = "Floor" . $floorID;
-                $roomVar = $floorVar . "Room" . $roomID;
+            while (@IPS_GetObjectIDByIdent("Floor{$floorID}Room{$roomID}ID", $this->InstanceID) !== false) {
+                $floorVar = "Floor{$floorID}";
+                $roomVar = "Floor{$floorID}Room{$roomID}";
 
                 $roomData = [
                     'id'   => $this->GetValue($roomVar . "ID"),
