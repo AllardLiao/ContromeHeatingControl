@@ -316,8 +316,8 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->SetValue(        $roomVar . "RemainingTime",     intval($room['remaining_time']));
                         $this->MaintainVariable($roomVar . "PermSolltemperatur", $roomVar . "-SolltemperaturNormal",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $this->SetValue(        $roomVar . "PermSolltemperatur", floatval($room['perm_solltemperatur']));
-                        $this->MaintainVariable($roomVar . "OffsetTotal",           $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                        $this->SetValue(        $roomVar . "OffsetTotal",           isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
+                        $this->MaintainVariable($roomVar . "OffsetTotal",        $roomVar . "-TotalOffset",   VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "OffsetTotal",        isset($room['total_offset']) ? floatval($room['total_offset']) : 0.0);
 
                         // In der Anzeige wird bei temporärer Änderung die Darstellung gedreht und die Solltemp durchgestrichen
                         if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
@@ -589,11 +589,11 @@ class ContromeCentralControl extends IPSModuleStrict
                     . '<div class="room-values">'
                     . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature">' . ($room['temperature'] ?? '--') . ' °C</span></div>';
 
-                $showNormal = "";
+                $showNormal = "style='display:;'";
                 $showTemp = "style='display:none;'";
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $showNormal = "style='display:none;'";
-                    $showTemp = "";
+                    $showTemp = "style='display:;'";
                 }
                 $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showNormal . '>' . ($room['target'] ?? '--') . ' °C</span></div>';
                 $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" ' . $showTemp . '><s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
