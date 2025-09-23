@@ -349,14 +349,35 @@ function showMessage(text, type = "success", duration = 4) {
 }
 
 function refreshRooms(msg) {
-    if (msg && msg.updates) {
-        msg.updates.forEach(update => {
+    if (msg.payload && msg.payload.updates) {
+        msg.payload.updates.forEach(update => {
             const el = document.getElementById(update.id);
             if (el) {
-                el.textContent = update.value;
-                console.log("Updated:", update.id, "→", update.value);
-            } else {
-                console.warn("Kein Element mit ID:", update.id);
+                // Prüfen ob HTML erlaubt sein soll
+                if (update.allowHtml) {
+                    el.innerHTML = update.value;
+                } else {
+                    el.textContent = update.value;
+                }
+            }
+
+            // Restzeit-Logik
+            if (update.id.endsWith("_target_temp_time")) {
+                const blockId = update.id.replace("_target_temp_time", "_temp_block");
+                const permId  = update.id.replace("_target_temp_time", "_perm_target");
+
+                const block = document.getElementById(blockId);
+                const perm  = document.getElementById(permId);
+
+                if (block && perm) {
+                    if (update.value === "0 min" || update.value === "--" || update.value === "00:00 h") {
+                        block.style.display = "none";
+                        perm.style.display = "none";
+                    } else {
+                        block.style.display = "";
+                        perm.style.display = "";
+                    }
+                }
             }
         });
     }
