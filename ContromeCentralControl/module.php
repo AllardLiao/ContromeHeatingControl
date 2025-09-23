@@ -419,17 +419,6 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue($roomVar . "SensorCount", $sensorCount);
                             $this->MaintainVariable($roomVar . "SensorsJSON", $roomVar . "-Sensors", VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue($roomVar . "SensorsJSON", json_encode($sensorsArray, JSON_UNESCAPED_UNICODE));
-
-                            //Visu-Update für Sensoren
-                            $otherSensors = array_filter($sensorsArray, function($s) use ($room) {
-                                return $s['name'] !== $this->GetValue('primary_sensor_name');
-                            });
-                            foreach ($otherSensors as $sensor) {
-                                if (!$sensor['raumtemperatursensor']) {
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : '--'), "allowHtml" => true];
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_lastinfo", 'value' => htmlspecialchars($sensor['letzte_uebertragung'] ?? '--'), "allowHtml" => true];
-                                }
-                            }
                             // Wenn vorhanden, primären (Raum-)Temperatursensor extrahieren
                             $primaryName = "";
                             $primaryValue = 0.0;
@@ -450,6 +439,16 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SetValue($roomVar . "PrimarySensorValue", is_null($primaryValue) ? 0.0 : $primaryValue);
                             $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
                             $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
+                            //Visu-Update für Sensoren
+                            $otherSensors = array_filter($sensorsArray, function($s) use ($room) {
+                                return $s['name'] !== $this->GetValue('primary_sensor_name');
+                            });
+                            foreach ($otherSensors as $sensor) {
+                                if (!$sensor['raumtemperatursensor']) {
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : '--'), "allowHtml" => true];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_lastinfo", 'value' => htmlspecialchars($sensor['letzte_uebertragung'] ?? '--'), "allowHtml" => true];
+                                }
+                            }
                         }
                     }
                 }
