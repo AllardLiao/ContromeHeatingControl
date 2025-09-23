@@ -303,13 +303,8 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
-                                if ($this->isSuccess($response, KL_DEBUG, "Checking temperature response. ") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
-                                    $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => $payload["Temperature"] . " °C", "allowHtml" => true];
-                                } else {
-                                    $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => floatval($room['temperatur']) . " °C", "allowHtml" => true];
-                                }
+                                $this->SetValue($roomVar . "Temperature",       $payload["Temperature"]);
+                                $updatesVisu[] = ['id' => "room_" . $roomID . "_temperature", 'value' => $payload["Temperature"] . " °C", "allowHtml" => true];
                             }
                         } else {
                             $this->SetValue(    $roomVar . "Temperature",       floatval($room['temperatur']));
@@ -356,14 +351,9 @@ class ContromeCentralControl extends IPSModuleStrict
                                     $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback with instance: " . $instID, 0);
                                     $response = CONRT_GetEffectiveHumidity($instID);
                                     $payload = $this->getResponsePayload($response);
+                                    $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($payload["Humidity"]) . "%", "allowHtml" => true];
                                     $this->SendDebug("Humidity payload:", print_r($payload, true), 0);
-                                    if ($this->isSuccess($response, KL_DEBUG, "Checking humidity response") && isset($payload['RoomID']) && $payload["RoomID"] == $roomID) {
-                                        $this->SetValue($roomVar . "Humidity",       $payload["Humidity"]);
-                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($payload["Humidity"]) . "%", "allowHtml" => true];
-                                    } else {
-                                        $this->SetValue(    $roomVar . "Humidity",       $payload["Humidity"]);
-                                        $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => floatval($room['luftfeuchte']) . "%", "allowHtml" => true];
-                                    }
                                 }
                             } else {
                                 $this->SetValue(    $roomVar . "Humidity",       floatval($room['luftfeuchte']));
