@@ -648,8 +648,8 @@ class ContromeCentralControl extends IPSModuleStrict
 
                         // Erste Zeile: Gesamt-Offset
                         $roomHtml .= '<tr class="offset-sum">'
-                                . '<td><strong>Gesamt-Offset</strong></td>'
-                                . '<td><strong id="room_' . $room['id'] . '_offset_sum" class="value-cell">' . number_format($sum, 2, ',', '') . ' °C</strong></td>'
+                                . '<td>Gesamt-Offset</td>'
+                                . '<td class="value-cell" id="room_' . $room['id'] . '_offset_sum"> ' . number_format($sum, 2, ',', '') . ' °C</td>'
                                 . '</tr>';
 
                         // Doppelstrich als Trenner
