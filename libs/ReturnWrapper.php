@@ -77,16 +77,17 @@ trait ReturnWrapper
      * Analyser for standard return messages
      *
      * If result is success, returns true otherwise false
-     * If optional params are set, logs messages in debug and logMessage
+     * If optional params are set, logs messages in debug and logMessage.
      * Note: isSuccess expects an JSON encoded string as created by wrapReturn! To check
      * other JSON strings, use isError() instead.
      * Note: only for 'fail' status, the LogMessage errType is used, in case of 'success' KL_NOTIFY is used.
      *
-     * @param string    $result       Return message to be checked and has to be created by wrapReturn!
-     * @param string    $errType      IPS error type for LogMessage in case of 'fail'. optional.
-     * @param string    $msg          Message to be logged. optional.
+     * @param string    $result             Return message to be checked and has to be created by wrapReturn!
+     * @param string    $errType            IPS error type for LogMessage in case of 'fail'. optional.
+     * @param string    $msg                Message to be logged. optional.
+     * @param bool      $onlyLogOnError     If true, only log on error. optional.
      */
-    protected function isSuccess(string $result, int $errType = 0, string $msg = ""): bool
+    protected function isSuccess(string $result, int $errType = 0, string $msg = "", bool $onlyLogOnError = false): bool
     {
         $decoded = json_decode($result, true);
         if (!is_array($decoded) ||

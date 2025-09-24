@@ -74,7 +74,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $result = $this->PingGateway($ip);
         $msg = $ip . " not reachable. Please check.";
-        if (!$this->isSuccess($result, KL_ERROR, $msg)) {
+        if (!$this->isSuccess($result, KL_ERROR, $msg, true)) {
             $this->SetStatus(IS_NO_CONNECTION);
             return;
         }
@@ -214,7 +214,7 @@ class ContromeGateway extends IPSModuleStrict
         // 1. Test: Daten da?
         $result = $this->checkConnectionPrerequisites();
         $msg = "Missing connection information.";
-        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        if (!$this->isSuccess($result, KL_ERROR, $msg, true))
         {
             $this->SetStatus(IS_INACTIVE);
             return $this->wrapReturn(false, $msg);
@@ -249,7 +249,7 @@ class ContromeGateway extends IPSModuleStrict
         $sendData = Array('RoomID' => $roomId, 'Setpoint' => $roomSollTemp);
         $result = $this->WriteSetpoint($sendData);
 
-        if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . "."))
+        if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . ".", true))
         {
             $msg = "Success - connection established for user " . $user;
             $this->UpdateFormField("Result", "caption", $msg);
@@ -274,7 +274,7 @@ class ContromeGateway extends IPSModuleStrict
     {
         $result = $this->checkConnectionPrerequisites();
         $msg = "Missing connection information.";
-        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        if (!$this->isSuccess($result, KL_ERROR, $msg, true))
         {
             $this->SetStatus(IS_INACTIVE);
             return $this->wrapReturn(false, $msg);
@@ -366,7 +366,7 @@ class ContromeGateway extends IPSModuleStrict
     {
         $result = $this->checkConnectionPrerequisites();
         $msg = "Can not fetch data. Missing connection information.";
-        if (!$this->isSuccess($result, KL_ERROR, $msg))
+        if (!$this->isSuccess($result, KL_ERROR, $msg, true))
         {
             return $this->wrapReturn(false, $msg);
         }
