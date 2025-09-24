@@ -606,7 +606,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
                 $roomHtml .= '<div class="room-temp-schedule' . $showTemp . '" id="room_' . $room['id'] . '_target_temp_block">'
                             . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp" class="value-cell">' . ($room['target'] ?? '--') . ' °C</span></div>'
-                            . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
+                            . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time" class="value-cell">' . $hoursMinutes . ' h</span></div>'
                             . '</div>';
 
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
