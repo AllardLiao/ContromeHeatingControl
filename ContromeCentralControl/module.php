@@ -954,7 +954,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 'msg' => "Error setting the mode: missing room id or mode id.",
                 'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
             ];
-            return $this->wrapReturn(false, 'Error: missing parameters in SetRoomMode', $payloadToVisu);
+            return $this->wrapReturn(false, 'Error: missing parameters in SetRoomMode: ' . print_r($params, true), $payloadToVisu);
         }
         // Raumliste erstellen
         $roomIds = $params['RoomIDs'];
