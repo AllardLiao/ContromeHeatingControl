@@ -591,20 +591,20 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature">' . ($room['temperature'] ?? '--') . ' °C</span></div>';
+                    . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature" class="value-cell">' . ($room['temperature'] ?? '--') . ' °C</span></div>';
 
                 $showNormal = " visible";
                 $showTemp = " hidden";
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $showNormal = " hidden";
                     $showTemp = " visible";
-                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="' . $showTemp . '"><s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showTemp . '"><s>' . ($room['perm_solltemperatur'] ?? '--') . ' °C</s></span></div>';
                 } else {
-                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="' . $showNormal . '">' . ($room['target'] ?? '--') . ' °C</span></div>';
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showNormal . '">' . ($room['target'] ?? '--') . ' °C</span></div>';
                 }
 
                 $roomHtml .= '<div class="room-temp-schedule' . $showTemp . '" id="room_' . $room['id'] . '_target_temp_block">'
-                            . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp">' . ($room['target'] ?? '--') . ' °C</span></div>'
+                            . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp" class="value-cell">' . ($room['target'] ?? '--') . ' °C</span></div>'
                             . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time">' . $hoursMinutes . ' h</span></div>'
                             . '</div>';
 
@@ -630,7 +630,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Erste Zeile: Gesamt-Offset
                         $roomHtml .= '<tr class="offset-sum">'
                                 . '<td><strong>Gesamt-Offset</strong></td>'
-                                . '<td><strong id="room_' . $room['id'] . '_offset_sum">' . number_format($sum, 2, ',', '') . ' °C</strong></td>'
+                                . '<td><strong id="room_' . $room['id'] . '_offset_sum" class="value-cell">' . number_format($sum, 2, ',', '') . ' °C</strong></td>'
                                 . '</tr>';
 
                         // Doppelstrich als Trenner
@@ -641,7 +641,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
                             $roomHtml .= '<tr>'
                                     . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_name">' . htmlspecialchars($offsetName) . '</td>'
-                                    . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
+                                    . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value" class="value-cell">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
                                     . '</tr>';
                         }
 
@@ -663,7 +663,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<table class="room-sensor-table">';
                         $roomHtml .= '<tr>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
-                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_value">' . ((isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) && ($room['primary_sensor_value'] > 0)) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
+                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_value" class="value-cell">' . ((isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) && ($room['primary_sensor_value'] > 0)) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
                                 . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_last_info">' . htmlspecialchars($room['primary_sensor_last_info'] ?? '--') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
@@ -680,7 +680,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             if (!$sensor['raumtemperatursensor']) {
                                 $roomHtml .= '<tr>'
                                         . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
-                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_value">' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
+                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_value" class="value-cell">' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
                                         . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_last_info">' . htmlspecialchars($sensor['letzte_uebertragung'] ?? '--') . '</td>'
                                         . '</tr>';
                             }
