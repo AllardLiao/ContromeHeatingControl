@@ -47,6 +47,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyBoolean("ShowTimer", false);
         $this->RegisterPropertyBoolean("ShowCalendar", false);
         $this->RegisterPropertyInteger("DurationOfMessagePopup", 8);
+        $this->RegisterPropertyInteger("VisuColorText", 0x000000);
 
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
@@ -723,7 +724,8 @@ class ContromeCentralControl extends IPSModuleStrict
         $html = str_replace('<!--COLOR_ROOM_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorRoomTiles")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_SYSTEM_INFO-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorSystemInfoTile")), 6, '0', STR_PAD_LEFT), $html);
         $html = str_replace('<!--COLOR_FLOOR_TILES-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorFloorTiles")), 6, '0', STR_PAD_LEFT), $html);
-
+        $html = str_replace('<!--COLOR_TEXT-->', "#" . str_pad(dechex($this->ReadPropertyInteger("VisuColorText")), 6, '0', STR_PAD_LEFT), $html);
+        
         // Optionsauswahlfelder / Wertvorgaben einfügen
         $html = str_replace('<!--MODE_OPTIONS-->', $modeOptions, $html);
         $html = str_replace('<!--FLOOR_ROOM_OPTIONS-->', $roomOptions, $html);

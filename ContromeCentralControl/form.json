@@ -29,6 +29,22 @@
                     "type": "RowLayout",
                     "items": [
                         {
+                            "type": "label",
+                            "caption": "Color of the forground (text) in the dashboard",
+                            "width": "800px"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorText",
+                            "caption": "Text color",
+                            "allowTransparent": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
                             "type": "CheckBox",
                             "name": "ShowMainElements",
                             "caption": "Show main elements (always on)",
@@ -175,7 +191,7 @@
                 },
                 {
                     "type": "NumberSpinner",
-                    "caption": "Duration of popup message (setting values with success or not)",
+                    "caption": "Duration of popup message (setting was successfull ... or not)",
                     "digits": 0,
                     "enabled": true,
                     "hex": false,
@@ -187,7 +203,7 @@
                     "suffix": "Sek.",
                     "value": 8,
                     "visible": true,
-                    "width": "300px"
+                    "width": "500px"
                 }
             ]
         },
