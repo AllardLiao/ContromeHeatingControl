@@ -313,7 +313,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 if ((int)$payload["RoomID"] === (int)$roomID){
                                     // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                     $temperature = $payload["Temperature"];
-                                    if (str_contains($this->getResponseMessage($response), "fallback")) {
+                                    if (str_contains($this->getResponseMessage($response), "allback")) {
                                         $roomNote .= "Temperatur from fallback device. ";
                                     }
                                 }
@@ -367,7 +367,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                     if ((int)$payload["RoomID"] === (int)$roomID){
                                         // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                         $humidity = $payload["Humidity"];
-                                        if (str_contains($this->getResponseMessage($response), "fallback")) {
+                                        if (str_contains($this->getResponseMessage($response), "allback")) { // für Fallback und fallback
                                             $roomNote .= "Humidity from fallback device. ";
                                         }
                                     }
