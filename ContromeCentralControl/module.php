@@ -681,7 +681,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $roomHtml .= '<tr>'
                                         . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
                                         . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_value" class="value-cell">' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
-                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_last_info">' . htmlspecialchars($sensor['letzte_uebertragung'] ?? '--') . '</td>'
+                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_last_info">' . (isset($sensor['letzte_uebertragung']) ? date('d.m H:i', strtotime($sensor['letzte_uebertragung'])) : '--') . '</td>'
                                         . '</tr>';
                             }
                         }
