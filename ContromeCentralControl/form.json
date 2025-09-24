@@ -172,6 +172,22 @@
                             "enabled": false
                         }
                     ]
+                },
+                {
+                    "type": "NumberSpinner",
+                    "caption": "Duration of popup message (setting values with success or not)",
+                    "digits": 0,
+                    "enabled": true,
+                    "hex": false,
+                    "maximum": 120,
+                    "minimum": 3,
+                    "moreDigits": false,
+                    "name": "DurationOfMessagePopup",
+                    "onChange": "",
+                    "suffix": "Sek.",
+                    "value": 8,
+                    "visible": true,
+                    "width": "300px"
                 }
             ]
         },

@@ -252,10 +252,46 @@
 <script>
 
 // EventListener zentralisiert
-document.getElementById('btn_set_mode').addEventListener('click', function() {
-    const mode = parseInt(document.getElementById('mode_select').value);
-    const roomId = parseInt(document.getElementById('mode_room_select').value);
-    RequestAction('Mode', { roomId: roomId, mode: mode });
+document.addEventListener('DOMContentLoaded', function () {
+    const btnMode = document.getElementById('btn_set_mode');
+    if (!btnMode) return;
+
+    btnMode.addEventListener('click', function () {
+        btnMode.disabled = true;
+        let mode   = parseFloat(document.getElementById('mode_select')?.value ?? NaN);
+        let select = document.getElementById('mode_room_select');
+        let selectedValue = select.value;
+
+        let roomIds = [];
+        if (selectedValue === "all") {
+            // alle Räume, außer "all" selbst
+            roomIds = Array.from(select.options)
+                        .filter(opt => opt.value !== "all")
+                        .map(opt => parseInt(opt.value));
+        } else {
+            roomIds = [parseInt(selectedValue)];
+        }
+
+        if (!roomIds.length || isNaN(mode)) {
+            alert("Bitte Raum und Betriebsmode auswählen!");
+            btnMode.disabled = false;
+            return;
+        }
+
+        const params = {
+            RoomIDs: roomIds,
+            Mode: mode
+        };
+
+        console.log("Sende permanente Parameter:", params);
+
+        try {
+            requestAction('visu_CC_Setpoint', JSON.stringify(params));
+        } catch (e) {
+            console.error("Fehler beim Senden (Soll-Temperatur):", e);
+            btnMode.disabled = false;
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -186,6 +186,10 @@ class ContromeGateway extends IPSModuleStrict
 
             case ACTIONs::SET_SETPOINT_TEMP:
                 return $this->WriteTargetTemperature($data);    //Temporäre Solltemperaturänderung
+
+            case ACTIONs::SET_MODE:
+                return $this->WriteContromeMode($data);
+
             default:
                 $msg = "Unknown action: " . $data['Action'];
                 return $this->wrapReturn(false, $msg);
@@ -677,6 +681,101 @@ class ContromeGateway extends IPSModuleStrict
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
         return $this->wrapReturn(true, 'Target updated.');
+    }
+    /**
+     * Writes the mode to Controme
+     *
+     * Returns an JSON wrapped return (see DebugHelper Trait)
+     *
+     * @param mixed    $data          Assoziative array with fields int 'RoomID' => X and int 'ModeID' => Y
+     * @return string                 JSON wrapped response
+     */
+    private function WriteContromeMode(mixed $data): string
+    {
+        // Interne Validierung
+        if (!is_array($data)) {
+            return $this->wrapReturn(false, "Invalid data format - array expected");
+        }
+
+        $roomId   = isset($data['RoomID'])   ? intval($data['RoomID'])     : null;
+        $modeID = isset($data['ModeID']) ? intval($data['ModeID']) : null;
+
+        if ($roomId === null || $modeID === null) {
+            return $this->wrapReturn(false, "Missing parameter RoomID or ModeID");
+        }
+
+        $ip   = $this->ReadPropertyString('IPAddress');
+        $user = $this->ReadPropertyString('User');
+        $pass = $this->ReadPropertyString('Password');
+
+        if (empty($ip) || empty($user) || empty($pass)) {
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, "Missing Controme API credentials");
+        }
+
+        $url = $this->getJsonSet() . CONTROME_API::SET_OPERATION_MODE . "$roomId/";
+
+        // POST-Daten (ggf. action/value anpassen nach der Controme-API für setzen der Solltemperatur)
+        $postData = http_build_query([
+            'user'     => $user,
+            'password' => $pass,
+            'action'   => "betriebsart",
+            'value'    => CONTROME_API::getApiLabelBetriebsart($modeID)
+        ]);
+
+        $opts = [
+            'http' => [
+                'method'  => 'POST',
+                'header'  => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'content' => $postData,
+                'timeout' => 10
+            ]
+        ];
+        $context = stream_context_create($opts);
+
+        $this->SendDebug(__FUNCTION__, "POST $url\nData: " . $postData . "\nContext: " . $context, 0);
+
+        $response = @file_get_contents($url, false, $context);
+        if ($response === false) {
+            if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+                $message = $this->CheckHttpReponseHeader($http_response_header);
+            }
+            else {
+                $message = "HTTP request failed and no response header available.";
+            }
+            // Etwas stimmt nicht bei der Abfrage
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, "Request failed: " . $message);
+        }
+
+        // Versuche JSON zu decodieren — falls die API was Kulantes zurückliefert
+        $json = json_decode($response, true);
+        if ($json === null) {
+            // Wenn kein JSON, aber die API etwas liefert, ist das i.d.R. die HTML-Rückmeldung von Controme, dass etwas nicht geklappt hat und der Techniker informiert ist
+            // Wir prüfen aber, ob Controme nicht ggf. "[]" oder "{}" oder "true" zurückgeleifert hat und implizieren für diesen Fall erfolg!
+            if (strlen(trim($response)) > 4){
+                $this->SetStatus(IS_INACTIVE);
+                return $this->wrapReturn(false, 'Long non-JSON response from Controme API. Assuming error state.', $response);
+            }
+            else {
+                $this->SetStatus(IS_ACTIVE);
+                return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
+            }
+        }
+
+        // Fallback: wenn JSON vorliegt, aber kein explicit success -> als OK werten oder genauer prüfen
+        $this->SendDebug(__FUNCTION__, 'Controme-API returned: ' . print_r($json, true), 0);
+
+        // Prüfe auf explizite Fehlermeldung in der JSON Response
+        if (isset($json['error']) || isset($json['status']) && $json['status'] === 'error') {
+            $errorMsg = $json['error'] ?? $json['message'] ?? 'Unknown API error';
+            $this->SetStatus(IS_NO_CONNECTION);
+            return $this->wrapReturn(false, $errorMsg, print_r($json, true));
+        }
+
+        //Alle ist ok.
+        $this->SetStatus(IS_ACTIVE);
+        return $this->wrapReturn(true, 'Mode updated.');
     }
 
     private function CreateCentralControlInstance(): string

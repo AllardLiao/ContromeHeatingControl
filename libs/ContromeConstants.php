@@ -94,6 +94,13 @@ class CONTROME_API
         3 => "on"
     ];
 
+    public static function getApiLabelBetriebsart(int $value): string
+    {
+        if (array_key_exists($value, self::$betriebsartMapAPI)) {
+            return self::$betriebsartMapAPI[$value];
+        }
+        return "Unbekannt ($value)";
+    }
 }
 
 class CONTROME_PROFILES
