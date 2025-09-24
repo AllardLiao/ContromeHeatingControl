@@ -229,6 +229,45 @@
             display: inline-block;
         }
 
+        /* Buttons */
+        /* Kühler, moderner Button (Blau) */
+        .button-blue {
+            background: linear-gradient(135deg, #4a90e2, #357ab7);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 8px 16px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .button-blue:hover {
+            background: linear-gradient(135deg, #5aa1f2, #4689c7);
+        }
+        .button-blue:active {
+            transform: scale(0.97);
+        }
+        /* Warmer Button (Orange → Rot) */
+        .button-warm {
+            background: linear-gradient(135deg, #f0932b, #eb4d4b);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 8px 16px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+        }
+        .button-warm:hover {
+            background: linear-gradient(135deg, #f39c4a, #f0655d);
+        }
+        .button-warm:active {
+            transform: scale(0.97);
+        }
         /* Textfarben je nach Hintergrundfarbe */
         .subtile,
         .room-tile,
@@ -265,7 +304,7 @@
         <select id="mode_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_mode">Setzen</button>
+        <button id="btn_set_mode" class="button-blue">Setzen</button>
     </div>
 
     <!-- Tile 2: Permanente Soll-Temperatur -->
@@ -289,7 +328,7 @@
         <select id="temp_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_temp">Setzen</button>
+        <button id="btn_set_temp" class="button-warm">Setzen</button>
     </div>
 
     <!-- Tile 3: Temporäre Soll-Temperatur -->
@@ -303,7 +342,7 @@
         <select id="target_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_target">Setzen</button>
+        <button id="btn_set_target" class="button-warm">Setzen</button>
     </div>
 </div>
 
