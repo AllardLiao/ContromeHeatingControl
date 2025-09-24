@@ -44,7 +44,15 @@
             "olor of the forground (text) in the dashboard": "Farbe des Vordergrunds (Text) im Dashboard",
             "Color of the 'mode' button in the dashboard": "Farbe des 'Modus'-Buttons im Dashboard",
             "Color of the 'temperature' buttons in the dashboard": "Farbe der 'Temperatur'-Buttons im Dashboard",
-            "how only active room offset information": "x"
+            "Show only active room offset information": "Nur aktive Raumoffsetinformationen anzeigen",
+            "Temperatur from fallback device. ": "Temperatur vom Fallback-Gerät. ",
+            "Humidity from fallback device. ": "Luftfeuchtigkeit vom Fallback-Gerät. ",
+            "Temperatur from fallback device. Humidity from fallback device. ": "Temperatur und Luftfeuchtigkeit vom Fallback-Gerät. ",
+            "Controme Central Control": "Controme Zentralsteuerung",
+            "Heating": "Heizen",
+            "Cooling": "Kühlen",
+            "On": "An",
+            "Off": "Aus"
         }
     }
 }
