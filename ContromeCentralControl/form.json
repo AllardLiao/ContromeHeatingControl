@@ -29,22 +29,6 @@
                     "type": "RowLayout",
                     "items": [
                         {
-                            "type": "Label",
-                            "caption": "Color of the forground (text) in the dashboard",
-                            "width": "800px"
-                        },
-                        {
-                            "type": "SelectColor",
-                            "name": "VisuColorText",
-                            "caption": "Text color",
-                            "allowTransparent": false
-                        }
-                    ]
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
                             "type": "CheckBox",
                             "name": "ShowMainElements",
                             "caption": "Show main elements (always on)",
@@ -204,6 +188,54 @@
                     "value": 8,
                     "visible": true,
                     "width": "500px"
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "caption": "Color of the forground (text) in the dashboard",
+                            "width": "800px"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorText",
+                            "caption": "Text color",
+                            "allowTransparent": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "caption": "Color of the 'Mode' button in the dashboard",
+                            "width": "800px"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorModeButton",
+                            "caption": "Mode-button color",
+                            "allowTransparent": false
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "Label",
+                            "caption": "Color of the temperature setting buttons in the dashboard",
+                            "width": "800px"
+                        },
+                        {
+                            "type": "SelectColor",
+                            "name": "VisuColorTempButtons",
+                            "caption": "Text color",
+                            "allowTransparent": false
+                        }
+                    ]
                 }
             ]
         },
