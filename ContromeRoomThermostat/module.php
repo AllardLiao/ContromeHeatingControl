@@ -526,7 +526,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             return $this->wrapReturn($fromFallback, $msg, $payload);
         } else {
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C", $payload);
+            return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }
 
@@ -567,7 +567,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
             return $this->wrapReturn($fromFallback, $msg, $payload);
         } else {
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
-            return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %", $payload);
+            return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }
 
