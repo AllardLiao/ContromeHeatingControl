@@ -420,27 +420,28 @@ class ContromeCentralControl extends IPSModuleStrict
                             foreach ($sensorsArray as $s) {
                                 if (is_array($s) && (!empty($s['raumtemperatursensor']) || (isset($s['raumtemperatursensor']) && $s['raumtemperatursensor'] === true))) {
                                     $primaryName = $s['beschreibung'] ?? ($s['name'] ?? "n/a");
+                                    $primaryNameKey = preg_replace('/\s+/', '', strtolower($primaryName));
                                     $primaryValue = isset($s['wert']) ? floatval($s['wert']) : 0.0;
                                     $primaryLastInfo = $s['letzte_uebertragung'] ?? "n/a";
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_primarysensor_" . $offsetName . "_value", 'value' => $primaryValue . " °C", "allowHtml" => true];
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_primarysensor_" . $offsetName . "_lastinfo", 'value' => htmlspecialchars($primaryLastInfo), "allowHtml" => true];
+                                    $this->MaintainVariable($roomVar . "PrimarySensorName", $roomVar . "-PrimarySensorName", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                                    $this->SetValue($roomVar . "PrimarySensorName", (string)$primaryName);
+                                    $this->MaintainVariable($roomVar . "PrimarySensorValue", $roomVar . "-PrimarySensorValue", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
+                                    $this->SetValue($roomVar . "PrimarySensorValue", is_null($primaryValue) ? 0.0 : $primaryValue);
+                                    $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
+                                    $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_primarysensor_" . $primaryNameKey . "_value", 'value' => $primaryValue . " °C", "allowHtml" => true];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_primarysensor_" . $primaryNameKey . "_lastinfo", 'value' => htmlspecialchars($primaryLastInfo), "allowHtml" => true];
                                     break;
                                 }
                             }
-                            $this->MaintainVariable($roomVar . "PrimarySensorName", $roomVar . "-PrimarySensorName", VARIABLETYPE_STRING, "", $positionCounter++, true);
-                            $this->SetValue($roomVar . "PrimarySensorName", (string)$primaryName);
-                            $this->MaintainVariable($roomVar . "PrimarySensorValue", $roomVar . "-PrimarySensorValue", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
-                            $this->SetValue($roomVar . "PrimarySensorValue", is_null($primaryValue) ? 0.0 : $primaryValue);
-                            $this->MaintainVariable($roomVar . "PrimarySensorLastInfo", $roomVar . "-PrimarySensorLastInfo", VARIABLETYPE_STRING, "", $positionCounter++, true);
-                            $this->SetValue($roomVar . "PrimarySensorLastInfo", (string)$primaryLastInfo);
-                            //Visu-Update für Sensoren
                             $otherSensors = array_filter($sensorsArray, function($s) use ($room, $primaryName) {
                                 return $s['name'] !== $primaryName;
                             });
                             foreach ($otherSensors as $sensor) {
                                 if (!$sensor['raumtemperatursensor']) {
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : '--'), "allowHtml" => true];
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $offsetName . "_lastinfo", 'value' => htmlspecialchars($sensor['letzte_uebertragung'] ?? '--'), "allowHtml" => true];
+                                    $sensorKey = preg_replace('/\s+/', '', strtolower($sensor['name']));
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : '--'), "allowHtml" => true];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_lastinfo", 'value' => (isset($sensor['letzte_uebertragung']) ? date('d.m. H:i', strtotime($sensor['letzte_uebertragung'])) : '--'), "allowHtml" => true];
                                 }
                             }
                         }
@@ -664,7 +665,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<tr>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
                                 . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_value" class="value-cell">' . ((isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) && ($room['primary_sensor_value'] > 0)) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
-                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_last_info" class="value-cell">' . (isset($sensor['primary_sensor_last_info']) ? date('d.m. H:i', strtotime($sensor['primary_sensor_last_info'])) : '--') . '</td>'
+                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_last_info" class="value-cell">' . (isset($room['primary_sensor_last_info']) ? date('d.m. H:i', strtotime($room['primary_sensor_last_info'])) : '--') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';

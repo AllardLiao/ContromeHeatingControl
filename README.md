@@ -34,12 +34,13 @@ Controme Gateway (type=2, parent)
   .
   .
 
-Hinweis:
+Hinweise:
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
 Wird dies nach Verbindung dieses Moduls in der Controme-App angepasst, ändern sich die Namen der Kategorien und
-der Sensor-Variablen im IP-Symcon.
-Dies bedeutet insbesondere, dass die Namen über die Definition im Controme-Mini-Server abgeleitet wird. Beachte dies bei der
-Benennnung der Räume und Sensoren im Controme Mini-Server
+der Sensor-Variablen im IP-Symcon. Dies bedeutet insbesondere, dass die Namen über die Definition im
+Controme-Mini-Server abgeleitet wird. Beachte dies bei der Benennnung der Räume und Sensoren im Controme Mini-Server
+
+Die Anzeige des Raumthermostats im Central Control ist auf ein Raumthermostat je Raum beschränkt.
 
 by Kai J. Oey
 
