@@ -13,6 +13,7 @@ API Informatiaon can be found at https://support.controme.com/api/
 HINWEIS: Controme hat die Entwicklung der V2 angekündigt - diese ist momentan (für mich) noch nicht testbar.
 
 Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Visualisierung.
+![Screenshot Controme Heating Control](assets/Controme_Heating_Control.png)
 
 Das Module installiert eine Controme Gateway-Instanz, das Controme Gateway.
 Dieser stellt die Verbindung zum Controme Mini-Server her.
