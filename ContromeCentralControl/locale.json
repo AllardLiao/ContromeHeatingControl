@@ -40,7 +40,10 @@
             "Show room information (name, floor, termperature & setpoint)": "Rauminformationen anzeigen (Name, Etage, Temperatur & Sollwert)",
             "Dashboard background color for floors": "x",
             "Show room sensor data (room thermostat, return flow sensors)": "x",
-            "Duration of popup message (setting values with success or not)": "x"
+            "Duration of popup message (setting values with success or not)": "x",
+            "olor of the forground (text) in the dashboard": "x",
+            "Color of the 'mode' button in the dashboard": "x",
+            "Color of the 'temperature' buttons in the dashboard": "x"
         }
     }
 }

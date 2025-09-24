@@ -210,7 +210,7 @@
                     "items": [
                         {
                             "type": "Label",
-                            "caption": "Color of the 'Mode' button in the dashboard",
+                            "caption": "Color of the 'mode' button in the dashboard",
                             "width": "800px"
                         },
                         {
@@ -226,7 +226,7 @@
                     "items": [
                         {
                             "type": "Label",
-                            "caption": "Color of the temperature setting buttons in the dashboard",
+                            "caption": "Color of the 'temperature' buttons in the dashboard",
                             "width": "800px"
                         },
                         {
