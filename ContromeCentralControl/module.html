@@ -445,7 +445,7 @@
 <div class="tile-container">
     <!-- Tile 1: Betriebsart -->
     <div class="subtile" id="tile_mode">
-        <label>Betriebsart</label>
+        <label>Operation Mode</label>
         <div class="select-wrapper">
             <select id="mode_select">
                 <!--MODE_OPTIONS-->
@@ -457,13 +457,13 @@
             </select>
         </div>
         <div class="button-container">
-            <button id="btn_set_mode" class="button-blue">Setzen</button>
+            <button id="btn_set_mode" class="button-blue">APPLY</button>
         </div>
     </div>
 
-    <!-- Tile 2: Permanente Soll-Temperatur -->
+    <!-- Tile 2: Permanent setpoint -->
     <div class="subtile" id="tile_temperature">
-        <label>Permanente Soll-Temperatur</label>
+        <label>Permanent Setpoint</label>
         <div class="temp-slider-container">
             <div class="slider-row">
                 <input
@@ -486,13 +486,13 @@
             </select>
         </div>
         <div class="button-container">
-            <button id="btn_set_temp" class="button-warm">Setzen</button>
+            <button id="btn_set_temp" class="button-warm">APPLY</button>
         </div>
     </div>
 
     <!-- Tile 3: Temporäre Soll-Temperatur -->
     <div class="subtile" id="tile_target">
-        <label>Temporäre Soll-Temperatur</label>
+        <label>Temporary Setpoint</label>
         <div class="temp-slider-container">
             <div class="slider-row">
                 <input
@@ -509,7 +509,7 @@
                 <span id="target_temp-value"><!--MAX_TEMP--> °C</span>
             </div>
         </div>
-        <label for="duration_select">Dauer</label>
+        <label for="duration_select">Duration</label>
         <!-- Dauer-Slider -->
         <div class="temp-slider-container">
             <div class="slider-row">
@@ -543,7 +543,7 @@
             function updateDurationValue(idx) {
                 const h = durationValues[idx];
                 const days = (h / 24).toFixed(2);
-                document.getElementById("duration-value").innerText = h + " h (" + days + " Tage)";
+                document.getElementById("duration-value").innerText = h + " h (" + days + " " + translate("Days") + ")";
             }
             // Initial anzeigen
             updateDurationValue(slider.value);
@@ -554,7 +554,7 @@
             </select>
         </div>
         <div class="button-container">
-            <button id="btn_set_target" class="button-warm">Setzen</button>
+            <button id="btn_set_target" class="button-warm">Set</button>
         </div>
     </div>
 </div>
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!roomIds.length || isNaN(mode)) {
-            alert("Bitte Raum und Betriebsmode auswählen!");
+            alert(translate("Please select room and mode!"));
             btnMode.disabled = false;
             return;
         }
@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!roomIds.length || isNaN(ziel)) {
-            alert("Bitte Raum und Temperatur auswählen!");
+            alert(translate("Please select room and temperature!"));
             btnPerm.disabled = false;
             return;
         }
@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!roomIds.length || isNaN(ziel) || duration < 0) {
-            alert("Bitte Raum, Temperatur und Dauer auswählen!");
+            alert(translate("Please select room, temperature and duration!"));
             btn.disabled = false;
             return;
         }
@@ -701,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function showMessage(text, type = "success", duration = 4) {
     const box = document.getElementById("message_box");
     if (!box) return;
-    box.textContent = text;
+    box.textContent = translate(text);
     box.className = "message-box show " + type;
     box.style.display = "block";
     setTimeout(() => {
