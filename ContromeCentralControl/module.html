@@ -11,6 +11,9 @@
             margin-top: 10px;
         }
         .subtile {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
             flex: 1 1 30%;
             min-width: 250px;
             background: <!--COLOR_MAIN_TILES-->;
@@ -230,6 +233,14 @@
         }
 
         /* Buttons */
+        .button-container {
+            text-align: right;
+            margin-top: 8px; /* optional etwas Abstand nach oben */
+        }
+        .subtile .button-container {
+            margin-top: auto;     /* drückt den Button nach unten */
+            text-align: right;    /* rechtsbündig */
+        }
         /* Kühler, moderner Button (Blau) */
         .button-blue {
             background: linear-gradient(135deg, #4a90e2, #357ab7);
@@ -304,8 +315,9 @@
         <select id="mode_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_mode" class="button-blue">Setzen</button>
-    </div>
+        <div class="button-container">
+            <button id="btn_set_mode" class="button-blue">Setzen</button>
+        </div>
 
     <!-- Tile 2: Permanente Soll-Temperatur -->
     <div class="subtile" id="tile_temperature">
@@ -328,7 +340,9 @@
         <select id="temp_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_temp" class="button-warm">Setzen</button>
+        <div class="button-container">
+            <button id="btn_set_temp" class="button-warm">Setzen</button>
+        </div>
     </div>
 
     <!-- Tile 3: Temporäre Soll-Temperatur -->
@@ -342,7 +356,9 @@
         <select id="target_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
-        <button id="btn_set_target" class="button-warm">Setzen</button>
+        <div class="button-container">
+            <button id="btn_set_target" class="button-warm">Setzen</button>
+        </div>
     </div>
 </div>
 
