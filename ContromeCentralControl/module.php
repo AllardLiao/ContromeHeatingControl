@@ -48,8 +48,8 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyBoolean("ShowCalendar", false);
         $this->RegisterPropertyInteger("DurationOfMessagePopup", 8);
         $this->RegisterPropertyInteger("VisuColorText", 0x000000);
-        $this->RegisterPropertyInteger("VisuColorModeButton", 0x357ab7);
-        $this->RegisterPropertyInteger("VisuColorTempButtons", 0xeb4d4b);
+        $this->RegisterPropertyInteger("VisuColorModeButton", 0x00a9f4);
+        $this->RegisterPropertyInteger("VisuColorTempButtons", 0xfb4f2a);
 
         //Konfigurationselemente der zyklischen Abfrage
         $this->RegisterPropertyInteger("UpdateInterval", 5); // in Minuten
