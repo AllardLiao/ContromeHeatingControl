@@ -182,6 +182,40 @@
             background: #dc3545; /* rot */
         }
 
+        /* Temperatur-Slider */
+        .temp-slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        #temp-slider {
+            -webkit-appearance: none; /* Standard-Styles weg */
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, blue, red);
+            outline: none;
+        }
+        #temp-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #555;
+            cursor: pointer;
+        }
+        #temp-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #555;
+            cursor: pointer;
+        }
+
+        /* Textfarben je nach Hintergrundfarbe */
         .subtile,
         .room-tile,
         .floor-tile,
@@ -223,7 +257,20 @@
     <!-- Tile 2: Permanente Soll-Temperatur -->
     <div class="subtile" id="tile_temperature">
         <label>Permanente Soll-Temperatur</label>
-        <input type="number" id="input_temp" value="<!--MAX_TEMP-->" />
+        <div class="temp-slider-container">
+        <label for="temp-slider">Zieltemperatur:</label>
+        <input
+            type="range"
+            id="temp-slider"
+            name="target_temp"
+            min="15"
+            max="25"
+            step="0.5"
+            value="<!--MAX_TEMP-->"
+            oninput="document.getElementById('temp-value').innerText=this.value + ' °C'"
+        >
+        <span id="temp-value"><!--MAX_TEMP--> °C</span>
+        </div>
         <select id="temp_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
