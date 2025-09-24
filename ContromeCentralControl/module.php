@@ -292,6 +292,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     foreach ($floor['raeume'] as $room) {
                         $roomID   = $room['id'] ?? 0;
                         $roomName = $room['name'] ?? "Unbekannt";
+                        $roomNote = ""; // Hinweise werden bei jedem Speichern neu generiert.
                         $roomVar  = $floorVar . "Room" . $roomID; // Name des Präfix der Variablen für Räume im IPS Baum
 
                         // Raum-Variablen
@@ -312,6 +313,9 @@ class ContromeCentralControl extends IPSModuleStrict
                                 if ((int)$payload["RoomID"] === (int)$roomID){
                                     // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                     $temperature = $payload["Temperature"];
+                                    if (str_contains($this->getResponseMessage($response), "fallback")) {
+                                        $roomNote .= "Temperatur from fallback device. ";
+                                    }
                                 }
                             }
                         }
@@ -351,6 +355,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $updatesVisu[] = ['id' => "room_" . $roomID . "_state", 'value' => $room['betriebsart'], "allowHtml" => true];
                             $this->MaintainVariable($roomVar . "Humidity",          $roomVar . "-Luftfeuchte",   VARIABLETYPE_FLOAT, "~Humidity.F", $positionCounter++, true);
                             $humidity = isset($room['luftfeuchte']) && is_numeric($room['luftfeuchte']) ? floatval($room['luftfeuchte']) : 0.0;
+                            $humidityFallback = (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100));
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
                             if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
                                 $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback room: " . $roomID, 0);
@@ -361,11 +366,14 @@ class ContromeCentralControl extends IPSModuleStrict
                                     if ((int)$payload["RoomID"] === (int)$roomID){
                                         // Es gibt eine Instanz das uns "korrektere" daten liefern kann
                                         $humidity = $payload["Humidity"];
+                                        if (str_contains($this->getResponseMessage($response), "fallback")) {
+                                            $roomNote .= "Humidity from fallback device. ";
+                                        }
                                     }
                                 }
                             }
-                            $this->SetValue(    $roomVar . "Humidity",       $humidity);
-                            $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity", 'value' => $humidity . "%", "allowHtml" => true];
+                            $this->SetValue(    $roomVar . "Humidity",          $humidity);
+                            $updatesVisu[] = ['id' => "room_" . $roomID . "_humidity",          'value' => $humidity . "%", "allowHtml" => true];
                         }
                         // ---------------------------
                         // Offsets verarbeiten (wenn vorhanden)
@@ -448,6 +456,9 @@ class ContromeCentralControl extends IPSModuleStrict
                                 }
                             }
                         }
+                        $this->MaintainVariable($roomVar . "Note",  $roomVar . "-Hinweis",   VARIABLETYPE_STRING, "", $positionCounter++, true);
+                        $this->SetValue(        $roomVar . "Note",  $roomNote);
+                        $updatesVisu[] = ['id' => "room_" . $roomID . "_note",  'value' => $roomNote, "allowHtml" => true];
                     }
                 }
             }
@@ -541,13 +552,13 @@ class ContromeCentralControl extends IPSModuleStrict
 
     public function getVisualizationTile(): string
     {
-        // ========================
+        // ========================================================================================================================
         // 1. Mode-Options
         $modeOptions = '';
         foreach (CONTROME_PROFILES::$betriebsartMap as $id => $label) {
             $modeOptions .= '<option value="' . $id . '">' . $label . '</option>';
         }
-        // ========================
+        // ========================================================================================================================
         // 2.Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
         $rooms = $this->getRoomData();  // holt alle Räume aus den Variablen
         $roomOptions = '<option value="all">Alle Räume</option>';
@@ -560,7 +571,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $maxTemp = floatval($room['target']);
             }
         }
-        // ========================
+        // ========================================================================================================================
         // 3. Systeminfo HTML
         $sysInfo = $this->getSystemInfo();
         $this->SendDebug(__FUNCTION__, "Sysinfo: " . print_r($sysInfo, true), 0);
@@ -573,7 +584,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         $sysHtml .= '</div>'
                     .'</div>';
-        // ========================
+        // ========================================================================================================================
         // 4. Raumtiles HTML mit Etagen-Gruppierung
         $floorGroups = [];
         foreach ($rooms as $room) {
@@ -584,7 +595,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     $floorGroups[$floor]['floor'] = array('name' => $room['floorname'], 'id' => $room['floorid']);
                     $floorGroups[$floor]['roomsHtml'] = '';
                 }
-
+                // *************** B A S I C   R O O M   D A T A *******************
                 $hoursMinutes = "00:00";
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $hours = floor($room['remaining_time'] / 3600); // Die Remaining Time wird vonder API in Sekunden geliefert, schreiben müssen wir aber in Minuten - Damit das einheitlich ist, Anzeige in Minuten.
@@ -617,7 +628,10 @@ class ContromeCentralControl extends IPSModuleStrict
                     $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity" class="value-cell">' . ($room['humidity'] ?? '--') . '%</span></div>'
                                 . '<div><strong>Status:</strong><span id="room_' . $room['id'] . '_state" class="value-cell">' . ($room['state'] ?? '--') . '</span></div>';
                 }
+                $roomHasNote = (isset($room['note']) && (strlen($room['note']) > 0));
+                $roomHtml .= '<div class="room-footer" id="room_' . $room['id'] . '_note" class="' . ($roomHasNote ? 'visible' : 'hidden') . '">' . ($roomHasNote ? $room['note'] : '') . '</div>';
                 $roomHtml .= '</div>';
+                // *************** O F F S E T S *******************
                 if ($this->ReadPropertyBoolean('ShowRoomOffsets')) {
                     if (!empty($room['offsets'])) {
                         $roomHtml .= '<hr class="room-separator" />';
@@ -653,6 +667,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '</div>';
                     }
                 }
+                // *************** S E N S O R S *******************
                 if ($this->ReadPropertyBoolean('ShowRoomSensors')) {
                     $hasPrimary = !empty($room['primary_sensor_name']);
                     $otherSensors = array_filter($room['sensors'], function($s) use ($room) {
@@ -698,7 +713,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $floorGroups[$floor]['roomsHtml'] .= $roomHtml; // dem entsprechenden floor hinzufügen.
             }
         }
-        // Wrapper-HTML bauen
+        // *************** B U I L D   R O O M   H T M L *******************
         $roomTilesHtml = '<div class="tile-container" id="floors-container">';
         foreach ($floorGroups as $floor => $oneFloor) {
             $roomTilesHtml .= '<div class="floor-tile" id="floor-' . $oneFloor['floor']['id'] . '">'
@@ -709,7 +724,7 @@ class ContromeCentralControl extends IPSModuleStrict
             . '</div>';
         }
         $roomTilesHtml .= '</div>';
-        // ========================
+        // ========================================================================================================================
         // 5. Dropdown für Dauer in Stunden (0–24)
         $durationOptions = '';
         for ($h = 1; $h <= 168; $h++) {
@@ -717,7 +732,7 @@ class ContromeCentralControl extends IPSModuleStrict
             if ($h >= 72) $h += 24; // ab 72h in 24h-Schritten
             $durationOptions .= '<option value="' . $h . '">' . $h . ' h (= ' . number_format(($h / 24), 3, '.', '') . ' Tage)</option>';
         }
-        // ========================
+        // ========================================================================================================================
         // 6. HTML Template laden & Platzhalter ersetzen
         $html = file_get_contents(__DIR__ . '/module.html');
 
@@ -744,6 +759,7 @@ class ContromeCentralControl extends IPSModuleStrict
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
         }
+
         $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
         return $html;
     }

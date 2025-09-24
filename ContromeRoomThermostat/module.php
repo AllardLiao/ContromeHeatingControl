@@ -514,12 +514,16 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $temp = floatval($this->GetValue('Temperature'));
         if (is_null($temp) || !is_numeric($temp) || is_nan($temp) || $temp < -30 || $temp > 50) {   // Out of range for VariableProfile Temperature.Room
             $temp = 0.0;
+            $fromFallback = false;
+            $msg = "Not able to deliver valid temperature for room " . $this->ReadPropertyInteger('RoomID');
             $fallbackCheck = $this->checkRoomTermperatureForFallback($temp);
             if ($this->isSuccess($fallbackCheck)) {
                 $temp = $this->getResponsePayload($fallbackCheck);
+                $fromFallback = true;
+                $msg = "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C (fallback)";
             }
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn(false, "Not able to deliver valid temperature for room " . $this->ReadPropertyInteger('RoomID') . " with temperature " . number_format($temp, 2, '.', '') . " °C", $payload);
+            return $this->wrapReturn($fromFallback, $msg, $payload);
         } else {
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
             return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C", $payload);
@@ -551,12 +555,16 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $humidity = floatval($this->GetValue('Humidity'));
         if (!isset($humidity) || is_null($humidity) || !is_numeric($humidity) || is_nan($humidity) || $humidity < 0 || $humidity > 100) {   // Out of range for VariableProfile Humidity
             $humidity = 0.0;
+            $fromFallback = false;
+            $msg = "Not able to deliver valid humidity for room " . $this->ReadPropertyInteger('RoomID');
             $fallbackCheck = $this->checkHumidityForFallback($humidity);
             if ($this->isSuccess($fallbackCheck)) {
                 $humidity = $this->getResponsePayload($fallbackCheck);
+                $fromFallback = true;
+                $msg = "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " % (fallback)";
             }
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
-            return $this->wrapReturn(false, "Not able to deliver valid humidity for room " . $this->ReadPropertyInteger('RoomID') . " with humidity " . number_format($humidity, 2, '.', '') . " %", $payload);
+            return $this->wrapReturn($fromFallback, $msg, $payload);
         } else {
             $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
             return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %", $payload);
