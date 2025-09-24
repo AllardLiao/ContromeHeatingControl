@@ -362,6 +362,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                                 foreach ($thermostats as $instID) {
                                     $response = CONRT_GetEffectiveHumidity($instID);
+                                    $this->SendDebug(__FUNCTION__, "Check Fallback result: " . print_r($response, true));
                                     $payload = $this->getResponsePayload($response);
                                     if ((int)$payload["RoomID"] === (int)$roomID){
                                         // Es gibt eine Instanz das uns "korrektere" daten liefern kann
