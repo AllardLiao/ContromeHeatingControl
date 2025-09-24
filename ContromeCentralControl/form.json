@@ -29,7 +29,7 @@
                     "type": "RowLayout",
                     "items": [
                         {
-                            "type": "label",
+                            "type": "Label",
                             "caption": "Color of the forground (text) in the dashboard",
                             "width": "800px"
                         },
