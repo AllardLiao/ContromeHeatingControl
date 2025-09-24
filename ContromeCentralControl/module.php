@@ -886,7 +886,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
         $this->updateData();
-        return $this->wrapReturn(true, "Target setpoint set successfully.");
+        return $this->wrapReturn(true, "Target setpoint set successfully.", $payloadToVisu);
     }
 
     public function setRoomTemperature(mixed $params): string
@@ -939,7 +939,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
         $this->updateData();
-        return $this->wrapReturn(true, "Permanent setpoint set successfully.");
+        return $this->wrapReturn(true, "Permanent setpoint set successfully.", $payloadToVisu);
     }
 
     private function setRoomMode(mixed $params): string
@@ -991,7 +991,7 @@ class ContromeCentralControl extends IPSModuleStrict
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
         $this->updateData();
-        return $this->wrapReturn(true, "Mode set successfully.");
+        return $this->wrapReturn(true, "Mode set successfully.", $payloadToVisu);
     }
 
     private function sendVisuAction(string $action, array $payload)
