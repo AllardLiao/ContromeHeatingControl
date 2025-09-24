@@ -1,8 +1,7 @@
 {
     "translations": {
         "de": {
-            "Translation 1": "Übersetzung 1",
-            "Translation 2": "Übersetzung 2"
+            "Symcon module for local control and monitoring of Controme heating systems.": "Symcon-Modul für die lokale Steuerung und Überwachung von Controme-Heizsystemen."
         }
     }
 }

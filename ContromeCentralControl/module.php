@@ -668,7 +668,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         $roomHtml .= '<tr>'
                                 . '<td>' . htmlspecialchars($room['primary_sensor_name']) . '</td>'
                                 . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_value" class="value-cell">' . ((isset($room['primary_sensor_value']) && is_numeric($room['primary_sensor_value']) && ($room['primary_sensor_value'] > 0)) ? number_format(floatval($room['primary_sensor_value']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
-                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_last_info" class="value-cell">' . (isset($room['primary_sensor_last_info']) ? date('d.m. H:i', strtotime($room['primary_sensor_last_info'])) : '--') . '</td>'
+                                . '<td id="room_' . $room['id'] . '_primarysensor_' . $offsetName . '_last_info" class="value-cell">' . ((isset($room['primary_sensor_last_info']) && is_numeric($room['primary_sensor_last_info'])) ? date('d.m. H:i', strtotime($room['primary_sensor_last_info'])) : 'n/a') . '</td>'
                                 . '</tr>';
                         $roomHtml .= '</table>';
                         $roomHtml .= '</div>';

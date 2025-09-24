@@ -38,12 +38,12 @@
             "Show room sensor data (room temperature, return flow temperature)": "Raumsensordaten anzeigen (Raumtemperatur, Rücklauftemperatur)",
             "Show more room data (humidity & mode)": "Weitere Raumdaten anzeigen (Luftfeuchtigkeit & Modus)",
             "Show room information (name, floor, termperature & setpoint)": "Rauminformationen anzeigen (Name, Etage, Temperatur & Sollwert)",
-            "Dashboard background color for floors": "x",
-            "Show room sensor data (room thermostat, return flow sensors)": "x",
-            "Duration of popup message (setting values with success or not)": "x",
-            "olor of the forground (text) in the dashboard": "x",
-            "Color of the 'mode' button in the dashboard": "x",
-            "Color of the 'temperature' buttons in the dashboard": "x"
+            "Dashboard background color for floors": "Dashboard-Hintergrundfarbe für Etagen",
+            "Show room sensor data (room thermostat, return flow sensors)": "Raumsensordaten anzeigen (Raumthermostat, Rücklaufsensoren)",
+            "Duration of popup message (setting values with success or not)": "Dauer der Popup-Nachricht (Werte erfolgreich gesetzt oder nicht)",
+            "olor of the forground (text) in the dashboard": "Farbe des Vordergrunds (Text) im Dashboard",
+            "Color of the 'mode' button in the dashboard": "Farbe des 'Modus'-Buttons im Dashboard",
+            "Color of the 'temperature' buttons in the dashboard": "Farbe der 'Temperatur'-Buttons im Dashboard"
         }
     }
 }
