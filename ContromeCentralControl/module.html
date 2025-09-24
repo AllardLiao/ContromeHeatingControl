@@ -68,6 +68,9 @@
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between; /* Name links, Symbol rechts */
+            align-items: center;
         }
         .room-values, .room-temp-schedule {
             display: flex;
@@ -134,9 +137,31 @@
             white-space: nowrap; /* falls du verhindern willst, dass °C umbrechen */
         }
         .temp-status { /* für das kleine Symbol rechts oben */
-            float: right;
+            position: relative;
+            cursor: help;
+            margin-left: 6px;
             font-size: 1.2em;
-            line-height: 1;
+        }
+        /* Tooltip */
+        .temp-status::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%; /* über dem Symbol */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-size: 0.8em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+        }
+        .temp-status:hover::after {
+            opacity: 1;
         }
         .temp-ok { color: #28a745; }      /* grün */
         .temp-cold { color: #3498db; }    /* blau */
