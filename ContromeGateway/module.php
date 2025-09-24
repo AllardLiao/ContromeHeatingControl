@@ -722,6 +722,7 @@ class ContromeGateway extends IPSModuleStrict
             'action'   => "betriebsart",
             'value'    => CONTROME_API::getApiLabelBetriebsart($modeID)
         ]);
+        $this->SendDebug(__FUNCTION__, "API Call (mode): " . $postData, 0);
 
         $opts = [
             'http' => [
