@@ -604,8 +604,19 @@ class ContromeCentralControl extends IPSModuleStrict
                     $hoursMinutes = sprintf("%02d:%02d", $hours, $minutes);
                 }
 
+                $tempStatusOk = '<span class="temp-status" id="room_' . $room['id'] . '_temp_status temp-ok">✔️</span>';
+                $tempStatusCold = '<span class="temp-status" id="room_' . $room['id'] . '_temp_status temp-cold">❄️</span>';
+                $tempStatusWarm = '<span class="temp-status" id="room_' . $room['id'] . '_temp_status temp-warm">🔥</span>';
+                $tempDiff = floatval($room['target']) - floatval($room['temperature']);
+                if ($tempDiff < -1) {
+                    $tempStatus = $tempStatusCold;
+                } elseif ($tempDiff > 1) {
+                    $tempStatus = $tempStatusWarm;
+                } else {
+                    $tempStatus = $tempStatusOk;
+                }
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
-                    . '<div class="room-header">' . $room['name'] . '</div>'
+                    . '<div class="room-header">' . $room['name'] . $tempStatus . '</div>'
                     . '<div class="room-values">'
                     . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature" class="value-cell">' . (number_format(floatval($room['temperature']), 2, ',', '') ?? 'n/a') . ' °C</span></div>';
 
