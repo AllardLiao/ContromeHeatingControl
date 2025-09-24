@@ -42,6 +42,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyInteger("VisuColorFloorTiles", 0xd9d9d9);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
+        $this->RegisterPropertyBoolean("ShowRoomOffsetsOnlyActive", false);
         $this->RegisterPropertyBoolean("ShowRoomSensors", false);
         $this->RegisterPropertyBoolean("ShowVTR", false);
         $this->RegisterPropertyBoolean("ShowTimer", false);
@@ -451,8 +452,8 @@ class ContromeCentralControl extends IPSModuleStrict
                             foreach ($otherSensors as $sensor) {
                                 if (!$sensor['raumtemperatursensor']) {
                                     $sensorKey = preg_replace('/\s+/', '', strtolower($sensor['name']));
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : '--'), "allowHtml" => true];
-                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_lastinfo", 'value' => (isset($sensor['letzte_uebertragung']) ? date('d.m. H:i', strtotime($sensor['letzte_uebertragung'])) : '--'), "allowHtml" => true];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_value", 'value' => (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . " °C" : 'n/a'), "allowHtml" => true];
+                                    $updatesVisu[] = ['id' => "room_" . $roomID . "_sensor_" . $sensorKey . "_lastinfo", 'value' => (isset($sensor['letzte_uebertragung']) ? date('d.m. H:i', strtotime($sensor['letzte_uebertragung'])) : 'n/a'), "allowHtml" => true];
                                 }
                             }
                         }
@@ -579,7 +580,7 @@ class ContromeCentralControl extends IPSModuleStrict
                     .'<label>System Info</label>'
                     .'<div class="system-info-values">';
         foreach ($sysInfo as $key => $value) {
-            $sysHtml .= '<div><strong>' . $key . ':</strong><span  id="room_' . $room['id'] . '_sysinfo_' . preg_replace('/\s+/', '', $key) . '">' . ($value ?? '--') . '</span></div>';
+            $sysHtml .= '<div><strong>' . $key . ':</strong><span  id="room_' . $room['id'] . '_sysinfo_' . preg_replace('/\s+/', '', $key) . '">' . ($value ?? 'n/a') . '</span></div>';
             $this->SendDebug(__FUNCTION__, "Sysinfo Key: $key Value: $value", 0);
         }
         $sysHtml .= '</div>'
@@ -606,27 +607,27 @@ class ContromeCentralControl extends IPSModuleStrict
                 $roomHtml = '<div class="room-tile" id="room_' . $room['id'] . '">'
                     . '<div class="room-header">' . $room['name'] . '</div>'
                     . '<div class="room-values">'
-                    . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature" class="value-cell">' . (number_format(floatval($room['temperature']), 2, ',', '') ?? '--') . ' °C</span></div>';
+                    . '<div><strong>Ist:</strong><span id="room_' . $room['id'] . '_temperature" class="value-cell">' . (number_format(floatval($room['temperature']), 2, ',', '') ?? 'n/a') . ' °C</span></div>';
 
                 $showNormal = " visible";
                 $showTemp = " hidden";
                 if (!empty($room['remaining_time']) && $room['remaining_time'] > 0) {
                     $showNormal = " hidden";
                     $showTemp = " visible";
-                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showTemp . '"><s>' . (number_format(floatval($room['perm_solltemperatur']), 2, ',', '') ?? '--') . ' °C</s></span></div>';
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showTemp . '"><s>' . (number_format(floatval($room['perm_solltemperatur']), 2, ',', '') ?? 'n/a') . ' °C</s></span></div>';
                 } else {
-                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showNormal . '">' . (number_format(floatval($room['target']), 2, ',', '') ?? '--') . ' °C</span></div>';
+                    $roomHtml .= '<div><strong>Soll:</strong><span id="room_' . $room['id'] . '_target" class="value-cell ' . $showNormal . '">' . (number_format(floatval($room['target']), 2, ',', '') ?? 'n/a') . ' °C</span></div>';
                 }
 
                 $roomHtml .= '<div class="room-temp-schedule' . $showTemp . '" id="room_' . $room['id'] . '_target_temp_block">'
-                            . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp" class="value-cell">' . (number_format(floatval($room['target']), 2, ',', '') ?? '--') . ' °C</span></div>'
+                            . '<div><strong>Temporär-Soll:</strong><span id="room_' . $room['id'] . '_target_temp" class="value-cell">' . (number_format(floatval($room['target']), 2, ',', '') ?? 'n/a') . ' °C</span></div>'
                             . '<div><strong>Restzeit:</strong><span id="room_' . $room['id'] . '_target_temp_time" class="value-cell">' . $hoursMinutes . ' h</span></div>'
                             . '</div>';
 
                 if ($this->ReadPropertyBoolean('ShowRoomData'))
                 {
-                    $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity" class="value-cell">' . (number_format($room['humidity'], 2, ',', '') ?? '--') . '%</span></div>'
-                                . '<div><strong>Status:</strong><span id="room_' . $room['id'] . '_state" class="value-cell">' . ($room['state'] ?? '--') . '</span></div>';
+                    $roomHtml .= '<div><strong>Luftfeuchte:</strong><span id="room_' . $room['id'] . '_humidity" class="value-cell">' . (number_format($room['humidity'], 2, ',', '') ?? 'n/a') . '%</span></div>'
+                                . '<div><strong>Status:</strong><span id="room_' . $room['id'] . '_state" class="value-cell">' . ($room['state'] ?? 'n/a') . '</span></div>';
                 }
                 $roomHasNote = (isset($room['note']) && (strlen($room['note']) > 0));
                 $roomHtml .= '<div class="room-footer" id="room_' . $room['id'] . '_note" class="' . ($roomHasNote ? 'visible' : 'hidden') . '">' . ($roomHasNote ? $room['note'] : '') . '</div>';
@@ -657,10 +658,12 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Details
                         foreach ($room['offsets'] as $offsetName => $values) {
                             $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
-                            $roomHtml .= '<tr>'
-                                    . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_name">' . htmlspecialchars($offsetName) . '</td>'
-                                    . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value" class="value-cell">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
-                                    . '</tr>';
+                            if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal > 0)){
+                                $roomHtml .= '<tr>'
+                                        . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_name">' . htmlspecialchars($offsetName) . '</td>'
+                                        . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value" class="value-cell">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
+                                        . '</tr>';
+                            }
                         }
 
                         $roomHtml .= '</table>';
@@ -699,8 +702,8 @@ class ContromeCentralControl extends IPSModuleStrict
                             if (!$sensor['raumtemperatursensor']) {
                                 $roomHtml .= '<tr>'
                                         . '<td>' . htmlspecialchars($sensor['beschreibung'] ?? $sensor['name']) . '</td>'
-                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_value" class="value-cell">' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : '--') . '</td>'
-                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_last_info" class="value-cell">' . (isset($sensor['letzte_uebertragung']) ? date('d.m. H:i', strtotime($sensor['letzte_uebertragung'])) : '--') . '</td>'
+                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_value" class="value-cell">' . (isset($sensor['wert']) && is_numeric($sensor['wert']) ? number_format(floatval($sensor['wert']), 2, ',', '') . ' °C' : 'n/a') . '</td>'
+                                        . '<td id="room_' . $room['id'] . '_sensor_' . $sensor['name'] . '_last_info" class="value-cell">' . (isset($sensor['letzte_uebertragung']) ? date('d.m. H:i', strtotime($sensor['letzte_uebertragung'])) : 'n/a') . '</td>'
                                         . '</tr>';
                             }
                         }

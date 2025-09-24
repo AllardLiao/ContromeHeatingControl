@@ -43,7 +43,8 @@
             "Duration of popup message (setting values with success or not)": "Dauer der Popup-Nachricht (Werte erfolgreich gesetzt oder nicht)",
             "olor of the forground (text) in the dashboard": "Farbe des Vordergrunds (Text) im Dashboard",
             "Color of the 'mode' button in the dashboard": "Farbe des 'Modus'-Buttons im Dashboard",
-            "Color of the 'temperature' buttons in the dashboard": "Farbe der 'Temperatur'-Buttons im Dashboard"
+            "Color of the 'temperature' buttons in the dashboard": "Farbe der 'Temperatur'-Buttons im Dashboard",
+            "how only active room offset information": "x"
         }
     }
 }

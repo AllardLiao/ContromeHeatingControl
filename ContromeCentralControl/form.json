@@ -123,6 +123,22 @@
                     "items": [
                         {
                             "type": "CheckBox",
+                            "name": "ShowRoomOffsetsOnlyActive",
+                            "caption": "Show only active room offset information",
+                            "value": false,
+                            "width": "800px"
+                        },
+                        {
+                            "type": "Label",
+                            "caption": "Same tile as 'show room info'"
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "CheckBox",
                             "name": "ShowRoomSensors",
                             "caption": "Show room sensor data (room thermostat, return flow sensors)",
                             "value": true,
