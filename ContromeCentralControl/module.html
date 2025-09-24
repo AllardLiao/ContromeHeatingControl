@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Sende permanente Parameter:", params);
 
         try {
-            requestAction('visu_CC_Setpoint', JSON.stringify(params));
+            requestAction('visu_CC_Mode', JSON.stringify(params));
         } catch (e) {
             console.error("Fehler beim Senden (Soll-Temperatur):", e);
             btnMode.disabled = false;
