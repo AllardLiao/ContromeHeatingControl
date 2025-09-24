@@ -124,13 +124,22 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->testReadRoomData();
                 break;
             case ACTIONs::VISU_CC_MODE:
-                $this->setRoomMode($value);
+                $response = $this->setRoomMode($value);
+                $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
+                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
+                $this->updateData();
                 break;
             case ACTIONs::VISU_CC_SETPOINT:
-                $this->setRoomTemperature($value);
+                $response = $this->setRoomTemperature($value);
+                $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
+                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
+                $this->updateData();
                 break;
             case ACTIONs::VISU_CC_TARGET:
-                $this->setRoomTemperatureTemp($value);
+                $response = $this->setRoomTemperatureTemp($value);
+                $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
+                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
+                $this->updateData();
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -825,7 +834,11 @@ class ContromeCentralControl extends IPSModuleStrict
         // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['Target'], $params['Duration']))
         {
-            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', print_r($params, true));
+            $payloadToVisu = [
+                'msg' => "Error setting the mode: missing room id, temporary temperature or duration.",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperatureTemp', $payloadToVisu);
         }
 
         // Raumliste erstellen
@@ -833,12 +846,20 @@ class ContromeCentralControl extends IPSModuleStrict
         if (!is_array($roomIds)) {
             $roomIds = [$roomIds]; // falls aus Versehen nur eine Zahl übergeben wurde
         }
-        $target     = (float) $params['Target'];
+        $target = (float) $params['Target'];
         $duration = (int) $params['Duration'];
-        if ($target <= 0) {
-            return $this->wrapReturn(false, "Invalid target temperature: $target");
+        if (($target < 15 || $target > 25)) {
+            $payloadToVisu = [
+                'msg' => "Error setting the mode: invalid target temperature (15 - 25 °C).",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Invalid target temperature: $target", $payloadToVisu);
         }
-        if ($duration < 0) {
+        if ($duration < 60) {
+            $payloadToVisu = [
+                'msg' => "Error setting the mode: invalid duration (min. 60 min).",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
             return $this->wrapReturn(false, "Invalid duration: $duration");
         }
         // Raumliste durchgehen und schreiben.
@@ -857,8 +878,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     'msg' => "Error setting the temporary setpoint for room id " . $roomId . " with temperature " . $target . ".",
                     'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
                 ];
-                $this->sendVisuAction("ERROR", $payloadToVisu);
-                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
                 return $this->wrapReturn(false, "Temporary setpoint not set for room " . $roomId . " and temperature " . $target . ".", $payloadToVisu);
             }
         }
@@ -866,8 +885,6 @@ class ContromeCentralControl extends IPSModuleStrict
             'msg' => "Temporary setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . " for " . $duration . " minutes.",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->sendVisuAction("SUCCESS", $payloadToVisu);
-        $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
         $this->updateData();
         return $this->wrapReturn(true, "Target setpoint set successfully.");
     }
@@ -880,7 +897,11 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['Target'])) {
-            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperature', print_r($params, true));
+            $payloadToVisu = [
+                'msg' => "Error setting the temperature: missing room id or temperature value.",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, 'Missing parameters in SetRoomTemperature', $payloadToVisu);
         }
         // Raumliste erstellen
         $roomIds = $params['RoomIDs'];
@@ -888,8 +909,12 @@ class ContromeCentralControl extends IPSModuleStrict
             $roomIds = [$roomIds]; // falls aus Versehen nur eine Zahl übergeben wurde
         }
         $target  = floatval($params['Target']);
-        if ($target <= 0) {
-            return $this->wrapReturn(false, "Invalid target temperature: $target");
+        if ($target < 15 || $target > 25) {
+            $payloadToVisu = [
+                'msg' => "Error setting the temperature: invalid temperature value (15 - 25 °C).",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Invalid target temperature: $target", $payloadToVisu);
         }
         foreach ($roomIds as $roomId) {
             $this->SendDebug(__FUNCTION__, "Setze permanente Temperatur für Raum $roomId auf $target °C", 0);
@@ -906,8 +931,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     'msg' => "Error setting the setpoint for room id " . $roomId . " with temperature " . $target . ".",
                     'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
                 ];
-                $this->sendVisuAction("ERROR", $payloadToVisu);
-                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
                 return $this->wrapReturn(false, "Target setpoint not set for room " . $roomId . " and temperature " . $target . ".", $payloadToVisu);
             }
         }
@@ -915,12 +938,9 @@ class ContromeCentralControl extends IPSModuleStrict
             'msg' => "Setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . ".",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->sendVisuAction("SUCCESS", $payloadToVisu);
-        $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
         $this->updateData();
         return $this->wrapReturn(true, "Permanent setpoint set successfully.");
     }
-
 
     private function setRoomMode(mixed $params): string
     {
@@ -930,7 +950,11 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         // Pflicht-Parameter prüfen
         if (!isset($params['RoomIDs'], $params['ModeID'])) {
-            return $this->wrapReturn(false, 'Missing parameters in SetRoomMode', print_r($params, true));
+            $payloadToVisu = [
+                'msg' => "Error setting the mode: missing room id or mode id.",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, 'Error: missing parameters in SetRoomMode', $payloadToVisu);
         }
         // Raumliste erstellen
         $roomIds = $params['RoomIDs'];
@@ -939,7 +963,11 @@ class ContromeCentralControl extends IPSModuleStrict
         }
         $mode  = intval($params['ModeID']);
         if ($mode < 0 || $mode > 3) {
-            return $this->wrapReturn(false, "Invalid target mode: $mode");
+            $payloadToVisu = [
+                'msg' => "Error setting the mode: invalid mode id.",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Invalid target mode: $mode", $payloadToVisu);
         }
         foreach ($roomIds as $roomId) {
             $this->SendDebug(__FUNCTION__, "Setze Betriebsmodus für Raum $roomId auf Betriebs-ID $mode.", 0);
@@ -955,8 +983,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     'msg' => "Error setting the mode for room id " . $roomId . " with mode " . $mode . ".",
                     'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
                 ];
-                $this->sendVisuAction("ERROR", $payloadToVisu);
-                $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
                 return $this->wrapReturn(false, "Target mode not set for room " . $roomId . " and mode " . $mode . ".", $payloadToVisu);
             }
         }
@@ -964,8 +990,6 @@ class ContromeCentralControl extends IPSModuleStrict
             'msg' => "Mode set for room id's " . implode(", ", $roomIds) . " with mode " . $mode . ".",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->sendVisuAction("SUCCESS", $payloadToVisu);
-        $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
         $this->updateData();
         return $this->wrapReturn(true, "Mode set successfully.");
     }
