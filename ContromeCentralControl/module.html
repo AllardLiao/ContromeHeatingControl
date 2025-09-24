@@ -214,7 +214,20 @@
             border: 2px solid #555;
             cursor: pointer;
         }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* etwas Luft zwischen Slider und Zahl */
+        }
 
+        .slider-row input[type="range"] {
+            flex: 1; /* Slider nimmt die ganze Breite */
+        }
+
+        .slider-row span {
+            min-width: 60px;   /* fixe Breite für saubere Ausrichtung */
+            text-align: right; /* Zahl rechtsbündig */
+        }
         /* Textfarben je nach Hintergrundfarbe */
         .subtile,
         .room-tile,
@@ -258,18 +271,19 @@
     <div class="subtile" id="tile_temperature">
         <label>Permanente Soll-Temperatur</label>
         <div class="temp-slider-container">
-        <label for="temp-slider">Zieltemperatur:</label>
-        <input
-            type="range"
-            id="temp-slider"
-            name="target_temp"
-            min="15"
-            max="25"
-            step="0.5"
-            value="<!--MAX_TEMP-->"
-            oninput="document.getElementById('temp-value').innerText=this.value + ' °C'"
-        >
-        <span id="temp-value"><!--MAX_TEMP--> °C</span>
+        <div class="slider-row">
+            <input
+                type="range"
+                id="temp-slider"
+                name="target_temp"
+                min="15"
+                max="25"
+                step="0.5"
+                value="<!--MAX_TEMP-->"
+                oninput="document.getElementById('temp-value').innerText=this.value + ' °C'"
+            >
+            <span id="temp-value"><!--MAX_TEMP--> °C</span>
+        </div>
         </div>
         <select id="temp_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
