@@ -784,7 +784,8 @@ class ContromeCentralControl extends IPSModuleStrict
                     'target'     => $this->GetValue($roomVar . "Target"),
                     'remaining_time' => $this->GetValue($roomVar . "RemainingTime") ?? 0,
                     'perm_solltemperatur' => $this->GetValue($roomVar . "PermSolltemperatur") ?? 0,
-                    'temperature' => $this->GetValue($roomVar . "Temperature")
+                    'temperature' => $this->GetValue($roomVar . "Temperature"),
+                    'note'        => $this->GetValue($roomVar . "Note") ?? ''
                 ];
 
                 // Nur wenn ShowRoomData = true → Luftfeuchte und Betriebsmode
