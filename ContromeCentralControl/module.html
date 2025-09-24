@@ -259,6 +259,33 @@
         }
 
         /* Drop-Down-Felder */
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .select-wrapper select {
+            width: 100%;
+            padding: 8px 32px 8px 10px; /* rechts Platz für Pfeil */
+            font-size: 1em;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: #fff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 0.8em;
+            color: #555;
+        }
         .subtile select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -383,12 +410,16 @@
     <!-- Tile 1: Betriebsart -->
     <div class="subtile" id="tile_mode">
         <label>Betriebsart</label>
-        <select id="mode_select">
-            <!--MODE_OPTIONS-->
-        </select>
-        <select id="mode_room_select">
-            <!--FLOOR_ROOM_OPTIONS-->
-        </select>
+        <div class="select-wrapper">
+            <select id="mode_select">
+                <!--MODE_OPTIONS-->
+            </select>
+        </div>
+        <div class="select-wrapper">
+            <select id="mode_room_select">
+                <!--FLOOR_ROOM_OPTIONS-->
+            </select>
+        </div>
         <div class="button-container">
             <button id="btn_set_mode" class="button-blue">Setzen</button>
         </div>
@@ -413,9 +444,11 @@
                 <span id="temp-value"><!--MAX_TEMP--> °C</span>
             </div>
         </div>
-        <select id="temp_room_select">
-            <!--FLOOR_ROOM_OPTIONS-->
-        </select>
+        <div class="select-wrapper">
+            <select id="temp_room_select">
+                <!--FLOOR_ROOM_OPTIONS-->
+            </select>
+        </div>
         <div class="button-container">
             <button id="btn_set_temp" class="button-warm">Setzen</button>
         </div>
@@ -479,9 +512,11 @@
             // Initial anzeigen
             updateDurationValue(slider.value);
         </script>
-        <select id="target_room_select">
-            <!--FLOOR_ROOM_OPTIONS-->
-        </select>
+        <div class="select-wrapper">
+            <select id="target_room_select">
+                <!--FLOOR_ROOM_OPTIONS-->
+            </select>
+        </div>
         <div class="button-container">
             <button id="btn_set_target" class="button-warm">Setzen</button>
         </div>
