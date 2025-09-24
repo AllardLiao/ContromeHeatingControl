@@ -52,7 +52,8 @@
             "Heating": "Heizen",
             "Cooling": "Kühlen",
             "On": "An",
-            "Off": "Aus"
+            "Off": "Aus",
+            "All rooms": "Alle Räume"
         }
     }
 }

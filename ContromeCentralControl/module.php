@@ -305,10 +305,10 @@ class ContromeCentralControl extends IPSModuleStrict
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $temperature = isset($room['temperatur']) && is_numeric($room['temperatur']) ? floatval($room['temperatur']) : 0.0;
                         if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
-                            $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback room: " . $roomID, 0);
+                            $this->SendDebug(__FUNCTION__, "Checking temperature fallback room: " . $roomID, 0);
                             $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                             foreach ($thermostats as $instID) {
-                                $this->SendDebug("CONCC - saveVariables", "Checking temperature fallback with instance: " . $instID, 0);
+                                $this->SendDebug(__FUNCTION__, "Checking temperature fallback with instance: " . $instID, 0);
                                 $response = CONRT_GetEffectiveTemperature($instID);
                                 $payload = $this->getResponsePayload($response);
                                 if ((int)$payload["RoomID"] === (int)$roomID){
@@ -358,7 +358,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $humidity = isset($room['luftfeuchte']) && is_numeric($room['luftfeuchte']) ? floatval($room['luftfeuchte']) : 0.0;
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
                             if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
-                                $this->SendDebug("CONCC - saveVariables", "Checking humidity fallback room: " . $roomID, 0);
+                                $this->SendDebug(__FUNCTION__, "Checking humidity fallback room: " . $roomID, 0);
                                 $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
                                 foreach ($thermostats as $instID) {
                                     $response = CONRT_GetEffectiveHumidity($instID);
@@ -562,7 +562,7 @@ class ContromeCentralControl extends IPSModuleStrict
         // ========================================================================================================================
         // 2.Dropdown für Räume: Alle Räume + Einzelräume sowie Max-Temp finden
         $rooms = $this->getRoomData();  // holt alle Räume aus den Variablen
-        $roomOptions = '<option value="all">Alle Räume</option>';
+        $roomOptions = '<option value="all">All rooms</option>';
         $maxTemp = 15.0;
         foreach ($rooms as $room) {
             if (!empty($room['name'])) {
