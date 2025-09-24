@@ -393,50 +393,43 @@
         </div>
         <label for="duration_select">Dauer</label>
 
-    <!-- Dauer-Slider -->
-    <div class="temp-slider-container">
-        <div class="slider-row">
-            <input
-                type="range"
-                id="duration-slider"
-                min="0"
-                max="<!--COUNT_VALUES-->"
-                step="1"
-                value="0"
-                oninput="updateDurationValue(this.value)"
-            >
-            <span id="duration-value"></span>
+        <!-- Dauer-Slider -->
+        <div class="temp-slider-container">
+            <div class="slider-row">
+                <input
+                    type="range"
+                    id="duration-slider"
+                    min="0"
+                    max="<!--COUNT_VALUES-->"
+                    step="1"
+                    value="0"
+                    oninput="updateDurationValue(this.value)"
+                >
+                <span id="duration-value"></span>
+            </div>
         </div>
-    </div>
-    <script>
-        // Mapping-Array nach deinem PHP-Schema
-        const durationValues = [];
-        for (let h = 1; h <= 168; h++) {
-            if (h <= 11) {
-                durationValues.push(h);
-            } else if (h <= 71) {
-                if (h % 12 === 0) durationValues.push(h);
-            } else {
-                if (h % 24 === 0) durationValues.push(h);
+        <script>
+            // Mapping-Array nach deinem PHP-Schema
+            const durationValues = [];
+            for (let h = 1; h <= 168; h++) {
+                if (h <= 11) {
+                    durationValues.push(h);
+                } else if (h <= 71) {
+                    if (h % 12 === 0) durationValues.push(h);
+                } else {
+                    if (h % 24 === 0) durationValues.push(h);
+                }
             }
-        }
-
-        const slider = document.getElementById("duration-slider");
-        slider.max = durationValues.length - 1;
-
-        function updateDurationValue(idx) {
-            const h = durationValues[idx];
-            const days = (h / 24).toFixed(2);
-            document.getElementById("duration-value").innerText = h + " h (" + days + " Tage)";
-        }
-
-        // Initial anzeigen
-        updateDurationValue(slider.value);
-    </script>
-
-        <select id="duration_select">
-            <!--DURATION_OPTIONS-->
-        </select>
+            const slider = document.getElementById("duration-slider");
+            slider.max = durationValues.length - 1;
+            function updateDurationValue(idx) {
+                const h = durationValues[idx];
+                const days = (h / 24).toFixed(2);
+                document.getElementById("duration-value").innerText = h + " h (" + days + " Tage)";
+            }
+            // Initial anzeigen
+            updateDurationValue(slider.value);
+        </script>
         <select id="target_room_select">
             <!--FLOOR_ROOM_OPTIONS-->
         </select>
@@ -548,8 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('click', function () {
         btn.disabled = true;
         let ziel     = parseFloat(document.getElementById('input_target_temp')?.value ?? NaN);
-        /*let duration = parseInt(document.getElementById('duration_select')?.value ?? -1);*/
-        let idx = parseInt(document.getElementById('duration-slider')?.value ?? -1);
+        let idx      = parseInt(document.getElementById('duration-slider')?.value ?? -1);
         let duration = (idx >= 0 ? durationValues[idx] : -1);
         let select   = document.getElementById('target_room_select');
         let selectedValue = select.value;
