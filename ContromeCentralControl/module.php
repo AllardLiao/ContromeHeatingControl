@@ -148,8 +148,6 @@ class ContromeCentralControl extends IPSModuleStrict
             case ACTIONs::RESET_TO_DEFAULT:
                 $this->SendDebug(__FUNCTION__, "Resetting to default", 0);
                 $this->ResetToDefaultProfileValues();
-                $this->ApplyChanges();
-                $this->ReloadForm();
                 break;
             default:
                 parent::RequestAction($ident, $value);
