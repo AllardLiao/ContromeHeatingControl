@@ -184,6 +184,7 @@ class ContromeCentralControl extends IPSModuleStrict
         if (!is_array($value)){
             $value = json_decode($value, true);
         }
+        $this->SendDebug(__FUNCTION__, "Disabling/enabling form field " . print_r($value, true), 0);
         return $this->UpdateFormField($value['FormField'], "enabled", boolval($value['onOrOff']));
     }
 
