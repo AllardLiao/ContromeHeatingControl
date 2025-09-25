@@ -149,6 +149,7 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->SendDebug(__FUNCTION__, "Resetting to default", 0);
                 $this->ResetToDefaultProfileValues();
                 $this->ApplyChanges();
+                $this->ReloadForm();
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -158,23 +159,23 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function ResetToDefaultProfileValues(): void
     {
-        IPS_SetProperty($this->InstanceID, "VisuColorMainTiles", 0x454545);
-        IPS_SetProperty($this->InstanceID, "ShowSystemInfo", true);
-        IPS_SetProperty($this->InstanceID, "VisuColorSystemInfoTile", 0x696e96);
-        IPS_SetProperty($this->InstanceID, "ShowRooms", true);
-        IPS_SetProperty($this->InstanceID, "VisuColorRoomTiles", 0x5c5c5c);
-        IPS_SetProperty($this->InstanceID, "VisuColorFloorTiles", 0x454545);
-        IPS_SetProperty($this->InstanceID, "ShowRoomData", true);
-        IPS_SetProperty($this->InstanceID, "ShowRoomOffsets", false);
-        IPS_SetProperty($this->InstanceID, "ShowRoomOffsetsOnlyActive", false);
-        IPS_SetProperty($this->InstanceID, "ShowRoomSensors", false);
-        IPS_SetProperty($this->InstanceID, "ShowVTR", false);
-        IPS_SetProperty($this->InstanceID, "ShowTimer", false);
-        IPS_SetProperty($this->InstanceID, "ShowCalendar", false);
-        IPS_SetProperty($this->InstanceID, "DurationOfMessagePopup", 8);
-        IPS_SetProperty($this->InstanceID, "VisuColorText", 0xFFFFFF);
-        IPS_SetProperty($this->InstanceID, "VisuColorModeButton", 0x00a9f4);
-        IPS_SetProperty($this->InstanceID, "VisuColorTempButtons", 0xfb4f2a);
+        $this->UpdateFormField("VisuColorMainTiles", "value", 0x454545);
+        $this->UpdateFormField("ShowSystemInfo", "value", true);
+        $this->UpdateFormField("VisuColorSystemInfoTile", "value", 0x696e96);
+        $this->UpdateFormField("ShowRooms", "value", true);
+        $this->UpdateFormField("VisuColorRoomTiles", "value", 0x5c5c5c);
+        $this->UpdateFormField("VisuColorFloorTiles", "value", 0x454545);
+        $this->UpdateFormField("ShowRoomData", "value", true);
+        $this->UpdateFormField("ShowRoomOffsets", "value", false);
+        $this->UpdateFormField("ShowRoomOffsetsOnlyActive", "value", false);
+        $this->UpdateFormField("ShowRoomSensors", "value", false);
+        $this->UpdateFormField("ShowVTR", "value", false);
+        $this->UpdateFormField("ShowTimer", "value", false);
+        $this->UpdateFormField("ShowCalendar", "value", false);
+        $this->UpdateFormField("DurationOfMessagePopup", "value", 8);
+        $this->UpdateFormField("VisuColorText", "value", 0xFFFFFF);
+        $this->UpdateFormField("VisuColorModeButton", "value", 0x00a9f4);
+        $this->UpdateFormField("VisuColorTempButtons", "value", 0xfb4f2a);
     }
 
     public function testReadRoomData(): string
