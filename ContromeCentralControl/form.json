@@ -258,8 +258,7 @@
                     "caption": "Reset to default values",
                     "onClick": "IPS_RequestAction($id,'ResetToDefault',true);",
                     "enabled": true
-                },
-
+                }
             ]
         },
         {
