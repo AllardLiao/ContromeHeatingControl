@@ -57,6 +57,7 @@ class ACTIONs
     public const FORM_RT_TOGGLEFALLBACKTEMPSENSOR     = 'form_rt_toggleFallbackTempSensor';
     public const FORM_RT_TOGGLEFALLBACKHUMIDITYSENSOR = 'form_rt_toggleFallbackHumiditySensor';
     public const RESET_TO_DEFAULT                     = 'ResetToDefault';
+    public const DISABLE_FORM_FIELD                   = 'DisableFormField';
 
     // Abzufragende Daten vom Gateway
     public const DATA_SYSTEM_INFO   = 'info';

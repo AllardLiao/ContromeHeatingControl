@@ -149,11 +149,13 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->SendDebug(__FUNCTION__, "Resetting to default", 0);
                 $this->ResetToDefaultProfileValues();
                 break;
+            case ACTIONs::DISABLE_FORM_FIELD:
+                $this->DisableFormField($value);
+                break;
             default:
                 parent::RequestAction($ident, $value);
         }
     }
-
 
     private function ResetToDefaultProfileValues(): void
     {
@@ -174,6 +176,11 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->UpdateFormField("VisuColorText", "value", 0xFFFFFF);
         $this->UpdateFormField("VisuColorModeButton", "value", 0x00a9f4);
         $this->UpdateFormField("VisuColorTempButtons", "value", 0xfb4f2a);
+    }
+
+    private function DisableFormField($value): bool
+    {
+        return $this->UpdateFormField($value['FormField'], "enabled", $value['onOrOff']);
     }
 
     public function testReadRoomData(): string
