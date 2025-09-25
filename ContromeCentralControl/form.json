@@ -71,7 +71,7 @@
                             "caption": "Show room information (name, floor, termperature & setpoint)",
                             "value": true,
                             "width": "800px",
-                            "onChange": "IPS_RequestAction($id, ['FormField' => 'ShowRoomData', 'onOrOff' => this.checked]);"
+                            "onChange": "IPS_RequestAction($id, 'DisableFormField', ['FormField' => 'ShowRoomData', 'onOrOff' => $ShowRooms]);"
                         },
                         {
                             "type": "SelectColor",
