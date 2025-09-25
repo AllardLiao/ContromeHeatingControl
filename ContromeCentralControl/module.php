@@ -157,23 +157,23 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function ResetToDefaultProfileValues(): void
     {
-        $this->SetValue("VisuColorMainTiles", 0x454545);
-        $this->SetValue("ShowSystemInfo", true);
-        $this->SetValue("VisuColorSystemInfoTile", 0x696e96);
-        $this->SetValue("ShowRooms", true);
-        $this->SetValue("VisuColorRoomTiles", 0x5c5c5c);
-        $this->SetValue("VisuColorFloorTiles", 0x454545);
-        $this->SetValue("ShowRoomData", true);
-        $this->SetValue("ShowRoomOffsets", false);
-        $this->SetValue("ShowRoomOffsetsOnlyActive", false);
-        $this->SetValue("ShowRoomSensors", false);
-        $this->SetValue("ShowVTR", false);
-        $this->SetValue("ShowTimer", false);
-        $this->SetValue("ShowCalendar", false);
-        $this->SetValue("DurationOfMessagePopup", 8);
-        $this->SetValue("VisuColorText", 0xFFFFFF);
-        $this->SetValue("VisuColorModeButton", 0x00a9f4);
-        $this->SetValue("VisuColorTempButtons", 0xfb4f2a);
+        IPS_SetProperty($this->InstanceID, "VisuColorMainTiles", 0x454545);
+        IPS_SetProperty($this->InstanceID, "ShowSystemInfo", true);
+        IPS_SetProperty($this->InstanceID, "VisuColorSystemInfoTile", 0x696e96);
+        IPS_SetProperty($this->InstanceID, "ShowRooms", true);
+        IPS_SetProperty($this->InstanceID, "VisuColorRoomTiles", 0x5c5c5c);
+        IPS_SetProperty($this->InstanceID, "VisuColorFloorTiles", 0x454545);
+        IPS_SetProperty($this->InstanceID, "ShowRoomData", true);
+        IPS_SetProperty($this->InstanceID, "ShowRoomOffsets", false);
+        IPS_SetProperty($this->InstanceID, "ShowRoomOffsetsOnlyActive", false);
+        IPS_SetProperty($this->InstanceID, "ShowRoomSensors", false);
+        IPS_SetProperty($this->InstanceID, "ShowVTR", false);
+        IPS_SetProperty($this->InstanceID, "ShowTimer", false);
+        IPS_SetProperty($this->InstanceID, "ShowCalendar", false);
+        IPS_SetProperty($this->InstanceID, "DurationOfMessagePopup", 8);
+        IPS_SetProperty($this->InstanceID, "VisuColorText", 0xFFFFFF);
+        IPS_SetProperty($this->InstanceID, "VisuColorModeButton", 0x00a9f4);
+        IPS_SetProperty($this->InstanceID, "VisuColorTempButtons", 0xfb4f2a);
     }
 
     public function testReadRoomData(): string
