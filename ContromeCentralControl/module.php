@@ -146,10 +146,10 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->updateData();
                 break;
             case ACTIONs::RESET_TO_DEFAULT:
-                $this->SendDebug(__FUNCTION__, "Resetting to default - " . print_r($value, true), 0);
-                $this->ResetToDefaultProfileValues($value);
+                $this->ResetToDefaultProfileValues();
                 break;
             case ACTIONs::DISABLE_FORM_FIELD:
+                $this->SendDebug(__FUNCTION__, "disable/enable - " . print_r($value, true), 0);
                 $this->DisableFormField($value);
                 break;
             default:
