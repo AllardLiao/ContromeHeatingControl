@@ -94,7 +94,8 @@
                             "name": "ShowRoomData",
                             "caption": "Show more room data (humidity & mode)",
                             "value": true,
-                            "width": "800px"
+                            "width": "800px",
+                            "enabled": "{ShowRooms}"
                         },
                         {
                             "type": "Label",
@@ -110,7 +111,8 @@
                             "name": "ShowRoomOffsets",
                             "caption": "Show room offset information (weather, timer, etc.)",
                             "value": false,
-                            "width": "800px"
+                            "width": "800px",
+                            "enabled": "{ShowRooms}"
                         },
                         {
                             "type": "Label",
@@ -126,7 +128,8 @@
                             "name": "ShowRoomOffsetsOnlyActive",
                             "caption": "Show only active room offset information",
                             "value": false,
-                            "width": "800px"
+                            "width": "800px",
+                            "enabled": "{ShowRooms}"
                         },
                         {
                             "type": "Label",
@@ -142,7 +145,8 @@
                             "name": "ShowRoomSensors",
                             "caption": "Show room sensor data (room thermostat, return flow sensors)",
                             "value": true,
-                            "width": "800px"
+                            "width": "800px",
+                            "enabled": "{ShowRooms}"
                         },
                         {
                             "type": "Label",
