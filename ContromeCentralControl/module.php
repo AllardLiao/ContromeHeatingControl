@@ -180,7 +180,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
     private function DisableFormField($value): bool
     {
-        return $this->UpdateFormField($value['FormField'], "enabled", $value['onOrOff']);
+        return $this->UpdateFormField($value['FormField'], "enabled", boolval($value['onOrOff']));
     }
 
     public function testReadRoomData(): string
