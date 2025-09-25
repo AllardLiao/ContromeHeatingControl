@@ -23,7 +23,7 @@ class GUIDs
 
 class ACTIONs
 {
-    // Implementierte Actions (alle Module) die nur Daten empfangen
+    // Implementierte Actions (alle Module) die nur Daten lesen
     public const CHECK_CONNECTION                   = 'CheckConnection';
     public const CREATE_CENTRAL_CONTROL_INSTANCE    = "CreateCentralControlInstance";
     public const CREATE_ROOM_THERMOSTAT_INSTANCE    = "CreateRoomThermostatInstance";
@@ -35,7 +35,7 @@ class ACTIONs
     public const UPDATE_DATA                        = 'UpdateData';
     public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
 
-    // Implementierte Actions (nur CentralControl) die Daten senden
+    // Implementierte Actions (nur CentralControl) die Daten speichern
     public const SET_SETPOINT                       = 'SetSetpoint'; // Permanente Temperaturänderung
     public const SET_MODE                           = 'SetRoomMode';
     public const SET_SETPOINT_TEMP                  = 'SetRoomTemperatureTemp'; // Temporäre Temperaturänderung
@@ -56,6 +56,7 @@ class ACTIONs
     public const FORM_RT_TOGGLEAUTOUPDATE             = 'form_rt_toggleAutoUpdate';
     public const FORM_RT_TOGGLEFALLBACKTEMPSENSOR     = 'form_rt_toggleFallbackTempSensor';
     public const FORM_RT_TOGGLEFALLBACKHUMIDITYSENSOR = 'form_rt_toggleFallbackHumiditySensor';
+    public const RESET_TO_DEFAULT                     = 'ResetToDefault';
 
     // Abzufragende Daten vom Gateway
     public const DATA_SYSTEM_INFO   = 'info';

@@ -34,12 +34,12 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // Properties für die Konfiguration des Moduls
         $this->RegisterPropertyBoolean("ShowMainElements", true);
-        $this->RegisterPropertyInteger("VisuColorMainTiles", 0xd0cdcd);
+        $this->RegisterPropertyInteger("VisuColorMainTiles", 0x454545);
         $this->RegisterPropertyBoolean("ShowSystemInfo", true);
-        $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0xd6dbff);
+        $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0x696e96);
         $this->RegisterPropertyBoolean("ShowRooms", true);
-        $this->RegisterPropertyInteger("VisuColorRoomTiles", 0xf0f0f0);
-        $this->RegisterPropertyInteger("VisuColorFloorTiles", 0xd9d9d9);
+        $this->RegisterPropertyInteger("VisuColorRoomTiles", 0x5c5c5c);
+        $this->RegisterPropertyInteger("VisuColorFloorTiles", 0x454545);
         $this->RegisterPropertyBoolean("ShowRoomData", true);
         $this->RegisterPropertyBoolean("ShowRoomOffsets", false);
         $this->RegisterPropertyBoolean("ShowRoomOffsetsOnlyActive", false);
@@ -48,7 +48,7 @@ class ContromeCentralControl extends IPSModuleStrict
         $this->RegisterPropertyBoolean("ShowTimer", false);
         $this->RegisterPropertyBoolean("ShowCalendar", false);
         $this->RegisterPropertyInteger("DurationOfMessagePopup", 8);
-        $this->RegisterPropertyInteger("VisuColorText", 0x000000);
+        $this->RegisterPropertyInteger("VisuColorText", 0xFFFFFF);
         $this->RegisterPropertyInteger("VisuColorModeButton", 0x00a9f4);
         $this->RegisterPropertyInteger("VisuColorTempButtons", 0xfb4f2a);
 
@@ -145,9 +145,35 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
                 $this->updateData();
                 break;
+            case ACTIONs::RESET_TO_DEFAULT:
+                $this->ResetToDefaultProfileValues();
+                $this->ApplyChanges();
+                break;
             default:
                 parent::RequestAction($ident, $value);
         }
+    }
+
+
+    private function ResetToDefaultProfileValues(): void
+    {
+        $this->SetValue("VisuColorMainTiles", 0x454545);
+        $this->SetValue("ShowSystemInfo", true);
+        $this->SetValue("VisuColorSystemInfoTile", 0x696e96);
+        $this->SetValue("ShowRooms", true);
+        $this->SetValue("VisuColorRoomTiles", 0x5c5c5c);
+        $this->SetValue("VisuColorFloorTiles", 0x454545);
+        $this->SetValue("ShowRoomData", true);
+        $this->SetValue("ShowRoomOffsets", false);
+        $this->SetValue("ShowRoomOffsetsOnlyActive", false);
+        $this->SetValue("ShowRoomSensors", false);
+        $this->SetValue("ShowVTR", false);
+        $this->SetValue("ShowTimer", false);
+        $this->SetValue("ShowCalendar", false);
+        $this->SetValue("DurationOfMessagePopup", 8);
+        $this->SetValue("VisuColorText", 0xFFFFFF);
+        $this->SetValue("VisuColorModeButton", 0x00a9f4);
+        $this->SetValue("VisuColorTempButtons", 0xfb4f2a);
     }
 
     public function testReadRoomData(): string
