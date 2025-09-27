@@ -732,7 +732,7 @@ function refreshRooms(payload) {
                 if (update.allowHtml) {
                     el.innerHTML = update.value;
                 } else {
-                    el.textContent = update.value;
+                    el.textContent = translate(update.value);
                 }
             } catch (e) {
                 console.error("refreshRooms: Fehler beim Setzen value für", update.id, e);
@@ -744,10 +744,10 @@ function refreshRooms(payload) {
             // wir nutzen nur .hidden (und entfernen optional .visible)
             if (update.show) {
                 el.classList.remove('hidden');
-                el.classList.add('visible'); // optional
+                el.classList.add('visible');
             } else {
                 el.classList.add('hidden');
-                el.classList.remove('visible'); // optional
+                el.classList.remove('visible'); 
             }
         }
 
