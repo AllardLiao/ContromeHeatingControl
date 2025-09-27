@@ -425,7 +425,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
         $result = $this->SendDataToParent(json_encode([
             "DataID"   => GUIDs::DATAFLOW,
-            "Action"   => ACTIONs::WRITE_SETPOINT,
+            "Action"   => ACTIONs::SET_SETPOINT,
             "FloorID"  => $floorId,
             "RoomID"   => $roomId,
             "Setpoint" => number_format($value, 2, '.', '') // immer mit 2 Nachkommastellen senden
