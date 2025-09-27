@@ -802,7 +802,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
 
         $this->SendDebug(__FUNCTION__, "HTML: " . $html, 0);
-        return translateHTML($html);
+        return ($html);
     }
 
     private function getRoomData(): array
