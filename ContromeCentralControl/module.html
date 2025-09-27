@@ -730,7 +730,7 @@ function refreshRooms(payload) {
         if (Object.prototype.hasOwnProperty.call(update, 'value')) {
             try {
                 if (update.allowHtml) {
-                    el.innerHTML = update.value;
+                    el.innerHTML = translate(update.value);
                 } else {
                     el.textContent = translate(update.value);
                 }
@@ -747,7 +747,7 @@ function refreshRooms(payload) {
                 el.classList.add('visible');
             } else {
                 el.classList.add('hidden');
-                el.classList.remove('visible'); 
+                el.classList.remove('visible');
             }
         }
 
