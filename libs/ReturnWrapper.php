@@ -101,7 +101,7 @@ trait ReturnWrapper
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
         $prefix = $decoded[self::SALT . 'success'] ? "Success" : "Fail";
 
-        if ($errType !== 0) {
+        if ($errType !== 0 && $onlyLogOnError && !$decoded[self::SALT . 'success']) {
             $fullMsg = "$prefix: " . ($msg !== "" ? "$msg " : "") . $decoded[self::SALT . 'message'];
             $this->SendDebug($caller, $fullMsg, 0);
             $this->LogMessage("$fullMsg / $caller", $decoded[self::SALT . 'success'] ? KL_NOTIFY : $errType);
