@@ -1,53 +1,56 @@
+
 # ContromeCentralControl
-Beschreibung des Moduls.
 
-### Inhaltsverzeichnis
+Module description: Central control for Controme heating systems in IP-Symcon.
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Software-Installation](#3-software-installation)
-4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
-5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
-7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
-8. [Lizenz](#8-lizens)
+## Table of Contents
 
-### 1. Funktionsumfang
+1. [Features](#1-features)
+2. [Requirements](#2-requirements)
+3. [Installation](#3-installation)
+4. [Instance Setup in IP-Symcon](#4-instance-setup-in-ip-symcon)
+5. [Status Variables and Profiles](#5-status-variables-and-profiles)
+6. [Visualization](#6-visualization)
+7. [PHP Command Reference](#7-php-command-reference)
+8. [License](#8-license)
 
-* Setting of the operation mode
-* Setting of (permanent) setpoints
-* Setting of temporary setpoints
+## 1. Features
 
-### 2. Voraussetzungen
+- Set operation mode
+- Set (permanent) setpoints
+- Set temporary setpoints
 
-- IP-Symcon ab Version 7.1
-- Controme API License
+## 2. Requirements
 
-### 3. Software-Installation
+- IP-Symcon version 7.1 or higher
+- Controme API license
 
-* Über den Module Store das 'Controme Heating Control'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen https://github.com/AllardLiao/ContromeHeatingControl.git
+## 3. Installation
 
-### 4. Einrichten der Instanzen in IP-Symcon
+- Install the 'Controme Heating Control' module via the Module Store.
+- Alternatively, add the following URL in Module Control: https://github.com/AllardLiao/ContromeHeatingControl.git
 
- Unter 'Instanz hinzufügen' kann die 'ContromeCentralControl'-Instanz mithilfe des Schnellfilters gefunden werden.
- Alternativ ist eine Erstellung über das Controme Gateway Configuration Form möglich.
-	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
+## 4. Instance Setup in IP-Symcon
 
-__Konfigurationsseite__:
+You can find the 'ContromeCentralControl' instance using the quick filter under 'Add Instance'.
+Alternatively, you can create it via the Controme Gateway configuration form.
+
+For more information on adding instances, see the [IP-Symcon documentation](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen).
+
+__Configuration Page__:
 
 ![Configuration Form](../libs/assets/CONCC_Form.jpeg)
 
-Name                     | Beschreibung
------------------------- | ----------------------------------------------------------------------------------------
-Visualisation...         | Definition, how the visualisation tile will look like and what data will be displayed.
-Advanced Settings...     | Automatic updates and their interval
+| Name                | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| Visualisation...    | Defines how the visualization tile will look and what data will be displayed |
+| Advanced Settings...| Automatic updates and their interval                                        |
 
-### 5. Statusvariablen und Profile
+## 5. Status Variables and Profiles
 
-Die Statusvariablen werden automatisch angelegt. Das Löschen einzelner kann zu Fehlfunktionen führen.
+Status variables are created automatically. Deleting individual variables may cause malfunctions.
 
-### 6. Visualisierung
+## 6. Visualization
 
 ![Visualisation tiles](../libs/assets/Controme_Heating_Control.png)
 

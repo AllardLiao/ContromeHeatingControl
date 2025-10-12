@@ -1,53 +1,56 @@
+
 # ContromeRoomThermostat
-Beschreibung des Moduls.
 
-### Inhaltsverzeichnis
+Module description: Room thermostat for Controme heating systems in IP-Symcon.
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Software-Installation](#3-software-installation)
-4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
-5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
-7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
-8. [Lizenz](#8-lizenz)
+## Table of Contents
 
-### 1. Funktionsumfang
+1. [Features](#1-features)
+2. [Requirements](#2-requirements)
+3. [Installation](#3-installation)
+4. [Instance Setup in IP-Symcon](#4-instance-setup-in-ip-symcon)
+5. [Status Variables and Profiles](#5-status-variables-and-profiles)
+6. [Visualization](#6-visualization)
+7. [PHP Command Reference](#7-php-command-reference)
+8. [License](#8-license)
 
-Darstellung eines Raumthermostats für das Controme-Heizungssystem.
+## 1. Features
 
-### 2. Voraussetzungen
+- Representation of a room thermostat for the Controme heating system
 
-- IP-Symcon ab Version 7.1
-- Controme Mini-Server mit API-Lizenz
+## 2. Requirements
 
-### 3. Software-Installation
+- IP-Symcon version 7.1 or higher
+- Controme Mini-Server with API license
 
-* Über den Module Store das 'ContromeHeatingControl'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen https://github.com/AllardLiao/ContromeHeatingControl.git
+## 3. Installation
 
-### 4. Einrichten der Instanzen in IP-Symcon
+- Install the 'ContromeHeatingControl' module via the Module Store.
+- Alternatively, add the following URL in Module Control: https://github.com/AllardLiao/ContromeHeatingControl.git
 
- Unter 'Instanz hinzufügen' kann die 'ContromeRoomThermostat'-Instanz mithilfe des Schnellfilters gefunden werden.
-	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
+## 4. Instance Setup in IP-Symcon
 
-__Konfigurationsseite__:
+You can find the 'ContromeRoomThermostat' instance using the quick filter under 'Add Instance'.
 
-Name                                         | Beschreibung
--------------------------------------------- | -----------------------------------------------------------------------------
-Room assignment                              | Floor id, room id, floor name, room name
-Advanced settings                            |
-  - Automatically update values              | Automatically get values from Controme API / Mini-Server; default = true
-  - Update interval                          | Update interval for automatic updates; default = 1 min
-Sensor fallback settings                     |
-  - Use fallback temperature sensors         | Use fallback sensor for temperature
-  - Alternative fixed fallback temperature   | in case fallback sensor is off or not available, set a fix temperature
-  - Use fallback humidity sensors            | Use fallback sensor for humidity
-  - Alternative fixed fallback humidity      | in case fallback sensor is off or not available, set a fix humidity
+For more information on adding instances, see the [IP-Symcon documentation](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen).
 
-### 5. Statusvariablen und Profile
+__Configuration Page__:
 
-Die Statusvariablen werden automatisch angelegt. Das Löschen einzelner kann zu Fehlfunktionen führen.
+| Name                          | Description                                                                 |
+|-------------------------------|-----------------------------------------------------------------------------|
+| Room assignment               | Floor id, room id, floor name, room name                                    |
+| Advanced settings             |                                                                             |
+| - Automatically update values | Automatically get values from Controme API / Mini-Server; default = true    |
+| - Update interval             | Update interval for automatic updates; default = 1 min                      |
+| Sensor fallback settings      |                                                                             |
+| - Use fallback temperature sensors       | Use fallback sensor for temperature                                 |
+| - Alternative fixed fallback temperature | If fallback sensor is off or unavailable, set a fixed temperature   |
+| - Use fallback humidity sensors          | Use fallback sensor for humidity                                    |
+| - Alternative fixed fallback humidity    | If fallback sensor is off or unavailable, set a fixed humidity      |
+
+## 5. Status Variables and Profiles
+
+Status variables are created automatically. Deleting individual variables may cause malfunctions.
 
 #### Statusvariablen
 

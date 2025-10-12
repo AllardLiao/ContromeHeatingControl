@@ -1,52 +1,55 @@
-# ContromeSocket
-Beschreibung des Moduls.
 
-### Inhaltsverzeichnis
+# ContromeGateway
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Software-Installation](#3-software-installation)
-4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
-5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
-7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
-8. [Lizenz](#8-lizenz)
+Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server.
 
-### 1. Funktionsumfang
+## Table of Contents
 
-Connection to the Controme Mini-Server
+1. [Features](#1-features)
+2. [Requirements](#2-requirements)
+3. [Installation](#3-installation)
+4. [Instance Setup in IP-Symcon](#4-instance-setup-in-ip-symcon)
+5. [Status Variables and Profiles](#5-status-variables-and-profiles)
+6. [Visualization](#6-visualization)
+7. [PHP Command Reference](#7-php-command-reference)
+8. [License](#8-license)
 
-### 2. Voraussetzungen
+## 1. Features
 
-- IP-Symcon ab Version 7.1
+- Connection to the Controme Mini-Server
+
+## 2. Requirements
+
+- IP-Symcon version 7.1 or higher
 - Controme API license
 
-### 3. Software-Installation
+## 3. Installation
 
-* Über den Module Store das 'Controme Gateway'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen https://github.com/AllardLiao/ContromeHeatingControl.git
+- Install the 'Controme Gateway' module via the Module Store.
+- Alternatively, add the following URL in Module Control: https://github.com/AllardLiao/ContromeHeatingControl.git
 
-### 4. Einrichten der Instanzen in IP-Symcon
+## 4. Instance Setup in IP-Symcon
 
- Unter 'Splitter Instanz hinzufügen' kann das 'ContromeGateway' mithilfe des Schnellfilters gefunden werden.
-	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
+You can find the 'ContromeGateway' splitter instance using the quick filter under 'Add Splitter Instance'.
 
-__Konfigurationsseite__:
+For more information on adding instances, see the [IP-Symcon documentation](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen).
 
-Name                        | Beschreibung
---------------------------- | -----------------------------------------------------------------------------------------------------------
-Credentials                 | User account (name / password)
-Device IP                   | IP address of the controme mini server, local IP advised (Controme does not support credential encryption)
-Expert Settings             |
-  - House id                | Identifier of the house - normally 1, but in rare cases (according to Controme) it is 2
-  - Use HTTPS               | DO NOT ACTIVATE - currently (Oct 2025) not implemented by Controme
-Controme Instance Creation  |
-  - Target category         | Category where new instances (room thermostat or central control) will be placed
-  - Button "CREATE CC"      | Creates a central control instance
-  - List "rooms"            | List of rooms configured in the Controme Mini-Server configuration
-  - Button "CREATE RT"      | Creates a room thermostat instance for selected room
+__Configuration Page__:
 
-### 5. Statusvariablen und Profile
+| Name                       | Description                                                                                                   |
+|----------------------------|--------------------------------------------------------------------------------------------------------------|
+| Credentials                | User account (username / password)                                                                            |
+| Device IP                  | IP address of the Controme Mini-Server (local IP recommended; Controme does not support credential encryption) |
+| Expert Settings            |                                                                                                              |
+| - House id                 | Identifier of the house (usually 1, rarely 2 according to Controme)                                           |
+| - Use HTTPS                | DO NOT ACTIVATE - currently (Oct 2025) not implemented by Controme                                            |
+| Controme Instance Creation |                                                                                                               |
+| - Target category          | Category where new instances (room thermostat or central control) will be placed                              |
+| - Button "CREATE CC"       | Creates a central control instance                                                                            |
+| - List "rooms"             | List of rooms configured in the Controme Mini-Server configuration                                            |
+| - Button "CREATE RT"       | Creates a room thermostat instance for the selected room                                                      |
+
+## 5. Status Variables and Profiles
 
 n/a
 
