@@ -58,6 +58,7 @@ Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server
 
 Beispiel:
 `CONCC_CheckConnection();`
+
 Returns JSON:
 {
     "success" => success/fail
@@ -74,6 +75,7 @@ Note: IDs again is an array.
 
 Beispiel:
 `CONCC_SetRoomTemperature(["RoomIDs" => [1, 2, 3], "Target" => 22.1]);`
+
 Returns JSON:
 {
     "success" => success/fail
@@ -90,6 +92,7 @@ Note: IDs again is an array.
 
 Beispiel:
 `CONCC_SetRoomTemperatureTemp(["RoomIDs" => [1], "Target" => 24.0, 180]);`
+
 Returns JSON:
 {
     "success" => success/fail
