@@ -587,7 +587,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
     }
 
-    private function getVisualizationTile(): string
+    public function getVisualizationTile(): string
     {
         // ========================================================================================================================
         // 1. Mode-Options
