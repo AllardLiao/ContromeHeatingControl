@@ -53,7 +53,7 @@ Die Statusvariablen werden automatisch angelegt. Das Löschen einzelner kann zu 
 
 ### 7. PHP-Befehlsreferenz
 
-`string CONCC_CheckConnection();`
+* `string CONCC_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
@@ -65,7 +65,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-`string CONCC_SetRoomTemperature();`
+* `string CONCC_SetRoomTemperature();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -81,7 +81,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-`string CONCC_setRoomTemperatureTemp();`
+* `string CONCC_setRoomTemperatureTemp();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -97,7 +97,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-`string CONCC_setRoomMode();`
+* `string CONCC_setRoomMode();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:

@@ -2,10 +2,9 @@
 
 Folgende Module beinhaltet das Controme Heating Control Repository:
 
-- __Controme Heating Control__ ([Dokumentation](Controme%20Heating%20Control))
-[Documentation](ContromeGateway)
-[Documentation](ContromeCentralControl)
-[Documentation](ContromeRoomThermostat)
+- __Controme Gateway__ ([Documentation](ContromeGateway))
+- __Controme Central Control__ ([Documentation](ContromeCentralControl))
+- __Controme Room Thermostat__ ([Documentation](ContromeRoomThermostat))
 
 IP-Symcon Modul zur lokalen Steuerung und Überwachung von Controme-Heizsystemen.
 

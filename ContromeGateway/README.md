@@ -67,7 +67,7 @@ There is not visualisation - only the configuration form:
 
 ### 7. PHP-Befehlsreferenz
 
-`string CONGW_FetchRooms();`
+* `string CONGW_FetchRooms();`
 Holt über das Controme API konfigurierte Räumen.
 
 Beispiel:
@@ -76,7 +76,7 @@ Beispiel:
 Return:
 JSON encoded list of rooms
 
-`string CONGW_FetchSystemInfo();`
+* `string CONGW_FetchSystemInfo();`
 Holt über das Controme API Systeminformationen des Mini-Servers.
 
 Beispiel:
@@ -85,7 +85,7 @@ Beispiel:
 Return:
 JSON encoded system information
 
-`string CONGW_GetTempDataForRoom(int room-id);`
+* `string CONGW_GetTempDataForRoom(int room-id);`
 Holt über das Controme API Daten zu dem Raum mit Nummer room-id vom Controme Mini-Servers.
 
 Beispiel:
@@ -94,7 +94,7 @@ Beispiel:
 Return:
 JSON encoded temperature information
 
-`string CONGW_CheckConnection();`
+* `string CONGW_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
