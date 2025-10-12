@@ -186,7 +186,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->UpdateFormField($value['FormField'], "enabled", boolval($value['onOrOff']));
     }
 
-    public function testReadRoomData(): string
+    private function testReadRoomData(): string
     {
         $roomId  = $this->ReadPropertyInteger("RoomID");
 
@@ -587,7 +587,7 @@ class ContromeCentralControl extends IPSModuleStrict
         }
     }
 
-    public function getVisualizationTile(): string
+    private function getVisualizationTile(): string
     {
         // ========================================================================================================================
         // 1. Mode-Options
@@ -890,7 +890,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
     }
 
-    private function setRoomTemperatureTemp(mixed $params): string
+    public function setRoomTemperatureTemp(mixed $params): string
     {
         // Absicherung: immer Array
         if (!is_array($params)) {
@@ -1007,7 +1007,7 @@ class ContromeCentralControl extends IPSModuleStrict
         return $this->wrapReturn(true, "Permanent setpoint set successfully.", $payloadToVisu);
     }
 
-    private function setRoomMode(mixed $params): string
+    public function setRoomMode(mixed $params): string
     {
         // Absicherung: immer Array
         if (!is_array($params)) {

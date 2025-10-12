@@ -186,7 +186,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     }
 
     /**
-     * Is called by pressing the button "Check Connection" from the instance configuration
+     * Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
      *
      * @return boolean
      */
@@ -411,7 +411,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->SetValue("Hinweis", $hinweis);
     }
 
-    private function WriteSetpoint(float $value): string
+    public function WriteSetpoint(float $value): string
     {
         $result = $this->checkConnectionPrerequisites();
         if (!$this->isSuccess($result))
@@ -443,47 +443,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
             throw new UserFriendlyException($errMsg);
         }
 
-        $msg = "Solltemperatur erfolgreich gesetzt: " . $value . " °C";
         $this->SetValue("Setpoint", $value); // nur bei Erfolg lokal setzen
         $this->SetStatus(IS_ACTIVE);
-        return $this->wrapReturn(true, "Setpoint set successfully.");
-    }
-
-    public function GetVisualizationTileCustom(): string
-    {
-        // sichere Werte holen
-        $step        = $this->ReadPropertyFloat('StepSize');
-        $title       = htmlspecialchars($this->ReadPropertyString('Room') ?: $this->ReadPropertyString('Floor') ?: 'Thermostat', ENT_QUOTES);
-        $instanceId  = $this->InstanceID;
-        $setpoint    = floatval($this->GetValue('Setpoint'));     // helper siehe unten
-        $temperature = floatval($this->GetValue('Temperature'));
-        $humidity    = floatval($this->GetValue('Humidity'));
-        $mode        = htmlspecialchars((string)$this->GetValue('Mode'), ENT_QUOTES);
-
-        // Template-Datei laden (module.html)
-        $moduleFile = __DIR__ . '/module.html';
-        if (!file_exists($moduleFile)) {
-            // Fallback: kleines inline-HTML, falls module.html fehlt
-            $html = "<div style='font-family:sans-serif;padding:8px;'>Controme Thermostat</div>";
-        } else {
-            $html = file_get_contents($moduleFile);
-            if ($html === false) $html = '';
-        }
-
-        // Platzhalter ersetzen (Initwerte)
-        $repl = [
-            '{{InstanceID}}' => $instanceId,
-            '{{Setpoint}}'   => number_format($setpoint, 1, '.', ''),
-            '{{Temperature}}'=> number_format($temperature, 1, '.', ''),
-            '{{Humidity}}'   => number_format($humidity, 1, '.', ''),
-            '{{Mode}}'       => $mode,
-            '{{Step}}'       => rtrim(rtrim((string)$step, '0'), '.'),
-            '{{Title}}'      => $title
-        ];
-        $html = str_replace(array_keys($repl), array_values($repl), $html);
-
-        // WICHTIG: als STRING zurückgeben (HTML)
-        return $html;
+        return $this->wrapReturn(true, "Setpoint set to " . $value . " °C");
     }
 
     private function checkConnectionPrerequisites()

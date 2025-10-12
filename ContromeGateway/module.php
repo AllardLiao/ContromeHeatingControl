@@ -322,7 +322,7 @@ class ContromeGateway extends IPSModuleStrict
      * Build the form list and update the module/form UI.
      * Liefert true bei Erfolg, false bei Fehler.
      */
-    public function SetRoomList(): string
+    private function SetRoomList(): string
     {
         $data = $this->FetchRooms();
 
@@ -837,7 +837,7 @@ class ContromeGateway extends IPSModuleStrict
         }
     }
 
-    public function EnableDisableFormButtons()
+    private function EnableDisableFormButtons()
     {
         // Prüfen, ob Räume vorhanden sind
         $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
