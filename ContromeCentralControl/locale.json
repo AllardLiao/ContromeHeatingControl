@@ -83,7 +83,13 @@
             "Total offset": "Gesamt-Offset",
             "Room thermostat": "Raumthermostat",
             "Other sensors": "Sonstige Sensoren",
-            "Reset to default values": "Zurücksetzen auf Standardwerte"
+            "Reset to default values": "Zurücksetzen auf Standardwerte",
+            "Allow changing of mode": "Ändern des Modus erlauben",
+            "Allow changing of permanent temperature": "Ändern der permanenten Temperatur erlauben",
+            "Allow changing of temporary temperature": "Ändern der temporären Temperatur erlauben",
+            "Changing mode is disabled in the configuration of this instance!": "Das Ändern des Modus ist in der Konfiguration dieser Instanz deaktiviert!",
+            "Changing permanent temperature is disabled in the configuration of this instance!": "Das Ändern der permanenten Temperatur ist in der Konfiguration dieser Instanz deaktiviert!",
+            "Changing temporary temperature is disabled in the configuration of this instance!": "Das Ändern der temporären Temperatur ist in der Konfiguration dieser Instanz deaktiviert!"
         },
         "es": {
             "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:": "Controme solo permite establecer temperaturas y modos desde aplicaciones externas. Si desea cambiar otras configuraciones, utilice la interfaz de Controme:",
@@ -167,7 +173,13 @@
             "Offsets": "Compensaciones",
             "Total offset": "Compensación total",
             "Room thermostat": "Termostato de la habitación",
-            "Other sensors": "Otros sensores"
+            "Other sensors": "Otros sensores",
+            "Allow changing of mode": "Permitir cambiar el modo",
+            "Allow changing of permanent temperature": "Permitir cambiar la temperatura permanente",
+            "Allow changing of temporary temperature": "Permitir cambiar la temperatura temporal",
+            "Changing mode is disabled in the configuration of this instance!": "¡Cambiar el modo está deshabilitado en la configuración de esta instancia!",
+            "Changing permanent temperature is disabled in the configuration of this instance!": "¡Cambiar la temperatura permanente está deshabilitado en la configuración de esta instancia!",
+            "Changing temporary temperature is disabled in the configuration of this instance!": "¡Cambiar la temperatura temporal está deshabilitado en la configuración de esta instancia!"
         }
     }
 }

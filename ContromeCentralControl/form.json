@@ -45,6 +45,27 @@
                     ]
                 },
                 {
+                    "type": "CheckBox",
+                    "name": "AllowChangeOfMode",
+                    "caption": "Allow changing of mode",
+                    "value": true,
+                    "width": "800px"
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "AllowChangeOfPermanentTemperature",
+                    "caption": "Allow changing of permanent temperature",
+                    "value": true,
+                    "width": "800px"
+                },
+                {
+                    "type": "CheckBox",
+                    "name": "AllowChangeOfTemporaryTemperature",
+                    "caption": "Allow changing of temporary temperature",
+                    "value": true,
+                    "width": "800px"
+                },
+                {
                     "type": "RowLayout",
                     "items": [
                         {

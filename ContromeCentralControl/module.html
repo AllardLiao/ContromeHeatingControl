@@ -790,6 +790,12 @@ function handleMessage(data) {
                     if (btn) btn.disabled = false;
                 }
                 break;
+            case "DISABLE_BUTTON":
+                if (message.payload && message.payload.id) {
+                    const btn = document.getElementById(message.payload.id);
+                    if (btn) btn.disabled = true;
+                }
+                break;
             default:
                 console.warn("Unbekannte Action:", action, payload);
         }

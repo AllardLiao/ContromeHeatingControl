@@ -24,7 +24,7 @@ Zentrale Steuereinheit(en) und (je Raum) Raum-Thermostate.
 
 Mehrere zentrale Steuereinheiten sind möglich - hierüber können End-User Steuerungen mit unterschiedlichen
 Berechtigungen erzeugt werden - wie z.B. das Umschalten zwischen Heiz- und Kühl-Betrieb in der einen Instanz
-möglich in der anderen nicht.
+möglich, in der anderen nicht.
 
 ```
 Controme Gateway (type=2, parent)

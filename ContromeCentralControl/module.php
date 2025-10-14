@@ -34,6 +34,9 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // Properties für die Konfiguration des Moduls
         $this->RegisterPropertyBoolean("ShowMainElements", true);
+        $this->RegisterPropertyBoolean("AllowChangeOfMode", true);
+        $this->RegisterPropertyBoolean("AllowChangeOfPermanentTemperature", true);
+        $this->RegisterPropertyBoolean("AllowChangeOfTemporaryTemperature", true);
         $this->RegisterPropertyInteger("VisuColorMainTiles", 0x454545);
         $this->RegisterPropertyBoolean("ShowSystemInfo", true);
         $this->RegisterPropertyInteger("VisuColorSystemInfoTile", 0x696e96);
@@ -128,18 +131,33 @@ class ContromeCentralControl extends IPSModuleStrict
                 $this->testReadRoomData();
                 break;
             case ACTIONs::VISU_CC_MODE:
+                if (!$this->ReadPropertyBoolean("AllowChangeOfMode")) {
+                    $this->sendVisuAction("ERROR", ['message' => "Changing mode is disabled in the configuration of this instance!"]);
+                    $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
+                    break;
+                }
                 $response = $this->setRoomMode($value);
                 $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
                 $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
                 $this->updateData();
                 break;
             case ACTIONs::VISU_CC_SETPOINT:
+                if (!$this->ReadPropertyBoolean("AllowChangeOfPermanentTemperature")) {
+                    $this->sendVisuAction("ERROR", ['message' => "Changing permanent temperature is disabled in the configuration of this instance!"]);
+                    $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
+                    break;
+                }
                 $response = $this->setRoomTemperature($value);
                 $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
                 $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
                 $this->updateData();
                 break;
             case ACTIONs::VISU_CC_TARGET:
+                if (!$this->ReadPropertyBoolean("AllowChangeOfTemporaryTemperature")) {
+                    $this->sendVisuAction("ERROR", ['message' => "Changing temporary temperature is disabled in the configuration of this instance!"]);
+                    $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
+                    break;
+                }
                 $response = $this->setRoomTemperatureTemp($value);
                 $this->sendVisuAction($this->isError($response) ? "ERROR" : "SUCCESS", $this->getResponsePayload($response));
                 $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
