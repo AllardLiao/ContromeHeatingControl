@@ -26,16 +26,18 @@ Mehrere zentrale Steuereinheiten sind möglich - hierüber können End-User Steu
 Berechtigungen erzeugt werden - wie z.B. das Umschalten zwischen Heiz- und Kühl-Betrieb in der einen Instanz
 möglich in der anderen nicht.
 
+```
 Controme Gateway (type=2, parent)
-  |
-  ├-- Controme Central Control (type=3, child)
-  |
-  ├-- Controme Room Thermostat #1 (type=3, child)
-  |
-  ├-- Controme Room Thermostat #2 (type=3, child)
-  .
-  .
-  .
+    |
+    ├── Controme Central Control (type=3, child)
+    |
+    ├── Controme Room Thermostat #1 (type=3, child)
+    |
+    ├── Controme Room Thermostat #2 (type=3, child)
+    .
+    .
+    .
+```
 
 Hinweise:
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
