@@ -132,7 +132,11 @@ class ContromeCentralControl extends IPSModuleStrict
                 break;
             case ACTIONs::VISU_CC_MODE:
                 if (!$this->ReadPropertyBoolean("AllowChangeOfMode")) {
-                    $this->sendVisuAction("ERROR", ['message' => "Changing mode is disabled in the configuration of this instance!"]);
+                    $payloadToVisu = [
+                        'msg' => "Changing mode is disabled in the configuration of this instance!",
+                        'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
+                    ];
+                    $this->sendVisuAction("ERROR", $payloadToVisu);
                     $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_mode"]);
                     break;
                 }
@@ -143,7 +147,11 @@ class ContromeCentralControl extends IPSModuleStrict
                 break;
             case ACTIONs::VISU_CC_SETPOINT:
                 if (!$this->ReadPropertyBoolean("AllowChangeOfPermanentTemperature")) {
-                    $this->sendVisuAction("ERROR", ['message' => "Changing permanent temperature is disabled in the configuration of this instance!"]);
+                    $payloadToVisu = [
+                        'msg' => "Changing permanent temperature is disabled in the configuration of this instance!",
+                        'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
+                    ];
+                    $this->sendVisuAction("ERROR", $payloadToVisu);
                     $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_temp"]);
                     break;
                 }
@@ -154,7 +162,11 @@ class ContromeCentralControl extends IPSModuleStrict
                 break;
             case ACTIONs::VISU_CC_TARGET:
                 if (!$this->ReadPropertyBoolean("AllowChangeOfTemporaryTemperature")) {
-                    $this->sendVisuAction("ERROR", ['message' => "Changing temporary temperature is disabled in the configuration of this instance!"]);
+                    $payloadToVisu = [
+                        'msg' => "Changing temporary temperature is disabled in the configuration of this instance!",
+                        'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
+                    ];
+                    $this->sendVisuAction("ERROR", $payloadToVisu);
                     $this->sendVisuAction("ENABLE_BUTTON", ['id' => "btn_set_target"]);
                     break;
                 }
