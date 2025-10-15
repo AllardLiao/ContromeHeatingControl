@@ -720,7 +720,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Summe berechnen
                         $sum = 0.0;
                         foreach ($room['offsets'] as $values) {
-                            $sum += isset($values['raum']) ? floatval($values['raum']) : 0;
+                            $sum += round((isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0), 2);
                         }
 
                         // Erste Zeile: Gesamt-Offset
@@ -732,10 +732,10 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Doppelstrich als Trenner
                         $roomHtml .= '<tr><td colspan="2"><hr class="offset-sum-separator" /></td></tr>';
 
-                        // Details
+                        // Details anhängen
                         foreach ($room['offsets'] as $offsetName => $values) {
-                            $raumVal = isset($values['raum']) ? floatval($values['raum']) : 0;
-                            if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal > 0)){
+                            $raumVal = round((isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0), 2);
+                            if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal !== 0.0)){
                                 $roomHtml .= '<tr>'
                                         . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_name">' . htmlspecialchars($offsetName) . '</td>'
                                         . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value" class="value-cell">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
