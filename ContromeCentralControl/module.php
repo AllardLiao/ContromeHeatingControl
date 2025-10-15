@@ -734,6 +734,7 @@ class ContromeCentralControl extends IPSModuleStrict
 
                         // Details anhängen
                         foreach ($room['offsets'] as $offsetName => $values) {
+                            $this->SendDebug(__FUNCTION__, "Offset for room " . $room['id'] . " plugin " . $offsetName . ": " . print_r($values, true), 0);
                             $raumVal = (isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0);
                             if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal > 0)){
                                 $roomHtml .= '<tr>'
