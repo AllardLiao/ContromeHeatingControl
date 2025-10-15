@@ -737,7 +737,7 @@ class ContromeCentralControl extends IPSModuleStrict
                             $this->SendDebug(__FUNCTION__, "Offset for room " . $room['id'] . " plugin " . $offsetName . ": " . print_r($values, true), 0);
                             $raumVal = (isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0);
                             $this->SendDebug(__FUNCTION__, "Offset for room " . $room['id'] . " plugin " . $offsetName . " raum value: " . $raumVal, 0);
-                            if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal !== 0)){
+                            if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal !== 0.0)){
                                 $roomHtml .= '<tr>'
                                         . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_name">' . htmlspecialchars($offsetName) . '</td>'
                                         . '<td id="room_' . $room['id'] . '_offset_' . $offsetName . '_value" class="value-cell">' . number_format($raumVal, 2, ',', '') . ' °C</td>'
