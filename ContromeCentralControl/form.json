@@ -342,7 +342,7 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "You can test data connection to Controme by setting a room id and try to fetch the data for that room from Controme Mini-Server."
+                    "caption": "You can test data connection to Controme for room id '1' and try to fetch the data for that room from Controme Mini-Server."
                 },
                 {
                     "type": "NumberSpinner",
@@ -365,7 +365,7 @@
                     "validate": "",
                     "value": 1,
                     "minimum": 1,
-                    "visible": true,
+                    "visible": false,
                     "width": "100px"
                 },
                 {
