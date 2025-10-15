@@ -720,7 +720,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Summe berechnen
                         $sum = 0.0;
                         foreach ($room['offsets'] as $values) {
-                            $sum += (isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0);
+                            $sum += round((isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0), 2);
                         }
 
                         // Erste Zeile: Gesamt-Offset
@@ -735,7 +735,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Details anhängen
                         foreach ($room['offsets'] as $offsetName => $values) {
                             $this->SendDebug(__FUNCTION__, "Offset for room " . $room['id'] . " plugin " . $offsetName . ": " . print_r($values, true), 0);
-                            $raumVal = (isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0);
+                            $raumVal = round((isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0), 2);
                             $this->SendDebug(__FUNCTION__, "Offset for room " . $room['id'] . " plugin " . $offsetName . " raum value: " . $raumVal, 0);
                             if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal !== 0.0)){
                                 $roomHtml .= '<tr>'
