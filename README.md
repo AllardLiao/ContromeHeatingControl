@@ -15,6 +15,7 @@ API Informatiaon can be found at https://support.controme.com/api/
 HINWEIS: Entwickelt in der V2 Branch von Controme OS - Kompatibilität mit V1 nicht gewährleiste.
 
 Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Visualisierung.
+
 ![Screenshot Controme Heating Control](libs/assets/Controme_Heating_Control.png)
 
 Das Module installiert eine Controme Gateway-Instanz, das Controme Gateway.
