@@ -43,7 +43,8 @@ __Configuration Page__:
 
 | Name                | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
-| Visualisation...    | Defines how the visualization tile will look and what data will be displayed |
+| Permissions         | Permissions set for this instance
+| Visualisation...    | Defines how the visualization tile will look and what data will be displayed|
 | Advanced Settings...| Automatic updates and their interval                                        |
 
 ## 5. Status Variables and Profiles
