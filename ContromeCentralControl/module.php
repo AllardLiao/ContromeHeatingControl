@@ -732,7 +732,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Doppelstrich als Trenner
                         $roomHtml .= '<tr><td colspan="2"><hr class="offset-sum-separator" /></td></tr>';
 
-                        // Details
+                        // Details anhängen
                         foreach ($room['offsets'] as $offsetName => $values) {
                             $raumVal = (isset($values['raum']) ? floatval($values['raum']) : 0) + (isset($values['haus']) ? floatval($values['haus']) : 0);
                             if (!$this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") || ($this->ReadPropertyBoolean("ShowRoomOffsetsOnlyActive") && $raumVal > 0)){
