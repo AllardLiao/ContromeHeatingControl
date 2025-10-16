@@ -29,9 +29,6 @@ class ContromeGateway extends IPSModuleStrict
     use WidgetHelper;
     use ReturnWrapper;
 
-    private string $JSON_GET = "http://127.0.0.1/get/json/v1/1/"; // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
-    private string $JSON_SET = "http://127.0.0.1/set/json/v1/1/";
-
     public function Create(): void
     {
         // Never delete this line!
@@ -46,6 +43,11 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
         $this->RegisterPropertyInteger("Mode", 0);
         $this->RegisterPropertyInteger("TargetCategory", 0); // Zielkategorie für neue Instanzen
+
+        // API Get und Set URLs als Attribute speichern
+        // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
+        $this->RegisterAttributeString("JSON_GET", "http://127.0.0.1/get/json/v1/1/");
+        $this->RegisterAttributeString("JSON_SET", "http://127.0.0.1/set/json/v1/1/");
     }
 
     public function Destroy(): void
@@ -886,7 +888,7 @@ class ContromeGateway extends IPSModuleStrict
 
     private function getJsonGet(): string
     {
-        return $this->JSON_GET;
+        return $this->ReadAttributeString("JSON_GET");
     }
 
     private function setJsonGet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
@@ -899,12 +901,13 @@ class ContromeGateway extends IPSModuleStrict
         if ($houseID <= 0) {
             throw new InvalidArgumentException("House-ID must be greater than 0");
         }
-        $this->JSON_GET = "http" . ($useHTTPS ? "s" : "") . "://$ip/get/json/v1/$houseID/";
+        $url = "http" . ($useHTTPS ? "s" : "") . "://$ip/get/json/v1/$houseID/";
+        $this->WriteAttributeString("JSON_GET", $url);
     }
 
     private function getJsonSet(): string
     {
-        return $this->JSON_SET;
+        return $this->ReadAttributeString("JSON_SET");
     }
 
     private function setJsonSet(string $ip, int $houseID = 1, bool $useHTTPS = false): void
@@ -917,7 +920,8 @@ class ContromeGateway extends IPSModuleStrict
         if ($houseID <= 0) {
             throw new InvalidArgumentException("House-ID must be greater than 0");
         }
-        $this->JSON_SET = "http" . ($useHTTPS ? "s" : "") . "://$ip/set/json/v1/$houseID/";
+        $url = "http" . ($useHTTPS ? "s" : "") . "://$ip/set/json/v1/$houseID/";
+        $this->WriteAttributeString("JSON_SET", $url);
     }
 
     protected function PingGateway(string $ip, int $timeout = 1000): string
