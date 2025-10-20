@@ -2,7 +2,7 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "Controme Heating Control - Gateway Component\n ",
+            "caption": "Controme Heating Control - Gateway Component",
             "link": false,
             "bold": true
         },
@@ -16,7 +16,7 @@
         },
         {
             "type": "Label",
-            "caption": "Limitations: this gateway is tested with Controme firmware branche V2.0 (stable) from 2025-02-18 16:04:25 or later\n\n",
+            "caption": "Limitations: this gateway is tested with Controme firmware branche V2.0 (stable) from 2025-02-18 16:04:25 or later\n",
             "italic": true
         },
         {
@@ -328,7 +328,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nLicense ",
+                    "caption": "\nLicense",
                     "link": false,
                     "bold": true
                 },

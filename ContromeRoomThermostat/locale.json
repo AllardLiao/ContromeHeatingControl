@@ -1,7 +1,41 @@
 {
     "translations": {
         "de": {
-
+            "Controme Heating Control - Room Thermostat\\n": "x",
+            "Symcon module for individual room temperature control.\\n\\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface.": "x",
+            "\\nRoom Assignment\\n": "x",
+            "Only modify the room number if you are sure of what you are doing.\\n\\nThe floor and room name are used for Symcon visualization - you can change them as you like.": "x",
+            "Floor-ID": "x",
+            "Room-ID": "x",
+            "Floor name": "x",
+            "oom name": "x",
+            "Visualisation ...": "x",
+            "Show navigation bar (Prev, Back, Next)": "x",
+            "Step size when changing the setpoint temperature": "x",
+            "Advanced settings ...": "x",
+            "Automatically update values": "x",
+            "Update interval": "x",
+            "Sensor fallback settings ...": "x",
+            "If Controme does not provide current temperature values, you can alternatively display another IPS temperature variable.\\nThis is useful, for example, if the room thermostat's battery is empty.": "x",
+            "Note: This temperature value is only used for display within IPS. It is currently not synchronized back to Controme.": "x",
+            "Temperature": "x",
+            "Use fallback temperature sensors": "x",
+            "Select fallback temperature variable": "x",
+            "Alternative fixed temperature to be displayed": "x",
+            "Use fallback humidity sensors": "x",
+            "Select fallback humidity variable": "x",
+            "Alternative fixed humidity to be displayed": "x",
+            "\\nCheck connection to Controme Gateway and Controme Mini-Server.\\nNote: this checks reading and writing. However, reading works also without any Controme license, writing requires a valid license! In case you only want to read, that might work!\\n": "x",
+            "Check connection": "x",
+            "\\nRead data for room from Controme Mini-Server only.": "x",
+            "Read data": "x",
+            "Source code, donation and licence ...": "x",
+            "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "x",
+            "\\nLicense": "x",
+            "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "x",
+            "No connection to Controme Mini-Server": "x",
+            "Authentication failed": "x",
+            "Communication not normal": "x"
         }
     }
 }

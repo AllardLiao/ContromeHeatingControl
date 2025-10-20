@@ -12,7 +12,7 @@
         },
         {
             "type": "Label",
-            "caption": "\nRoom Assignment\n ",
+            "caption": "\nRoom Assignment\n",
             "bold": true
         },
         {
@@ -82,7 +82,7 @@
                 {
                     "type": "CheckBox",
                     "name": "VisuNaviBar",
-                    "caption": "Show navigation bar (Prev, Back, Next)?",
+                    "caption": "Show navigation bar (Prev, Back, Next)",
                     "visible": false
                 },
                 {
@@ -279,7 +279,7 @@
                 },
                 {
                     "type": "Label",
-                    "caption": "\nLicense ",
+                    "caption": "\nLicense",
                     "link": false,
                     "bold": true
                 },

@@ -235,7 +235,7 @@ class ContromeGateway extends IPSModuleStrict
         // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
         if ($this->isError($currentData))
         {
-            $msg = "No connection to Controme Mini-Server, please check IP: " . $ip;
+            $msg = $this->Translate("No connection to Controme Mini-Server, please check IP: ") . $ip;
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $this->getResponseMessage($currentData));
@@ -253,12 +253,12 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . ".", true))
         {
-            $msg = "Success - connection established for user " . $user;
+            $msg = $this->Translate("Success - connection established for user ") . $user;
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_ACTIVE);
             return $this->wrapReturn(true, $msg);
         } else {
-            $msg = "Failed - could not establish connection for user " . $user . " (" . $this->getResponseMessage($result) . ")";
+            $msg = $this->Translate("Failed - could not establish connection for user ") . $user . " (" . $this->getResponseMessage($result) . ")";
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -303,14 +303,14 @@ class ContromeGateway extends IPSModuleStrict
                 $msg = $this->CheckHttpReponseHeader($http_response_header);
             }
             $msg = "Error calling {$url}: {$msg}";
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
+            $this->UpdateFormField("StatusInstances", "caption", $this->Translate("Failed to read data."));
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
         }
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $msg = "Failed to decode data (invalid JSON).";
+            $msg = $this->Translate("Failed to decode data (invalid JSON).");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
             return $this->wrapReturn(false, $msg);
@@ -329,7 +329,7 @@ class ContromeGateway extends IPSModuleStrict
         $data = $this->FetchRooms();
 
         if ($this->isError($data)) {
-            $msg = "No data received from Controme API.";
+            $msg = $this->Translate("No data received from Controme API.");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -353,7 +353,7 @@ class ContromeGateway extends IPSModuleStrict
         }
 
         // Formular aktualisieren
-        $msg = "Room list updated.";
+        $msg = $this->Translate("Room list updated.");
         $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
         $this->UpdateFormField("StatusInstances", "caption", $msg);
         $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
@@ -393,7 +393,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($json === false) {
             $error = error_get_last();
-            $msg   = "Request failed for " . "$url: " . $error['message'] ?? "Unknown error";
+            $msg   = $this->Translate("Request failed for ") . "$url: " . $error['message'] ?? $this->Translate("Unknown error");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -401,7 +401,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $msg = "Invalid/unexpected response from Controme API (non JSON provided).";
+            $msg = $this->Translate("Invalid/unexpected response from Controme API (non JSON provided).");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
             return $this->wrapReturn(false, $msg);
@@ -422,7 +422,7 @@ class ContromeGateway extends IPSModuleStrict
         $houseId = $this->ReadPropertyInteger("HouseID");
 
         if (empty($ip) || empty($user) || empty($pass) || empty($houseId)) {
-            $msg = "Conection check not possible: IP, User, Password or House-ID missing!";
+            $msg = $this->Translate("Conection check not possible: IP, User, Password or House-ID missing!");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -796,7 +796,7 @@ class ContromeGateway extends IPSModuleStrict
         IPS_SetName($newId, $instanceName);
         IPS_ApplyChanges($newId);
 
-        $msg = "Central Control created with name '$instanceName' (ID $newId)!";
+        $msg = $this->Translate("Central Control created with name ") . "'$instanceName' (ID $newId)!";
         $this->UpdateFormField("CCInstanceCreationResult", "caption", $msg);
         return $this->wrapReturn(true, $msg);
     }
@@ -829,11 +829,11 @@ class ContromeGateway extends IPSModuleStrict
             $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
 
             // Erfolgsmeldung
-            $msg = "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!";
+            $msg = $this->Translate("Room thermostat instance created with name ") . "'$floorName-$roomName' (ID: $instanceId)!";
             $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
             return $this->wrapReturn(true, $msg, $instanceId);
         } catch (Exception $e) {
-            $msg = "Error creating instance: " . $e->getMessage();
+            $msg = $this->Translate("Error creating instance: ") . $e->getMessage();
             $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
             return $this->wrapReturn(false, $msg);
         }
