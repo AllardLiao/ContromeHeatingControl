@@ -381,10 +381,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
-        $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
-        $varID = $this->GetIDForIdent("Hinweis");
-        IPS_SetIcon($varID, "circle-info");
-        //$this->EnableAction("Setpoint");
+        $newCreated = $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
+        if ($newCreated) {
+            $varID = $this->GetIDForIdent("Hinweis");
+            IPS_SetIcon($varID, "circle-info");
+        }
 
         if (isset($data['temperatur'])) {
             $this->SetValue("Temperature", floatval($data['temperatur']));
