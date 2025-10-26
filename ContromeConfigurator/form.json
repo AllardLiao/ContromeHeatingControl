@@ -9,30 +9,7 @@
         {
             "type": "Configurator",
             "caption": "Controme Instances",
-            "columns": [
-                {
-                    "caption": "Floor-Id",
-                    "name": "FloorID",
-                    "width": "75px",
-                    "quickFilter": false
-                },
-                {
-                    "caption": "Floor Name",
-                    "name": "Floor",
-                    "width": "200px"
-                },
-                {
-                    "caption": "Room-Id",
-                    "name": "RoomID",
-                    "width": "75px",
-                    "quickFilter": false
-                },
-                {
-                    "caption": "Room Name",
-                    "name": "Room",
-                    "width": "200px"
-                }
-            ],
+
             "discoveryInterval": 0,
             "delete": false,
             "name": "ContromeConfiguratorRTs",
@@ -60,12 +37,34 @@
                     "id": 2,
                     "name": "Room Thermostat",
                     "address": ""
-                },                {
-                    "FloorID": 1,
-                    "floor": "EG",
-                    "RoomID": 1,
-                    "Room": "Wohnzimmer"
-
+                },
+                {
+                    "parent": 2,
+                    "name": "EG / Wohnzimmer",
+                    "create":
+                    {
+                        "moduleID": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
+                        "configuration":
+                        {
+                            "RoomID": 1,
+                            "FloorID": 1,
+                            "HouseID": 1
+                        }
+                    }
+                },
+                {
+                    "parent": 2,
+                    "name": "EG / Schlafzimmer",
+                    "create":
+                    {
+                        "moduleID": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
+                        "configuration":
+                        {
+                            "RoomID": 2,
+                            "FloorID": 1,
+                            "HouseID": 1
+                        }
+                    }
                 }
             ],
             "visible": true
