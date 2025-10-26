@@ -9,7 +9,6 @@
         {
             "type": "Configurator",
             "caption": "Controme Instances",
-
             "discoveryInterval": 0,
             "delete": false,
             "name": "ContromeConfiguratorRTs",
@@ -23,8 +22,7 @@
                 },
                 {
                     "parent": 1,
-                    "name": "create new Controme central control",
-                    "address": "2",
+                    "name": "Create new Controme central control",
                     "create": {
                         "moduleID": "{A19ABE82-5AB1-7969-3851-E6446DECEBA9}",
                         "configuration": {
@@ -40,7 +38,7 @@
                 },
                 {
                     "parent": 2,
-                    "name": "EG / Wohnzimmer",
+                    "name": "EG (Floor-ID: 1) / Wohnzimmer (Room-ID: 1)",
                     "create":
                     {
                         "moduleID": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
@@ -54,7 +52,7 @@
                 },
                 {
                     "parent": 2,
-                    "name": "EG / Schlafzimmer",
+                    "name": "EG (Floor-ID: 1) / Schlafzimmer (Room-ID: 2)",
                     "create":
                     {
                         "moduleID": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
@@ -65,28 +63,6 @@
                             "HouseID": 1
                         }
                     }
-                }
-            ],
-            "visible": true
-        },
-        {
-            "type": "Configurator",
-            "caption": "Central Controls",
-            "columns": [
-                {
-                    "caption": "Central Control",
-                    "name": "ConctromeCC",
-                    "width": "550px"
-                }
-            ],
-            "discoveryInterval": 0,
-            "delete": false,
-            "name": "ContromeConfiguratorCCs",
-            "onExpand": "",
-            "rowCount": 2,
-            "values": [
-                {
-                    "ConctromeCC": "-create new central control-"
                 }
             ],
             "visible": true
