@@ -1,0 +1,18 @@
+{
+    "id": "{80E566C5-A75E-C38F-7267-9890C20D2AEA}",
+    "name": "Controme Configurator",
+    "type": 4,
+    "vendor": "Controme GmbH",
+    "aliases": [
+        "Controme Konfigurator"
+    ],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "implemented": [
+        "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
+    ],
+    "prefix": "CONCF",
+    "url": ""
+}

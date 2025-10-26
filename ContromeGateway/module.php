@@ -121,7 +121,7 @@ class ContromeGateway extends IPSModuleStrict
                 parent::RequestAction($ident, $value);
         }
         // Hier kommen wir raus, wenn der Funktion "irgendwas" übergeben wurde
-        $this->wrapReturn(false, "ForwardData not executed", $ident . print_r($value, true));
+        // $this->wrapReturn(false, "ForwardData not executed", $ident . print_r($value, true));
     }
 
     //
