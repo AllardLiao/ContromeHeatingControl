@@ -13,7 +13,7 @@
             "delete": false,
             "name": "ContromeConfiguratorRTs",
             "onExpand": "",
-            "rowCount": 8,
+            "rowCount": 10,
             "values": [
                 {
                     "id": 1,
@@ -70,7 +70,7 @@
         {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",
-            "expanded": true,
+            "expanded": false,
             "items": [
                 {
                     "type": "Label",
