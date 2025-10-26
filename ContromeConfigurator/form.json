@@ -17,8 +17,7 @@
             "values": [
                 {
                     "id": 1,
-                    "name": "Central Control",
-                    "address": ""
+                    "name": "Central Control"
                 },
                 {
                     "parent": 1,
@@ -33,8 +32,7 @@
                 },
                 {
                     "id": 2,
-                    "name": "Room Thermostat",
-                    "address": ""
+                    "name": "Room Thermostat"
                 },
                 {
                     "parent": 2,
@@ -69,57 +67,6 @@
         }
     ],
     "actions": [
-        {
-            "type": "ExpansionPanel",
-            "caption": "Execute action ...",
-            "expanded": true,
-            "items": [
-                {
-                    "type": "Label",
-                    "caption": "\nCheck connection to Controme MiniServer, executes one reading and one writing test (using room 1)."
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "Button",
-                            "caption": "Check connection",
-                            "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
-                            "enabled": true
-                        },
-                        {
-                            "type": "Label",
-                            "name": "Result",
-                            "caption": " "
-                        }
-                    ]
-                },
-                {
-                    "type": "Label",
-                    "caption": "\nTo create IPS Controme Central Control and Room Thermostat instances, you must first read the configuration from the Controme MiniServer."
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "Button",
-                            "caption": "Read configuration from Controme Mini-Server",
-                            "onClick": "IPS_RequestAction($id,'FetchRoomList',true);",
-                            "enabled": true
-                        },
-                        {
-                            "type": "Label",
-                            "name": "StatusInstances",
-                            "caption": " "
-                        }
-                    ]
-                },
-                {
-                    "type": "Label",
-                    "caption": "Note:\n1) If floor or room IDs in the Controme system change after you have created instances, those instances may not receive data or may receive incorrect data.\n2) Floor and room names can be changed within the module, but IDs must remain consistent for correct operation."
-                }
-            ]
-        },
         {
             "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",

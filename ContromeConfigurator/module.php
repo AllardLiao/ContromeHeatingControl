@@ -15,8 +15,6 @@ require_once __DIR__ . '/../libs/_traits.php';
 // Bibliotheks-übergreifende Constanten einbinden
 use Controme\GUIDs;
 use Controme\ACTIONs;
-use Controme\CONTROME_API;
-use Controme\CONTROME_PROFILES;
 
 class ContromeConfigurator extends IPSModuleStrict
 {
