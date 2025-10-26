@@ -8,16 +8,12 @@
         },
         {
             "type": "Label",
-            "caption": "Symcon module for local control and monitoring of Controme heating systems."
-        },
-        {
-            "type": "Label",
-            "caption": "\nConfiguration",
+            "caption": "\nConfiguration of Room Thermostats",
             "bold": true
         },
         {
             "type": "Configurator",
-            "caption": "Configuration",
+            "caption": "Room Thermostats",
             "columns": [
                 {
                     "caption": "Floor-Id",
@@ -42,15 +38,42 @@
             ],
             "discoveryInterval": 0,
             "delete": false,
-            "name": "ContromeConfigurator",
+            "name": "ContromeConfiguratorRTs",
             "onExpand": "",
             "rowCount": 0,
             "values": [
                 {
                     "FloorID": 1,
-                    "floor": "One",
-                    "RoomID": "TypeOne",
-                    "Room": "ModelOne"
+                    "floor": "EG",
+                    "RoomID": 1,
+                    "Room": "Wohnzimmer"
+                }
+            ],
+            "visible": true
+        },
+        {
+            "type": "Label",
+            "caption": "\nConfiguration of Central Controls",
+            "bold": true
+        },
+        {
+            "type": "Configurator",
+            "caption": "Central Controls",
+            "columns": [
+                {
+                    "caption": "Central Control",
+                    "name": "ConctromeCC",
+                    "width": "550px"
+                }
+            ],
+            "discoveryInterval": 0,
+            "delete": false,
+            "name": "ContromeConfiguratorCCs",
+            "onExpand": "",
+            "rowCount": 0,
+            "values": [
+                {
+                    "ConctromeCC": "-create new central control-"
                 }
             ],
             "visible": true

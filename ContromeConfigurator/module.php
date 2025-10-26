@@ -65,10 +65,6 @@ class ContromeConfigurator extends IPSModuleStrict
      */
     public function RequestAction(string $ident, mixed $value): void
     {
-        // JSON url anpassen
-        $this->setJsonGet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-        $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
-
         switch($ident) {
             case ACTIONs::FETCH_ROOM_LIST:
                 $this->SetRoomList(); // Räume abrufen und im Konfig-Form speichern
