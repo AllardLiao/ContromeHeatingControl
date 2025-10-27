@@ -1039,6 +1039,7 @@ class ContromeGateway extends IPSModuleStrict
                 $instances[] = $result;
             }
         }
+        $this->SendDebug(__FUNCTION__, "Instances: " . print_r($instances, true));
         return json_encode($instances);
     }
 
