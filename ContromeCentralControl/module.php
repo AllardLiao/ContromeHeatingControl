@@ -305,10 +305,7 @@ class ContromeCentralControl extends IPSModuleStrict
             //Existienz und bekanntheit der Variablen sicherstellen
             $this->registerSystemInfoVariables();
 
-            $this->SendDebug(__FUNCTION__, "SystemInfo data found: " . print_r($data[ACTIONs::DATA_SYSTEM_INFO], true), 0);
-
             $info = $data[ACTIONs::DATA_SYSTEM_INFO];
-            $this->SendDebug(__FUNCTION__, "Decoded info: " . print_r($info, true), 0);
             if (!is_array($info)) {
                 $this->SendDebug(__FUNCTION__, "SystemInfo is not array: " . print_r($info, true), 0);
             }
@@ -370,7 +367,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback festgelegt ist:
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $temperature = isset($room['temperatur']) && is_numeric($room['temperatur']) ? floatval($room['temperatur']) : 0.0;
-                        if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
+                        if (true || !isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
                             $this->SendDebug(__FUNCTION__, "Checking temperature fallback room: " . $roomID, 0);
                             // Abfrage an RTs über Gateway
                             $response = $this->SendDataToParent(json_encode([
@@ -654,7 +651,6 @@ class ContromeCentralControl extends IPSModuleStrict
                     .'<div class="system-info-values">';
         foreach ($sysInfo as $key => $value) {
             $sysHtml .= '<div><strong>' . $key . ':</strong><span  id="room_' . $room['id'] . '_sysinfo_' . preg_replace('/\s+/', '', $key) . '">' . ($value ?? 'n/a') . '</span></div>';
-            $this->SendDebug(__FUNCTION__, "Sysinfo Key: $key Value: $value", 0);
         }
         $sysHtml .= '</div>'
                     .'</div>';
@@ -832,7 +828,6 @@ class ContromeCentralControl extends IPSModuleStrict
         // Informationen einfügen
         if ($this->ReadPropertyBoolean("ShowRooms")) {
             $html = str_replace('<!--ROOM_TILES-->', $roomTilesHtml, $html);
-            $this->SendDebug(__FUNCTION__, "HTML: " . $roomTilesHtml, 0);
         }
         if ($this->ReadPropertyBoolean("ShowSystemInfo")) {
             $html = str_replace('<!--SYSTEM_INFO-->', $sysHtml, $html);
