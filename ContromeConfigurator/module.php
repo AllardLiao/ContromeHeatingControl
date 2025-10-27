@@ -107,7 +107,7 @@ class ContromeConfigurator extends IPSModuleStrict
 
         // 2. Central Control Instanzen - alle vom Gateway abfragen
         $ccInstances = $this->GetCentralControlInstances();
-
+        $this->SendDebug(__FUNCTION__, "CC Discovery returned: " . print_r($ccInstances, true), 0);
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
             foreach ($ccInstances as $ccInstance) {
