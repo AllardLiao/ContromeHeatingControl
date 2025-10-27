@@ -107,12 +107,10 @@ class ContromeConfigurator extends IPSModuleStrict
 
         // 2. Central Control Instanzen - alle vom Gateway abfragen
         $ccInstances = $this->GetCentralControlInstances();
-        $this->SendDebug(__FUNCTION__, "CC Discovery returned: " . print_r($ccInstances, true), 0);
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
             foreach ($ccInstances as $ccInstanceJson) {
                 $ccInstance = json_decode($ccInstanceJson, true);
-                $this->SendDebug(__FUNCTION__, "Instance: " . print_r($ccInstance, true));
                 $values[] = [
                     'parent' => 1,
                     'name' => $ccInstance['name'],
@@ -124,7 +122,6 @@ class ContromeConfigurator extends IPSModuleStrict
                 ];
             }
         }
-
         // Immer die Möglichkeit anbieten, eine neue zu erstellen
         $values[] = [
             'parent' => 1,
@@ -147,17 +144,13 @@ class ContromeConfigurator extends IPSModuleStrict
             if (!isset($etage['raeume']) || !is_array($etage['raeume'])) {
                 continue;
             }
-
             $floorId = $etage['id'] ?? 0;
             $floorName = $etage['etagenname'] ?? 'Unknown Floor';
-
             foreach ($etage['raeume'] as $raum) {
                 $roomId = $raum['id'] ?? 0;
                 $roomName = $raum['name'] ?? 'Unknown Room';
-
                 // Prüfen, ob bereits eine Instanz für diesen Raum existiert
                 $instanceID = $this->GetRoomThermostatInstanceID($roomId);
-
                 $values[] = [
                     'parent' => 2,
                     'name' => $floorName . ' / ' . $roomName,
@@ -166,12 +159,22 @@ class ContromeConfigurator extends IPSModuleStrict
                     'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
                     'create' => [
                         'moduleID' => GUIDs::ROOM_THERMOSTAT,
-                        'name' => 'Thermostat ' . $floorName . ' ' . $roomName,
                         'configuration' => [
-                            'RoomID' => $roomId,
+                            // Raum-spezifische Properties
                             'FloorID' => $floorId,
                             'Floor' => $floorName,
-                            'Room' => $roomName
+                            'RoomID' => $roomId,
+                            'Room' => $roomName,
+                            // Default-Werte aus Create() Methode
+                            'FallbackTempSensorUse' => false,
+                            'FallbackTempSensor' => 0,
+                            'FallbackTempValue' => 15.0,
+                            'FallbackHumiditySensorUse' => false,
+                            'FallbackHumiditySensor' => 0,
+                            'FallbackHumidityValue' => 40.0,
+                            'UpdateInterval' => 5,
+                            'AutoUpdate' => true,
+                            'StepSize' => 0.5
                         ]
                     ]
                 ];
