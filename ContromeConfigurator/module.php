@@ -271,6 +271,12 @@ class ContromeConfigurator extends IPSModuleStrict
             "Action" => ACTIONs::GET_ROOMS_FOR_CONFIGURATOR
         ]));
 
+        // SendDataToParent gibt false zurück, wenn kein Parent vorhanden ist
+        if ($response === false) {
+            $this->SendDebug(__FUNCTION__, "No parent gateway configured", 0);
+            return $this->wrapReturn(false, "No parent gateway configured. Please connect this configurator to a Controme Gateway instance.");
+        }
+
         if ($this->isError($response)) {
             $this->SendDebug(__FUNCTION__, "Error fetching rooms from gateway: " . $this->getResponseMessage($response), 0);
             return $this->wrapReturn(false, "Error fetching rooms from gateway.", $response);
