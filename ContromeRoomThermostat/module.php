@@ -173,19 +173,22 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString, true);
-        if (($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
+        if (isset($data["RoomID"]) && ($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
             switch ($data["Action"]){
                 case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
                     return $this->getEffectiveHumidity();
                 case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
                     return $this->getEffectiveTemperature();
+                default:
+                    return $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data);
+            }
+        } else {
+            switch ($data["Action"]){
                 case ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO:
                     return json_encode(['InstanceID' => $this->InstanceID, 'RoomID' => $this->ReadPropertyInteger("RoomID"), 'FloorID' => $this->ReadPropertyInteger("FloorID"), 'name' => IPS_GetName($this->InstanceID)]);
                 default:
-                    return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
+                    return $this->wrapReturn(false, "Invalid 'Action' without room id within query - cf. payload.", $data);
             }
-        } else {
-            return $this->wrapReturn(false, "Not my room id - cf. payload.", $data);
         }
     }
 
