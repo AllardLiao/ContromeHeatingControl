@@ -70,6 +70,19 @@ class ContromeRoomThermostat extends IPSModuleStrict
         parent::Destroy();
     }
 
+    /**
+     * Gibt die Konfiguration für die Parent-Verbindung zurück
+     * Wird von IP-Symcon verwendet, um kompatible Parent-Instanzen zu finden
+     *
+     * @return string JSON-kodierte Konfiguration
+     */
+    public function GetConfigurationForParent(): string
+    {
+        return json_encode([
+            'DataID' => GUIDs::DATAFLOW
+        ]);
+    }
+
     public function ApplyChanges() : void
     {
         //Never delete this line!

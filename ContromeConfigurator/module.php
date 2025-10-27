@@ -32,8 +32,7 @@ class ContromeConfigurator extends IPSModuleStrict
         // Never delete this line!
         parent::Create();
 
-        // Verbindung zum Gateway herstellen
-        $this->RequireParent(GUIDs::GATEWAY);
+        // Verbindung zum Gateway erfolgt über GetConfigurationForParent() und parentRequirements in module.json
 
         // Konfigurationselemente
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
@@ -56,6 +55,19 @@ class ContromeConfigurator extends IPSModuleStrict
 
         // Alles hat geklappt - Instanze aktiv
         $this->SetStatus(IS_ACTIVE);
+    }
+
+    /**
+     * Gibt die Konfiguration für die Parent-Verbindung zurück
+     * Wird von IP-Symcon verwendet, um kompatible Parent-Instanzen zu finden
+     *
+     * @return string JSON-kodierte Konfiguration
+     */
+    public function GetConfigurationForParent(): string
+    {
+        return json_encode([
+            'DataID' => GUIDs::DATAFLOW
+        ]);
     }
 
     /**
