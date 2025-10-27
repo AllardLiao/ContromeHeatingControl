@@ -354,7 +354,7 @@ class ContromeConfigurator extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, "Invalid response from gateway", 0);
             return 0;
         }
-
+        $this->SendDebug(__FUNCTION__, "RT instances delivered: " . print_r($instance, true));
         // Nach RoomID suchen
         foreach ($instances as $instance) {
             if (isset($instance['RoomID']) && (int)$instance['RoomID'] === $roomId) {
