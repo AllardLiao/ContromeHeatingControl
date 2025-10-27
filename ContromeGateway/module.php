@@ -1033,6 +1033,7 @@ class ContromeGateway extends IPSModuleStrict
         $instances = [];
         $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO);
         $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        $this->SendDebug(__FUNCTION__, "Discovery: " . print_r($thermostatResults, true));
         foreach ($thermostatResults as $result) {
             if (!$this->isError($result)){
                 $instances[] = $result;
