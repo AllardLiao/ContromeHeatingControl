@@ -384,6 +384,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                         $roomNote .= "Temperatur from fallback device. ";
                                     }
                                 }
+                                $this->SendDebug(__FUNCTION__, "RT for room " . $roomID . " found, temperature: " . $temperature);
                             }
                         }
                         $this->SetValue($roomVar . "Temperature",       $temperature);
