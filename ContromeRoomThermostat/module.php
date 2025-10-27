@@ -159,7 +159,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
 
     public function ReceiveData(string $JSONString): string
     {
-        $data = json_decode($JSONString);
+        $data = json_decode($JSONString, true);
         $this->SendDebug(__FUNCTION__, "Received Data - working on it: " . print_r($data, true), 0);
         if (($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
             switch ($data["Action"]){
