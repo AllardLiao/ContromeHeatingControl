@@ -184,7 +184,7 @@ class ContromeConfigurator extends IPSModuleStrict
                 break;
             }
         }
-
+        $this->SendDebug(__FUNCTION__, "Form: " . print_r($form, true));
         return json_encode($form);
     }
 
