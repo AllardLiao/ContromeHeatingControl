@@ -367,7 +367,7 @@ class ContromeCentralControl extends IPSModuleStrict
                         // Prüfen ob in einem der RT zu der Temperatur ggf. ein Fallback festgelegt ist:
                         $this->MaintainVariable($roomVar . "Temperature",       $roomVar . "-Temperatur", VARIABLETYPE_FLOAT, "~Temperature", $positionCounter++, true);
                         $temperature = isset($room['temperatur']) && is_numeric($room['temperatur']) ? floatval($room['temperatur']) : 0.0;
-                        if (true || !isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
+                        if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
                             $this->SendDebug(__FUNCTION__, "Checking temperature fallback room: " . $roomID, 0);
                             // Abfrage an RTs über Gateway
                             $response = $this->SendDataToParent(json_encode([
@@ -375,7 +375,6 @@ class ContromeCentralControl extends IPSModuleStrict
                                 "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM,
                                 "RoomID" => $roomID
                             ]));
-                            $this->SendDebug(__FUNCTION__, "REsponse from RTs: " . print_r($response, true), 0);
                             if (!$this->isError($response)){
                                 $payload = $this->getResponsePayload($response);
                                 if ((int)$payload["RoomID"] === (int)$roomID){
@@ -385,7 +384,6 @@ class ContromeCentralControl extends IPSModuleStrict
                                         $roomNote .= "Temperatur from fallback device. ";
                                     }
                                 }
-                                $this->SendDebug(__FUNCTION__, "RT for room " . $roomID . " found, temperature: " . $temperature, 0);
                             }
                         }
                         $this->SetValue($roomVar . "Temperature",       $temperature);

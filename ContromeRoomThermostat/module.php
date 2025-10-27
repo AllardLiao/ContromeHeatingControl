@@ -160,7 +160,6 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString, true);
-        $this->SendDebug(__FUNCTION__, "Received Data - working on it: " . print_r($data, true), 0);
         if (($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
             switch ($data["Action"]){
                 case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
@@ -171,20 +170,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
             }
         } else {
-            $this->SendDebug(__FUNCTION__, "Received Data - but not for my room id: " . print_r($data, true), 0);
             return $this->wrapReturn(false, "Not my room id - cf. payload.", $data);
         }
-    }
-
-    private function updateVisualization(): void
-    {
-        // Daten für die Visualisierung aktualisieren
-        $this->UpdateVisualizationValue(json_encode([
-            'Setpoint'    => floatval($this->GetValue('Setpoint')),
-            'Temperature' => floatval($this->GetValue('Temperature')),
-            'Humidity'    => floatval($this->GetValue('Humidity')),
-            'Mode'        => $this->GetValue('Mode')
-        ]));
     }
 
     private function toggleAutoUpdate(bool $toggleAutoUpdate)
