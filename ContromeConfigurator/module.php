@@ -111,7 +111,7 @@ class ContromeConfigurator extends IPSModuleStrict
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
             foreach ($ccInstances as $ccInstanceJson) {
-                $ccInstance = json_decode($ccInstanceJson);
+                $ccInstance = json_decode($ccInstanceJson, true);
                 $this->SendDebug(__FUNCTION__, "Instance: " . print_r($ccInstance, true));
                 $values[] = [
                     'parent' => 1,
