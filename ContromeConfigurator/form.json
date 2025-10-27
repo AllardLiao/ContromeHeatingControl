@@ -17,15 +17,18 @@
             "columns": [
                 {
                     "caption": "Floor id",
-                    "name": "FloorID"
+                    "name": "FloorID",
+                    "width": "75px"
                 },
                 {
                     "caption": "Room id",
-                    "name": "RoomID"
+                    "name": "RoomID",
+                    "width": "75px"
                 },
                 {
                     "caption": "Name",
-                    "name": "name"
+                    "name": "name",
+                    "width": "auto"
                 }
             ],
             "values": [
