@@ -30,6 +30,7 @@ class ACTIONs
     public const FETCH_ROOM_LIST                    = "FetchRoomList";
     public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
     public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
+    public const GET_ROOMS_FOR_CONFIGURATOR         = 'GetRoomsForConfigurator';
     public const GET_IP_ADDRESS                     = "GetIPAddress";
     public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
     public const UPDATE_DATA                        = 'UpdateData';

@@ -174,6 +174,17 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
     }
 
+    private function updateVisualization(): void
+    {
+        // Daten für die Visualisierung aktualisieren
+        $this->UpdateVisualizationValue(json_encode([
+            'Setpoint'    => floatval($this->GetValue('Setpoint')),
+            'Temperature' => floatval($this->GetValue('Temperature')),
+            'Humidity'    => floatval($this->GetValue('Humidity')),
+            'Mode'        => $this->GetValue('Mode')
+        ]));
+    }
+
     private function toggleAutoUpdate(bool $toggleAutoUpdate)
     {
         $this->UpdateFormField('UpdateInterval', 'enabled', $toggleAutoUpdate ? 'true' : 'false');

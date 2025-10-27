@@ -195,6 +195,11 @@ class ContromeGateway extends IPSModuleStrict
                 }
                 return $this->GetEeffectiveHumidityForRoom((int)$data['RoomID']);
 
+            case ACTIONs::GET_ROOMS_FOR_CONFIGURATOR:
+                // Nur Raumdaten für Konfigurator abrufen
+                $this->SendDebug(__FUNCTION__, "Fetching rooms for configurator", 0);
+                return $this->FetchRooms();
+
             case ACTIONs::SET_SETPOINT:
                 return $this->WriteSetpoint($data);
 

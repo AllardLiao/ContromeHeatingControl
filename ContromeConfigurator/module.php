@@ -32,6 +32,9 @@ class ContromeConfigurator extends IPSModuleStrict
         // Never delete this line!
         parent::Create();
 
+        // Verbindung zum Gateway herstellen
+        $this->RequireParent(GUIDs::GATEWAY);
+
         // Konfigurationselemente
         $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
         $this->RegisterPropertyInteger("TargetCategory", 0); // Zielkategorie für neue Instanzen
@@ -53,6 +56,97 @@ class ContromeConfigurator extends IPSModuleStrict
 
         // Alles hat geklappt - Instanze aktiv
         $this->SetStatus(IS_ACTIVE);
+    }
+
+    /**
+     * Erstellt das Konfigurationsformular dynamisch
+     *
+     * @return string JSON-String des Formulars
+     */
+    public function GetConfigurationForm(): string
+    {
+        $form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+
+        // Raumliste vom Gateway abrufen (gibt JSON-String zurück)
+        $responseJson = $this->FetchRoomsFromGateway();
+
+        // Response ist ein JSON-String, prüfen ob Fehler (wrapped mit success=false)
+        if ($this->isError($responseJson)) {
+            $msg = $this->getResponseMessage($responseJson);
+            $this->SendDebug(__FUNCTION__, "Could not fetch rooms from gateway: " . $msg, 0);
+            return json_encode($form);
+        }
+
+        // JSON dekodieren - wenn isError false ist, sind die Rohdaten direkt im JSON
+        $roomsData = json_decode($responseJson, true);
+        if (!is_array($roomsData)) {
+            $this->SendDebug(__FUNCTION__, "Invalid room data format", 0);
+            return json_encode($form);
+        }
+
+        // Configurator values aufbauen
+        $values = [];
+
+        // 1. Central Control Kategorie
+        $values[] = [
+            'id' => 1,
+            'name' => 'Central Control'
+        ];
+
+        // 2. Central Control Instance
+        $values[] = [
+            'parent' => 1,
+            'name' => 'Create new Controme Central Control',
+            'create' => [
+                'moduleID' => GUIDs::CENTRAL_CONTROL,
+                'configuration' => []
+            ]
+        ];
+
+        // 3. Room Thermostat Kategorie
+        $values[] = [
+            'id' => 2,
+            'name' => 'Room Thermostats'
+        ];
+
+        // 4. Räume durchgehen und Instanzen anlegen
+        foreach ($roomsData as $etage) {
+            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) {
+                continue;
+            }
+
+            $floorId = $etage['id'] ?? 0;
+            $floorName = $etage['etagenname'] ?? 'Unknown Floor';
+
+            foreach ($etage['raeume'] as $raum) {
+                $roomId = $raum['id'] ?? 0;
+                $roomName = $raum['name'] ?? 'Unknown Room';
+
+                $values[] = [
+                    'parent' => 2,
+                    'name' => $floorName . ' (Floor-ID: ' . $floorId . ') / ' . $roomName . ' (Room-ID: ' . $roomId . ')',
+                    'create' => [
+                        'moduleID' => GUIDs::ROOM_THERMOSTAT,
+                        'configuration' => [
+                            'RoomID' => $roomId,
+                            'FloorID' => $floorId,
+                            'Floor' => $floorName,
+                            'Room' => $roomName
+                        ]
+                    ]
+                ];
+            }
+        }
+
+        // Values in Configurator eintragen
+        foreach ($form['elements'] as &$element) {
+            if ($element['type'] === 'Configurator' && $element['name'] === 'ContromeConfiguratorRTs') {
+                $element['values'] = $values;
+                break;
+            }
+        }
+
+        return json_encode($form);
     }
 
     /**
@@ -162,6 +256,33 @@ class ContromeConfigurator extends IPSModuleStrict
         IPS_ApplyChanges($instanceId);
 
         return $instanceId;
+    }
+
+    /**
+     * Holt die Raumliste vom Gateway über SendDataToParent
+     *
+     * @return string JSON-String mit Raumdaten oder Fehler-Wrapper
+     */
+    private function FetchRoomsFromGateway(): string
+    {
+        // Anfrage an das Gateway senden - nutzt die dedizierte Konfigurator-Action
+        $response = $this->SendDataToParent(json_encode([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::GET_ROOMS_FOR_CONFIGURATOR
+        ]));
+
+        if ($this->isError($response)) {
+            $this->SendDebug(__FUNCTION__, "Error fetching rooms from gateway: " . $this->getResponseMessage($response), 0);
+            return $this->wrapReturn(false, "Error fetching rooms from gateway.", $response);
+        }
+
+        $data = json_decode($response, true);
+        if (!is_array($data)) {
+            $this->SendDebug(__FUNCTION__, "Invalid room data in gateway response", 0);
+            return $this->wrapReturn(false, "Invalid room data in gateway response", $response);
+        }
+
+        return $response;
     }
 
 }
