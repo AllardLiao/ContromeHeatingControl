@@ -114,7 +114,7 @@ class ContromeConfigurator extends IPSModuleStrict
                 $values[] = [
                     'parent' => 1,
                     'name' => $ccInstance['Name'],
-                    'instanceID' => $ccInstance['InstanceID'],
+                    'InstanceID' => $ccInstance['InstanceID'],
                     'create' => [
                         'moduleID' => GUIDs::CENTRAL_CONTROL,
                         'configuration' => []
@@ -127,7 +127,7 @@ class ContromeConfigurator extends IPSModuleStrict
         $values[] = [
             'parent' => 1,
             'name' => 'Create new Controme Central Control',
-            'instanceID' => 0, // 0 = nicht vorhanden, immer erstellbar
+            'InstanceID' => 0, // 0 = nicht vorhanden, immer erstellbar
             'create' => [
                 'moduleID' => GUIDs::CENTRAL_CONTROL,
                 'configuration' => []
@@ -160,7 +160,7 @@ class ContromeConfigurator extends IPSModuleStrict
                     'parent' => 2,
                     'name' => $floorName . ' / ' . $roomName,
                     'address' => 'Floor id: ' . $floorId . ' / Room id: ' . $roomId,
-                    'instanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
+                    'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
                     'create' => [
                         'moduleID' => GUIDs::ROOM_THERMOSTAT,
                         'name' => 'Thermostat ' . $floorName . ' ' . $roomName,
