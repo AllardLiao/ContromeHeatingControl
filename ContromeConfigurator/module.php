@@ -113,7 +113,7 @@ class ContromeConfigurator extends IPSModuleStrict
             foreach ($ccInstances as $ccInstance) {
                 $values[] = [
                     'parent' => 1,
-                    'name' => $ccInstance['Name'],
+                    'name' => $ccInstance['name'],
                     'InstanceID' => $ccInstance['InstanceID'],
                     'create' => [
                         'moduleID' => GUIDs::CENTRAL_CONTROL,

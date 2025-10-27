@@ -1031,27 +1031,13 @@ class ContromeGateway extends IPSModuleStrict
     private function GetRoomThermostatInstances(): string
     {
         $instances = [];
-
-        // Alle Child-Instanzen des Gateways holen
-        $childrenIDs = IPS_GetChildrenIDs($this->InstanceID);
-
-        foreach ($childrenIDs as $childID) {
-            // Prüfen, ob es eine Instanz ist
-            if (IPS_InstanceExists($childID)) {
-                $instance = IPS_GetInstance($childID);
-
-                // Prüfen, ob es ein Room Thermostat ist
-                if ($instance['ModuleInfo']['ModuleID'] === GUIDs::ROOM_THERMOSTAT) {
-                    $roomID = IPS_GetProperty($childID, 'RoomID');
-
-                    $instances[] = [
-                        'InstanceID' => $childID,
-                        'RoomID' => $roomID
-                    ];
-                }
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!$this->isError($result)){
+                $instances[] = $result;
             }
         }
-
         return json_encode($instances);
     }
 
@@ -1063,25 +1049,13 @@ class ContromeGateway extends IPSModuleStrict
     private function GetCentralControlInstances(): string
     {
         $instances = [];
-
-        // Alle Child-Instanzen des Gateways holen
-        $childrenIDs = IPS_GetChildrenIDs($this->InstanceID);
-
-        foreach ($childrenIDs as $childID) {
-            // Prüfen, ob es eine Instanz ist
-            if (IPS_InstanceExists($childID)) {
-                $instance = IPS_GetInstance($childID);
-
-                // Prüfen, ob es eine Central Control ist
-                if ($instance['ModuleInfo']['ModuleID'] === GUIDs::CENTRAL_CONTROL) {
-                    $instances[] = [
-                        'InstanceID' => $childID,
-                        'Name' => IPS_GetName($childID)
-                    ];
-                }
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_CENTRAL_CONTROL_INFO);
+        $ccResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($ccResults as $result) {
+            if (!$this->isError($result)){
+                $instances[] = $result;
             }
         }
-
         return json_encode($instances);
     }
 }

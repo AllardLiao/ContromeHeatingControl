@@ -32,7 +32,9 @@ class ACTIONs
     public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
     public const GET_ROOMS_FOR_CONFIGURATOR         = 'GetRoomsForConfigurator';
     public const GET_ROOM_THERMOSTAT_INSTANCES      = 'GetRoomThermostatInstances';
+    public const REQUEST_ROOM_THERMOSTAT_INFO       = 'RequestRoomThermostatInfo';
     public const GET_CENTRAL_CONTROL_INSTANCES      = 'GetCentralControlInstances';
+    public const REQUEST_CENTRAL_CONTROL_INFO       = 'RequestCentralControlInfo';
     public const GET_IP_ADDRESS                     = "GetIPAddress";
     public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
     public const UPDATE_DATA                        = 'UpdateData';

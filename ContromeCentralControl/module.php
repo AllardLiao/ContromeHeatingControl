@@ -200,6 +200,17 @@ class ContromeCentralControl extends IPSModuleStrict
         }
     }
 
+    public function ReceiveData(string $JSONString): string
+    {
+        $data = json_decode($JSONString, true);
+        switch ($data["Action"]){
+            case ACTIONs::REQUEST_CENTRAL_CONTROL_INFO:
+                return json_encode(['InstanceID' => $this->InstanceID, 'name' => IPS_GetName($this->InstanceID)]);
+            default:
+                return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
+        }
+    }
+
     private function ResetToDefaultProfileValues(): void
     {
         $this->UpdateFormField("VisuColorMainTiles", "value", 0x454545);
