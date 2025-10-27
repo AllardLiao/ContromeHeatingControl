@@ -1004,7 +1004,7 @@ class ContromeGateway extends IPSModuleStrict
         $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM, "RoomID" => $roomId);
         $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
         foreach ($thermostatResults as $result) {
-            if (!$this->isError($result)){
+            if (!empty($result) && !$this->isError($result)){
                 return $result;
             }
         }
@@ -1016,7 +1016,7 @@ class ContromeGateway extends IPSModuleStrict
         $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM, "RoomID" => $roomId);
         $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
         foreach ($thermostatResults as $result) {
-            if (!$this->isError($result)){
+            if (!empty($result) && !$this->isError($result)){
                 return $result;
             }
         }
@@ -1034,7 +1034,7 @@ class ContromeGateway extends IPSModuleStrict
         $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO);
         $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
         foreach ($thermostatResults as $result) {
-            if (!$this->isError($result)){
+            if (!empty($result) && !$this->isError($result)){
                 $instances[] = $result;
             }
         }
@@ -1052,7 +1052,7 @@ class ContromeGateway extends IPSModuleStrict
         $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_CENTRAL_CONTROL_INFO);
         $ccResults = $this->SendDataToChildren(json_encode($queryChilds));
         foreach ($ccResults as $result) {
-            if (!$this->isError($result)){
+            if (!empty($result) && !$this->isError($result)){
                 $instances[] = $result;
             }
         }

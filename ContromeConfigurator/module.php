@@ -163,7 +163,17 @@ class ContromeConfigurator extends IPSModuleStrict
                     'name' => $floorName . ' / ' . $roomName,
                     'FloorID' => $floorId,
                     'RoomID' => $roomId,
-                    'InstanceID' => $instanceID // 0 = nicht vorhanden, >0 = bereits erstellt
+                    'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
+                    'create' => [
+                        'moduleID' => GUIDs::ROOM_THERMOSTAT,
+                        'name' => 'Thermostat ' . $floorName . ' ' . $roomName,
+                        'configuration' => [
+                            'RoomID' => $roomId,
+                            'FloorID' => $floorId,
+                            'Floor' => $floorName,
+                            'Room' => $roomName
+                        ]
+                    ]
                 ];
             }
         }

@@ -180,14 +180,16 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
                     return $this->getEffectiveTemperature();
                 default:
-                    return $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data);
+                    return json_encode([]);
+                    //$this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data);
             }
         } else {
             switch ($data["Action"]){
                 case ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO:
                     return json_encode(['InstanceID' => $this->InstanceID, 'RoomID' => $this->ReadPropertyInteger("RoomID"), 'FloorID' => $this->ReadPropertyInteger("FloorID"), 'name' => IPS_GetName($this->InstanceID)]);
                 default:
-                    return $this->wrapReturn(false, "Invalid 'Action' without room id within query - cf. payload.", $data);
+                    return json_encode([]);
+                    //return $this->wrapReturn(false, "Invalid 'Action' without room id within query - cf. payload.", $data);
             }
         }
     }

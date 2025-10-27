@@ -207,7 +207,8 @@ class ContromeCentralControl extends IPSModuleStrict
             case ACTIONs::REQUEST_CENTRAL_CONTROL_INFO:
                 return json_encode(['InstanceID' => $this->InstanceID, 'name' => IPS_GetName($this->InstanceID)]);
             default:
-                return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
+                return json_encode([]);
+                //return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
         }
     }
 
