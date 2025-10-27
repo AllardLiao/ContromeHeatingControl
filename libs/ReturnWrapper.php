@@ -54,21 +54,20 @@ trait ReturnWrapper
     /**
      * Wrapper for standard return messages
      *
-     * Sends $message to debug and Logger.
+     * Sends $message to debug in case of success = false, can be suppressed by param $log.
      * In case success === true LogLevel is KL_DEBUG, if false KL_ERROR
      *
      * @param bool      $success    true|false
      * @param string    $msg        Title of the log message.
      * @param mixed     $payload    any payload you want to use, will be serialized with json_encode!
+     * @param bool      $log        default: true - flag to log debug
      */
-    protected function wrapReturn(bool $success, string $msg, mixed $payload = null): string
+    protected function wrapReturn(bool $success, string $msg, mixed $payload = null, bool $log = true): string
     {
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
         $prefix = $success ? "Success" : "Fail";
-        if (!$success)
-        {
+        if (!$success && $log){
             $this->SendDebug($caller, "$prefix: $msg - payload: " . print_r($payload, true), 0);
-            $this->LogMessage("$prefix: $msg / $caller - payload: " . print_r($payload, true), $success ? KL_DEBUG : KL_ERROR);
         }
         return json_encode([self::SALT . 'success' => $success, self::SALT . 'message' => $msg, self::SALT . 'payload' => $payload]);
     }
