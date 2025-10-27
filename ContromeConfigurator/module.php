@@ -161,7 +161,8 @@ class ContromeConfigurator extends IPSModuleStrict
                 $values[] = [
                     'parent' => 2,
                     'name' => $floorName . ' / ' . $roomName,
-                    'address' => 'Floor id: ' . $floorId . ' / Room id: ' . $roomId,
+                    'FloorID' => $floorId,
+                    'RoomID' => $roomId,
                     'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
                     'create' => [
                         'moduleID' => GUIDs::ROOM_THERMOSTAT,
