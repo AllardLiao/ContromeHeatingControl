@@ -105,10 +105,29 @@ class ContromeConfigurator extends IPSModuleStrict
             'name' => 'Central Control'
         ];
 
-        // 2. Central Control Instance
+        // 2. Central Control Instanzen - alle vom Gateway abfragen
+        $ccInstances = $this->GetCentralControlInstances();
+
+        // Wenn bereits Central Controls existieren, diese anzeigen
+        if (!empty($ccInstances)) {
+            foreach ($ccInstances as $ccInstance) {
+                $values[] = [
+                    'parent' => 1,
+                    'name' => $ccInstance['Name'],
+                    'instanceID' => $ccInstance['InstanceID'],
+                    'create' => [
+                        'moduleID' => GUIDs::CENTRAL_CONTROL,
+                        'configuration' => []
+                    ]
+                ];
+            }
+        }
+
+        // Immer die Möglichkeit anbieten, eine neue zu erstellen
         $values[] = [
             'parent' => 1,
             'name' => 'Create new Controme Central Control',
+            'instanceID' => 0, // 0 = nicht vorhanden, immer erstellbar
             'create' => [
                 'moduleID' => GUIDs::CENTRAL_CONTROL,
                 'configuration' => []
@@ -134,11 +153,17 @@ class ContromeConfigurator extends IPSModuleStrict
                 $roomId = $raum['id'] ?? 0;
                 $roomName = $raum['name'] ?? 'Unknown Room';
 
+                // Prüfen, ob bereits eine Instanz für diesen Raum existiert
+                $instanceID = $this->GetRoomThermostatInstanceID($roomId);
+
                 $values[] = [
                     'parent' => 2,
-                    'name' => $floorName . ' (Floor-ID: ' . $floorId . ') / ' . $roomName . ' (Room-ID: ' . $roomId . ')',
+                    'name' => $floorName . ' / ' . $roomName,
+                    'address' => 'Floor id: ' . $floorId . ' / Room id: ' . $roomId,
+                    'instanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
                     'create' => [
                         'moduleID' => GUIDs::ROOM_THERMOSTAT,
+                        'name' => 'Thermostat ' . $floorName . ' ' . $roomName,
                         'configuration' => [
                             'RoomID' => $roomId,
                             'FloorID' => $floorId,
@@ -268,6 +293,75 @@ class ContromeConfigurator extends IPSModuleStrict
         IPS_ApplyChanges($instanceId);
 
         return $instanceId;
+    }
+
+    /**
+     * Holt alle Central Control Instanzen vom Gateway
+     * Fragt das Gateway nach allen seinen Central Control Child-Instanzen
+     *
+     * @return array Array mit Instanzen [{"InstanceID": X, "Name": "..."}, ...] oder leeres Array
+     */
+    private function GetCentralControlInstances(): array
+    {
+        // Anfrage an das Gateway senden
+        $response = $this->SendDataToParent(json_encode([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::GET_CENTRAL_CONTROL_INSTANCES
+        ]));
+
+        // Fehlerprüfung
+        if ($response === false) {
+            $this->SendDebug(__FUNCTION__, "No parent gateway configured", 0);
+            return [];
+        }
+
+        // JSON dekodieren
+        $instances = json_decode($response, true);
+        if (!is_array($instances)) {
+            $this->SendDebug(__FUNCTION__, "Invalid response from gateway", 0);
+            return [];
+        }
+
+        return $instances;
+    }
+
+    /**
+     * Sucht nach einer existierenden Room Thermostat Instanz für die gegebene RoomID
+     * Fragt das Gateway nach allen seinen Child-Instanzen
+     *
+     * @param int $roomId Die Controme RoomID
+     * @return int Die Instanz-ID (0 wenn nicht gefunden)
+     */
+    private function GetRoomThermostatInstanceID(int $roomId): int
+    {
+        // Anfrage an das Gateway senden
+        $response = $this->SendDataToParent(json_encode([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::GET_ROOM_THERMOSTAT_INSTANCES
+        ]));
+
+        // Fehlerprüfung
+        if ($response === false) {
+            $this->SendDebug(__FUNCTION__, "No parent gateway configured", 0);
+            return 0;
+        }
+
+        // JSON dekodieren
+        $instances = json_decode($response, true);
+        if (!is_array($instances)) {
+            $this->SendDebug(__FUNCTION__, "Invalid response from gateway", 0);
+            return 0;
+        }
+
+        // Nach RoomID suchen
+        foreach ($instances as $instance) {
+            if (isset($instance['RoomID']) && (int)$instance['RoomID'] === $roomId) {
+                return (int)$instance['InstanceID'];
+            }
+        }
+
+        // Keine passende Instanz gefunden
+        return 0;
     }
 
     /**

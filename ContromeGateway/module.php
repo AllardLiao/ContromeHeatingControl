@@ -200,6 +200,14 @@ class ContromeGateway extends IPSModuleStrict
                 $this->SendDebug(__FUNCTION__, "Fetching rooms for configurator", 0);
                 return $this->FetchRooms();
 
+            case ACTIONs::GET_ROOM_THERMOSTAT_INSTANCES:
+                // Liste aller Room Thermostat Child-Instanzen zurückgeben
+                return $this->GetRoomThermostatInstances();
+
+            case ACTIONs::GET_CENTRAL_CONTROL_INSTANCES:
+                // Liste aller Central Control Child-Instanzen zurückgeben
+                return $this->GetCentralControlInstances();
+
             case ACTIONs::SET_SETPOINT:
                 return $this->WriteSetpoint($data);
 
@@ -1013,5 +1021,67 @@ class ContromeGateway extends IPSModuleStrict
             }
         }
         return $this->wrapReturn(false, "Could not find room thermostat for room id " . $roomId);
+    }
+
+    /**
+     * Gibt alle Room Thermostat Child-Instanzen dieses Gateways zurück
+     *
+     * @return string JSON mit Array von Instanzen [{"InstanceID": X, "RoomID": Y}, ...]
+     */
+    private function GetRoomThermostatInstances(): string
+    {
+        $instances = [];
+
+        // Alle Child-Instanzen des Gateways holen
+        $childrenIDs = IPS_GetChildrenIDs($this->InstanceID);
+
+        foreach ($childrenIDs as $childID) {
+            // Prüfen, ob es eine Instanz ist
+            if (IPS_InstanceExists($childID)) {
+                $instance = IPS_GetInstance($childID);
+
+                // Prüfen, ob es ein Room Thermostat ist
+                if ($instance['ModuleInfo']['ModuleID'] === GUIDs::ROOM_THERMOSTAT) {
+                    $roomID = IPS_GetProperty($childID, 'RoomID');
+
+                    $instances[] = [
+                        'InstanceID' => $childID,
+                        'RoomID' => $roomID
+                    ];
+                }
+            }
+        }
+
+        return json_encode($instances);
+    }
+
+    /**
+     * Gibt alle Central Control Child-Instanzen dieses Gateways zurück
+     *
+     * @return string JSON mit Array von Instanzen [{"InstanceID": X, "Name": "..."}, ...]
+     */
+    private function GetCentralControlInstances(): string
+    {
+        $instances = [];
+
+        // Alle Child-Instanzen des Gateways holen
+        $childrenIDs = IPS_GetChildrenIDs($this->InstanceID);
+
+        foreach ($childrenIDs as $childID) {
+            // Prüfen, ob es eine Instanz ist
+            if (IPS_InstanceExists($childID)) {
+                $instance = IPS_GetInstance($childID);
+
+                // Prüfen, ob es eine Central Control ist
+                if ($instance['ModuleInfo']['ModuleID'] === GUIDs::CENTRAL_CONTROL) {
+                    $instances[] = [
+                        'InstanceID' => $childID,
+                        'Name' => IPS_GetName($childID)
+                    ];
+                }
+            }
+        }
+
+        return json_encode($instances);
     }
 }
