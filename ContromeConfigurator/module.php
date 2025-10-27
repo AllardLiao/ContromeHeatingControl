@@ -358,6 +358,7 @@ class ContromeConfigurator extends IPSModuleStrict
         // Nach RoomID suchen
         foreach ($instances as $instanceJson) {
             $instance = json_decode($instanceJson, true);
+            $this->SendDebug(__FUNCTION__, "Check instance: for room " . $roomId . ": " . $instance['RoomID'] . " - InstanceID: " . $instance['InstanceID']);
             if (isset($instance['RoomID']) && (int)$instance['RoomID'] === $roomId) {
                 return (int)$instance['InstanceID'];
             }
