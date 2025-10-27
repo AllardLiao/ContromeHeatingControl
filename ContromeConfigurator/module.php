@@ -110,8 +110,8 @@ class ContromeConfigurator extends IPSModuleStrict
         $this->SendDebug(__FUNCTION__, "CC Discovery returned: " . print_r($ccInstances, true), 0);
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
-            $this->SendDebug(__FUNCTION__, "Instance: " . print_r($ccInstance, true));
             foreach ($ccInstances as $ccInstance) {
+                $this->SendDebug(__FUNCTION__, "Instance: " . print_r($ccInstance, true));
                 $values[] = [
                     'parent' => 1,
 //                    'name' => $ccInstance['name'],
