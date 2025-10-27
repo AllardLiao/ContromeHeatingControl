@@ -66,6 +66,8 @@ class ContromeConfigurator extends IPSModuleStrict
     public function GetConfigurationForm(): string
     {
         $form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+        return json_encode($form);
+
 
         // Raumliste vom Gateway abrufen (gibt JSON-String zurück)
         $responseJson = $this->FetchRoomsFromGateway();
