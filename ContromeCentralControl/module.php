@@ -375,6 +375,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                 "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM,
                                 "RoomID" => $roomID
                             ]));
+                            $this->SendDebug(__FUNCTION__, "REsponse from RTs: " . print_r($response, true), 0);
                             if (!$this->isError($response)){
                                 $payload = $this->getResponsePayload($response);
                                 if ((int)$payload["RoomID"] === (int)$roomID){
@@ -384,7 +385,7 @@ class ContromeCentralControl extends IPSModuleStrict
                                         $roomNote .= "Temperatur from fallback device. ";
                                     }
                                 }
-                                $this->SendDebug(__FUNCTION__, "RT for room " . $roomID . " found, temperature: " . $temperature);
+                                $this->SendDebug(__FUNCTION__, "RT for room " . $roomID . " found, temperature: " . $temperature, 0);
                             }
                         }
                         $this->SetValue($roomVar . "Temperature",       $temperature);
