@@ -161,6 +161,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
     {
         $data = json_decode($JSONString);
         if (($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
+            $this->SendDebug(__FUNCTION__, "Received Data - working on it: " . print_r($data, true), 0);
             switch ($data["Action"]){
                 case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
                     return $this->getEffectiveHumidity();
