@@ -157,6 +157,24 @@ class ContromeRoomThermostat extends IPSModuleStrict
         }
     }
 
+    public function ReceiveData(string $JSONString): string
+    {
+        $data = json_decode($JSONString);
+        if (($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
+            switch ($data["Action"]){
+                case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
+                    return $this->getEffectiveHumidity();
+                case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
+                    return $this->getEffectiveTemperature();
+                default:
+                    return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data);
+            }
+        } else {
+            $this->SendDebug(__FUNCTION__, "Received Data - but not for my room id: " . print_r($data, true), 0);
+            return $this->wrapReturn(false, "Not my room id - cf. payload.", $data);
+        }
+    }
+
     private function updateVisualization(): void
     {
         // Daten für die Visualisierung aktualisieren
@@ -485,10 +503,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $fromFallback = true;
                 $msg = "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C (fallback)";
             }
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn($fromFallback, $msg, $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp, "Fallback" => $fromFallback];
+            return $this->wrapReturn(true, $msg, $payload);
         } else {
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp, "Fallback" => false];
             return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }
@@ -526,10 +544,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $fromFallback = true;
                 $msg = "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " % (fallback)";
             }
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
-            return $this->wrapReturn($fromFallback, $msg, $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity, "Fallback" => $fromFallback];
+            return $this->wrapReturn(true, $msg, $payload);
         } else {
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity, "Fallback" => false];
             return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }

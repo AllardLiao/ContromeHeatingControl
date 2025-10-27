@@ -35,6 +35,11 @@ class ACTIONs
     public const UPDATE_DATA                        = 'UpdateData';
     public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
 
+    // Effective-Werte liefern einen Wert unter Beachtung der Konfiguration in der RT-Instanz,
+    // d.h. unter Beachtung der Fallback-Instanz bzw. Fallback-Wert
+    public const GET_EFFECTIVE_TEMP_FOR_ROOM        = 'GetEffectiveTemperatureForRoom';
+    public const GET_EFFECTIVE_HUMIDITY_FOR_ROOM    = 'GetEffectiveHumidityForRoom';
+
     // Implementierte Actions (nur CentralControl) die Daten speichern
     public const SET_SETPOINT                       = 'SetSetpoint'; // Permanente Temperaturänderung
     public const SET_MODE                           = 'SetRoomMode';
@@ -59,7 +64,7 @@ class ACTIONs
     public const RESET_TO_DEFAULT                     = 'ResetToDefault';
     public const DISABLE_FORM_FIELD                   = 'DisableFormField';
 
-    // Abzufragende Daten vom Gateway
+    // Abzufragende Daten vom Gateway (API-Befehle)
     public const DATA_SYSTEM_INFO   = 'info';
     public const DATA_ROOMS         = 'rooms'; // inkl. Temps
     public const DATA_ROOM_OFFSETS  = 'roomoffsets';

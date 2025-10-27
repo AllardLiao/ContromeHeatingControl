@@ -372,10 +372,13 @@ class ContromeCentralControl extends IPSModuleStrict
                         $temperature = isset($room['temperatur']) && is_numeric($room['temperatur']) ? floatval($room['temperatur']) : 0.0;
                         if (!isset($room['temperatur']) || is_null($room['temperatur']) || !is_numeric($room['temperatur'])) {
                             $this->SendDebug(__FUNCTION__, "Checking temperature fallback room: " . $roomID, 0);
-                            $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
-                            foreach ($thermostats as $instID) {
-                                $this->SendDebug(__FUNCTION__, "Checking temperature fallback with instance: " . $instID, 0);
-                                $response = CONRT_GetEffectiveTemperature($instID);
+                            // Abfrage an RTs über Gateway
+                            $response = $this->SendDataToParent(json_encode([
+                                "DataID" => GUIDs::DATAFLOW,
+                                "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM,
+                                "RoomID" => $roomID
+                            ]));
+                            if (!$this->isError($response)){
                                 $payload = $this->getResponsePayload($response);
                                 if ((int)$payload["RoomID"] === (int)$roomID){
                                     // Es gibt eine Instanz das uns "korrektere" daten liefern kann
@@ -425,15 +428,19 @@ class ContromeCentralControl extends IPSModuleStrict
                             // Prüfen ob in einem der RT zu der Humidity ggf. ein Fallback festgelegt ist:
                             if (!isset($room['luftfeuchte']) || is_null($room['luftfeuchte']) || !is_numeric($room['luftfeuchte']) || (floatval($room['luftfeuchte']) <= 0) || (floatval($room['luftfeuchte']) > 100)) {
                                 $this->SendDebug(__FUNCTION__, "Checking humidity fallback room: " . $roomID, 0);
-                                $thermostats = IPS_GetInstanceListByModuleID(GUIDs::ROOM_THERMOSTAT);
-                                foreach ($thermostats as $instID) {
-                                    $response = CONRT_GetEffectiveHumidity($instID);
-                                    $this->SendDebug(__FUNCTION__, "Check Fallback result: " . print_r($response, true));
+
+                                // Abfrage an RTs über Gateway
+                                $response = $this->SendDataToParent(json_encode([
+                                    "DataID" => GUIDs::DATAFLOW,
+                                    "Action" => ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM,
+                                    "RoomID" => $roomID
+                                ]));
+                                if (!$this->isError($response)){
                                     $payload = $this->getResponsePayload($response);
                                     if ((int)$payload["RoomID"] === (int)$roomID){
                                         // Es gibt eine Instanz das uns "korrektere" daten liefern kann
-                                        $humidity = $payload["Humidity"];
-                                        if (str_contains($this->getResponseMessage($response), "allback")) { // für Fallback und fallback
+                                        $temperature = $payload["Humidity"];
+                                        if (str_contains($this->getResponseMessage($response), "allback")) {
                                             $roomNote .= "Humidity from fallback device. ";
                                         }
                                     }

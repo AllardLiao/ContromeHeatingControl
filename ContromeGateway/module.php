@@ -183,6 +183,18 @@ class ContromeGateway extends IPSModuleStrict
                 return json_encode($result);
                 break;
 
+            case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
+                if (!isset($data['RoomID'])) {
+                    return $this->wrapReturn(false, "Missing room id");
+                }
+                return $this->GetEeffectiveTemperatureForRoom((int)$data['RoomID']);
+
+            case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
+                if (!isset($data['RoomID'])) {
+                    return $this->wrapReturn(false, "Missing room id");
+                }
+                return $this->GetEeffectiveHumidityForRoom((int)$data['RoomID']);
+
             case ACTIONs::SET_SETPOINT:
                 return $this->WriteSetpoint($data);
 
@@ -684,6 +696,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->SetStatus(IS_ACTIVE);
         return $this->wrapReturn(true, 'Target updated.');
     }
+
     /**
      * Writes the mode to Controme
      *
@@ -973,4 +986,27 @@ class ContromeGateway extends IPSModuleStrict
         return $instanceId;
     }
 
+    private function GetEeffectiveTemperatureForRoom(int $roomId): string
+    {
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM, "RoomID" => $roomId);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!$this->isError($result)){
+                return $result;
+            }
+        }
+        return $this->wrapReturn(false, "Could not find room thermostat for room id " . $roomId);
+    }
+
+    private function GetEeffectiveHumidityForRoom(int $roomId): string
+    {
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM, "RoomID" => $roomId);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!$this->isError($result)){
+                return $result;
+            }
+        }
+        return $this->wrapReturn(false, "Could not find room thermostat for room id " . $roomId);
+    }
 }
