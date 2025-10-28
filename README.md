@@ -3,6 +3,7 @@
 Folgende Module beinhaltet das Controme Heating Control Repository:
 
 - __Controme Gateway__ ([Documentation](ContromeGateway))
+- __Controme Configurator__ [Documentation](ContromeConfigurator)
 - __Controme Central Control__ ([Documentation](ContromeCentralControl))
 - __Controme Room Thermostat__ ([Documentation](ContromeRoomThermostat))
 
