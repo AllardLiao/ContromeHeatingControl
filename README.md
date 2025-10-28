@@ -18,10 +18,15 @@ Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Vi
 
 ![Screenshot Controme Heating Control](libs/assets/Controme_Heating_Control.png)
 
-Das Module installiert eine Controme Gateway-Instanz, das Controme Gateway.
-Dieser stellt die Verbindung zum Controme Mini-Server her.
-Wenn die Verbindung steht können nach Abruf der Räume zwei weitere Typen von Kontroll-Geräten erstellt werden:
-Zentrale Steuereinheit(en) und (je Raum) Raum-Thermostate.
+## Installation
+
+Erstelle zuerst eine Controme Gateway-Instanz als Splitter-Instanz und konfiguriere diese.
+Das Gateway stellt die Verbindung zum Controme Mini-Server her.
+
+Als nächstes erstelle eine Konfigurator-Instanz (im Baum unter den Konfiguratoren) und verbinde diese mit dem erstellen Controme-Gateway.
+
+Aus der Konfigurator-Instanz können nun die zwei Typen von Kontroll-Geräten erstellt werden:
+Zentrale Steuereinheit(en) und (je Raum ein) Raum-Thermostat(e).
 
 Mehrere zentrale Steuereinheiten sind möglich - hierüber können End-User Steuerungen mit unterschiedlichen
 Berechtigungen erzeugt werden - wie z.B. das Umschalten zwischen Heiz- und Kühl-Betrieb in der einen Instanz
@@ -30,7 +35,9 @@ möglich, in der anderen nicht.
 ```
 Controme Gateway (type=2, parent)
     |
-    ├── Controme Central Control (type=3, child)
+    ├── Controme Configurator (type=4, child)
+    |
+    ├── Controme Central Control #1 (type=3, child)
     |
     ├── Controme Room Thermostat #1 (type=3, child)
     |
@@ -42,13 +49,7 @@ Controme Gateway (type=2, parent)
 
 Hinweise:
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
-Wird dies nach Verbindung dieses Moduls in der Controme-App angepasst, ändern sich die Namen der Kategorien und
-der Sensor-Variablen im IP-Symcon. Dies bedeutet insbesondere, dass die Namen über die Definition im
-Controme-Mini-Server abgeleitet wird. Beachte dies bei der Benennnung der Räume und Sensoren im Controme Mini-Server
-
-Die Anzeige des Raumthermostats im Central Control ist auf ein Raumthermostat je Raum beschränkt.
-
-by Kai J. Oey
+Wird dies nach Verbindung dieses Moduls in der Controme-App angepasst, ändern sich die Namen Räume in der Konfigurator-Instanz und werden ggf. nicht korrekt als schon angelegt erkannt.
 
 ## License
 
