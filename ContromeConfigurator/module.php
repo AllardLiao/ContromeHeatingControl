@@ -106,6 +106,36 @@ class ContromeConfigurator extends IPSModuleStrict
         ];
 
         // 2. Central Control Instanzen - alle vom Gateway abfragen
+        // Central Control Konfiguration mit allen Default-Werten aus Create()
+        $ccConfig = [
+            // Visu-Einstellungen
+            'ShowMainElements' => true,
+            'AllowChangeOfMode' => true,
+            'AllowChangeOfPermanentTemperature' => true,
+            'AllowChangeOfTemporaryTemperature' => true,
+            'VisuColorMainTiles' => 0x454545,
+            'ShowSystemInfo' => true,
+            'VisuColorSystemInfoTile' => 0x696e96,
+            'ShowRooms' => true,
+            'VisuColorRoomTiles' => 0x5c5c5c,
+            'VisuColorFloorTiles' => 0x454545,
+            'ShowRoomData' => true,
+            'ShowRoomOffsets' => false,
+            'ShowRoomOffsetsOnlyActive' => false,
+            'ShowRoomSensors' => false,
+            'ShowVTR' => false,
+            'ShowTimer' => false,
+            'ShowCalendar' => false,
+            'DurationOfMessagePopup' => 8,
+            'VisuColorText' => 0xFFFFFF,
+            'VisuColorModeButton' => 0x00a9f4,
+            'VisuColorTempButtons' => 0xfb4f2a,
+            // Update-Einstellungen
+            'UpdateInterval' => 5,
+            'AutoUpdate' => true,
+            // Test-Einstellung
+            'RoomID' => 1
+        ];
         $ccInstances = $this->GetCentralControlInstances();
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
@@ -117,7 +147,7 @@ class ContromeConfigurator extends IPSModuleStrict
                     'InstanceID' => $ccInstance['InstanceID'],
                     'create' => [
                         'moduleID' => GUIDs::CENTRAL_CONTROL,
-                        'configuration' => []
+                        'configuration' => $ccConfig
                     ]
                 ];
             }
@@ -129,7 +159,7 @@ class ContromeConfigurator extends IPSModuleStrict
             'InstanceID' => 0, // 0 = nicht vorhanden, immer erstellbar
             'create' => [
                 'moduleID' => GUIDs::CENTRAL_CONTROL,
-                'configuration' => []
+                'configuration' => $ccConfig
             ]
         ];
 
