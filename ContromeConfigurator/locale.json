@@ -1,7 +1,40 @@
 {
     "translations": {
         "de": {
-            "Controme Heating Control - Configurator": "Controme Heizungssteuerung - Konfigurator"
+            "Controme Heating Control - Configurator": "Controme Heizungssteuerung - Konfigurator",
+            "Controme Instances": "Controme Instanzen",
+            "Floor id": "Etagen-ID",
+            "Room id": "Raum-ID",
+            "Name": "Name",
+            "Central Control": "Zentralsteuerung",
+            "Create new Controme central contro": "Neue Controme Zentralsteuerung erstellen",
+            "Room Thermostat": "Raumthermostat",
+            "Source code, donation and licence ...": "Quellcode, Spende und Lizenz ...",
+            "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "Die Software ist für nicht-kommerzielle Nutzung kostenlos. Ich würde mich über eine Spende freuen, wenn Ihnen das Modul gefällt.",
+            "\\nLicense": "\\nLizenz",
+            "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung-Nicht kommerziell-Weitergabe unter gleichen Bedingungen 4.0 International Lizenz.",
+            "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Details unter https://creativecommons.org/licenses/by-nc-sa/4.0/.",
+            "No connection to Controme Mini-Server": "Keine Verbindung zum Controme Mini-Server",
+            "Authentication failed": "Authentifizierung fehlgeschlagen",
+            "Communication not normal": "Kommunikation nicht normal"
+        },
+        "es": {
+            "Controme Heating Control - Configurator": "Control de Calefacción Controme - Configurador",
+            "Controme Instances": "Instancias Controme",
+            "Floor id": "ID de piso",
+            "Room id": "ID de habitación",
+            "Name": "Nombre",
+            "Central Control": "Control Central",
+            "Create new Controme central contro": "Crear nuevo control central",
+            "Room Thermostat": "Termostato de Habitación",
+            "Source code, donation and licence ...": "Código fuente, donación y licencia ...",
+            "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "El software es gratuito para uso no comercial. Agradecería una donación si le gusta el módulo.",
+            "\\nLicense": "\\nLicencia",
+            "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Este trabajo está licenciado bajo una Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional.",
+            "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Consulte https://creativecommons.org/licenses/by-nc-sa/4.0/ para más detalles.",
+            "No connection to Controme Mini-Server": "Sin conexión al Mini-Servidor Controme",
+            "Authentication failed": "Autenticación fallida",
+            "Communication not normal": "Comunicación no normal"
         }
     }
 }
