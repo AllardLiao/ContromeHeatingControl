@@ -53,17 +53,7 @@
                 },
                 {
                     "parent": 2,
-                    "name": "EG (Floor-ID: 1) / Wohnzimmer (Room-ID: 1)",
-                    "create":
-                    {
-                        "moduleID": "{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}",
-                        "configuration":
-                        {
-                            "RoomID": 1,
-                            "FloorID": 1,
-                            "HouseID": 1
-                        }
-                    }
+                    "name": "Press 'UPDATE' to get the room list from the gateway."
                 }
             ],
             "visible": true
