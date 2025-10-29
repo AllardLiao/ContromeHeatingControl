@@ -55,6 +55,8 @@ Status variables are created automatically. Deleting individual variables may ca
 
 ![Visualisation tiles](../libs/assets/Controme_Heating_Control.png)
 
+![Visualization mobile](../libs/assets/CONCC_Visu_mobile.jpeg)
+
 ### 7. PHP-Befehlsreferenz
 
 * `string CONCC_CheckConnection();`
