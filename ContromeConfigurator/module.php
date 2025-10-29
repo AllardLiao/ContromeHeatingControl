@@ -114,6 +114,7 @@ class ContromeConfigurator extends IPSModuleStrict
             'RoomID' => 1
         ];
         $ccInstances = $this->GetCentralControlInstances();
+        $ccCount = 1;
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
             foreach ($ccInstances as $ccInstanceJson) {
@@ -127,6 +128,7 @@ class ContromeConfigurator extends IPSModuleStrict
                         'configuration' => $ccConfig
                     ]
                 ];
+                $ccCount++;
             }
         }
         // Immer die Möglichkeit anbieten, eine neue zu erstellen
@@ -136,6 +138,7 @@ class ContromeConfigurator extends IPSModuleStrict
             'InstanceID' => 0, // 0 = nicht vorhanden, immer erstellbar
             'create' => [
                 'moduleID' => GUIDs::CENTRAL_CONTROL,
+                'name' => 'Controme Central Control #' . $ccCount,
                 'configuration' => $ccConfig
             ]
         ];
