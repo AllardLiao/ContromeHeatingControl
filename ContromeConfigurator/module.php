@@ -58,19 +58,6 @@ class ContromeConfigurator extends IPSModuleStrict
     }
 
     /**
-     * Gibt die Konfiguration für die Parent-Verbindung zurück
-     * Wird von IP-Symcon verwendet, um kompatible Parent-Instanzen zu finden
-     *
-     * @return string JSON-kodierte Konfiguration
-     */
-    public function GetConfigurationForParent(): string
-    {
-        return json_encode([
-            'DataID' => GUIDs::DATAFLOW
-        ]);
-    }
-
-    /**
      * Erstellt das Konfigurationsformular dynamisch
      *
      * @return string JSON-String des Formulars
