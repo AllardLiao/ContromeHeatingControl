@@ -3,8 +3,10 @@
     "name": "Controme Room Thermostat",
     "type": 3,
     "vendor": "Controme GmbH",
+    "LibraryID": "{89077CE1-F783-DE03-9291-0EEF49585535}",
     "aliases": [
-        "Controme Raumthermostat"
+        "Controme Thermostat",
+        "Room Thermostat (Controme)"
     ],
     "parentRequirements": [
         "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
@@ -14,5 +16,17 @@
         "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
     ],
     "prefix": "CONRT",
-    "url": ""
+    "url": "",
+    "translations": {
+        "de": {
+            "Controme Room Thermostat": "Controme Raumthermostat",
+            "Controme Thermostat": "Controme Thermostat",
+            "Room Thermostat (Controme)": "Raumthermostat (Controme)"
+        },
+        "es": {
+            "Controme Room Thermostat": "Termostato de Habitación Controme",
+            "Controme Thermostat": "Termostato Controme",
+            "Room Thermostat (Controme)": "Termostato de Habitación (Controme)"
+        }
+    }
 }

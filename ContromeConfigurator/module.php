@@ -83,46 +83,19 @@ class ContromeConfigurator extends IPSModuleStrict
         ];
 
         // 2. Central Control Instanzen - alle vom Gateway abfragen
-        // Central Control Konfiguration mit allen Default-Werten aus Create()
-        $ccConfig = [
-            // Visu-Einstellungen
-            'ShowMainElements' => true,
-            'AllowChangeOfMode' => true,
-            'AllowChangeOfPermanentTemperature' => true,
-            'AllowChangeOfTemporaryTemperature' => true,
-            'VisuColorMainTiles' => 0x454545,
-            'ShowSystemInfo' => true,
-            'VisuColorSystemInfoTile' => 0x696e96,
-            'ShowRooms' => true,
-            'VisuColorRoomTiles' => 0x5c5c5c,
-            'VisuColorFloorTiles' => 0x454545,
-            'ShowRoomData' => true,
-            'ShowRoomOffsets' => false,
-            'ShowRoomOffsetsOnlyActive' => false,
-            'ShowRoomSensors' => false,
-            'ShowVTR' => false,
-            'ShowTimer' => false,
-            'ShowCalendar' => false,
-            'DurationOfMessagePopup' => 8,
-            'VisuColorText' => 0xFFFFFF,
-            'VisuColorModeButton' => 0x00a9f4,
-            'VisuColorTempButtons' => 0xfb4f2a,
-            // Update-Einstellungen
-            'UpdateInterval' => 5,
-            'AutoUpdate' => true,
-            // Test-Einstellung
-            'RoomID' => 1
-        ];
         $ccInstances = $this->GetCentralControlInstances();
         $ccCount = 1;
         // Wenn bereits Central Controls existieren, diese anzeigen
         if (!empty($ccInstances)) {
             foreach ($ccInstances as $ccInstanceJson) {
                 $ccInstance = json_decode($ccInstanceJson, true);
+                $instanceID = $ccInstance['InstanceID'];
+                // Aktuelle Konfiguration der Instanz holen
+                $ccConfig = $this->GetConfigurationForCentralControl($instanceID);
                 $values[] = [
                     'parent' => 1,
                     'name' => $ccInstance['name'],
-                    'InstanceID' => $ccInstance['InstanceID'],
+                    'InstanceID' => $instanceID,
                     'create' => [
                         'moduleID' => GUIDs::CENTRAL_CONTROL,
                         'configuration' => $ccConfig
@@ -131,7 +104,7 @@ class ContromeConfigurator extends IPSModuleStrict
                 $ccCount++;
             }
         }
-        // Immer die Möglichkeit anbieten, eine neue zu erstellen
+        // Immer die Möglichkeit anbieten, eine neue zu erstellen (mit Defaults)
         $values[] = [
             'parent' => 1,
             'name' => 'Create new Controme Central Control',
@@ -139,7 +112,7 @@ class ContromeConfigurator extends IPSModuleStrict
             'create' => [
                 'moduleID' => GUIDs::CENTRAL_CONTROL,
                 'name' => 'Controme Central Control #' . $ccCount,
-                'configuration' => $ccConfig
+                'configuration' => $this->GetConfigurationForCentralControl(0)
             ]
         ];
 
@@ -161,6 +134,8 @@ class ContromeConfigurator extends IPSModuleStrict
                 $roomName = $raum['name'] ?? 'Unknown Room';
                 // Prüfen, ob bereits eine Instanz für diesen Raum existiert
                 $instanceID = $this->GetRoomThermostatInstanceID($roomId);
+                // Aktuelle Konfiguration der Instanz holen (oder Defaults für neue Instanzen)
+                $rtConfig = $this->GetConfigurationForRoomThermostat($instanceID, $floorId, $floorName, $roomId, $roomName);
                 $values[] = [
                     'parent' => 2,
                     'name' => $floorName . ' / ' . $roomName,
@@ -169,23 +144,7 @@ class ContromeConfigurator extends IPSModuleStrict
                     'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
                     'create' => [
                         'moduleID' => GUIDs::ROOM_THERMOSTAT,
-                        'configuration' => [
-                            // Raum-spezifische Properties
-                            'FloorID' => $floorId,
-                            'Floor' => $floorName,
-                            'RoomID' => $roomId,
-                            'Room' => $roomName,
-                            // Default-Werte aus Create() Methode
-                            'FallbackTempSensorUse' => false,
-                            'FallbackTempSensor' => 0,
-                            'FallbackTempValue' => 15.0,
-                            'FallbackHumiditySensorUse' => false,
-                            'FallbackHumiditySensor' => 0,
-                            'FallbackHumidityValue' => 40.0,
-                            'UpdateInterval' => 5,
-                            'AutoUpdate' => true,
-                            'StepSize' => 0.5
-                        ]
+                        'configuration' => $rtConfig
                     ]
                 ];
             }
@@ -217,6 +176,85 @@ class ContromeConfigurator extends IPSModuleStrict
             default:
                 parent::RequestAction($ident, $value);
         }
+    }
+
+    /**
+     * Holt die aktuelle Konfiguration einer Central Control Instanz
+     *
+     * @param int $instanceID Die Instanz-ID (0 für neue Instanz = Defaults)
+     * @return array Assoziatives Array mit allen Konfigurationswerten
+     */
+    private function GetConfigurationForCentralControl(int $instanceID): array
+    {
+        if ($instanceID === 0 || !IPS_InstanceExists($instanceID)) {
+            // Defaults zurückgeben für neue Instanzen
+            return [
+                'ShowMainElements' => true,
+                'AllowChangeOfMode' => true,
+                'AllowChangeOfPermanentTemperature' => true,
+                'AllowChangeOfTemporaryTemperature' => true,
+                'VisuColorMainTiles' => 0x454545,
+                'ShowSystemInfo' => true,
+                'VisuColorSystemInfoTile' => 0x696e96,
+                'ShowRooms' => true,
+                'VisuColorRoomTiles' => 0x5c5c5c,
+                'VisuColorFloorTiles' => 0x454545,
+                'ShowRoomData' => true,
+                'ShowRoomOffsets' => false,
+                'ShowRoomOffsetsOnlyActive' => false,
+                'ShowRoomSensors' => false,
+                'ShowVTR' => false,
+                'ShowTimer' => false,
+                'ShowCalendar' => false,
+                'DurationOfMessagePopup' => 8,
+                'VisuColorText' => 0xFFFFFF,
+                'VisuColorModeButton' => 0x00a9f4,
+                'VisuColorTempButtons' => 0xfb4f2a,
+                'UpdateInterval' => 5,
+                'AutoUpdate' => true,
+                'RoomID' => 1
+            ];
+        }
+
+        // Aktuelle Konfiguration der existierenden Instanz auslesen
+        $configJson = IPS_GetConfiguration($instanceID);
+        return json_decode($configJson, true);
+    }
+
+    /**
+     * Holt die aktuelle Konfiguration einer Room Thermostat Instanz
+     *
+     * @param int $instanceID Die Instanz-ID (0 für neue Instanz = Defaults)
+     * @param int $floorID Die Etagen-ID (nur für neue Instanzen)
+     * @param string $floorName Der Etagen-Name (nur für neue Instanzen)
+     * @param int $roomID Die Raum-ID (nur für neue Instanzen)
+     * @param string $roomName Der Raum-Name (nur für neue Instanzen)
+     * @return array Assoziatives Array mit allen Konfigurationswerten
+     */
+    private function GetConfigurationForRoomThermostat(int $instanceID, int $floorID = 0, string $floorName = '', int $roomID = 0, string $roomName = ''): array
+    {
+        if ($instanceID === 0 || !IPS_InstanceExists($instanceID)) {
+            // Defaults zurückgeben für neue Instanzen
+            return [
+                'FloorID' => $floorID,
+                'Floor' => $floorName,
+                'RoomID' => $roomID,
+                'Room' => $roomName,
+                'FallbackTempSensorUse' => false,
+                'FallbackTempSensor' => 0,
+                'FallbackTempValue' => 15.0,
+                'FallbackHumiditySensorUse' => false,
+                'FallbackHumiditySensor' => 0,
+                'FallbackHumidityValue' => 40.0,
+                'UpdateInterval' => 5,
+                'AutoUpdate' => true,
+                'StepSize' => 0.5
+            ];
+        }
+
+        // Aktuelle Konfiguration der existierenden Instanz auslesen
+        $configJson = IPS_GetConfiguration($instanceID);
+        return json_decode($configJson, true);
     }
 
     /**
