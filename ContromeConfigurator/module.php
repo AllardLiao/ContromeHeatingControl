@@ -208,17 +208,8 @@ class ContromeConfigurator extends IPSModuleStrict
     public function RequestAction(string $ident, mixed $value): void
     {
         switch($ident) {
-            case ACTIONs::FETCH_ROOM_LIST:
-                $this->SetRoomList(); // Räume abrufen und im Konfig-Form speichern
-                break;
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection($value);
-                break;
-            case ACTIONs::CREATE_CENTRAL_CONTROL_INSTANCE:
-                $this->CreateCentralControlInstance();
-                break;
-            case ACTIONs::CREATE_ROOM_THERMOSTAT_INSTANCE:
-                $this->CreateRoomThermostatInstance($value);
                 break;
             default:
                 parent::RequestAction($ident, $value);
