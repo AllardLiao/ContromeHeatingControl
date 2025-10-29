@@ -42,8 +42,30 @@
                     "create": {
                         "moduleID": "{A19ABE82-5AB1-7969-3851-E6446DECEBA9}",
                         "configuration": {
-                            "Calculation": 2,
-                            "Variables": "[]"
+                            "ShowMainElements": true,
+                            "AllowChangeOfMode": true,
+                            "AllowChangeOfPermanentTemperature": true,
+                            "AllowChangeOfTemporaryTemperature": true,
+                            "VisuColorMainTiles": 4539717,
+                            "ShowSystemInfo": true,
+                            "VisuColorSystemInfoTile": 6909590,
+                            "ShowRooms": true,
+                            "VisuColorRoomTiles": 6053980,
+                            "VisuColorFloorTiles": 4539717,
+                            "ShowRoomData": true,
+                            "ShowRoomOffsets": false,
+                            "ShowRoomOffsetsOnlyActive": false,
+                            "ShowRoomSensors": false,
+                            "ShowVTR": false,
+                            "ShowTimer": false,
+                            "ShowCalendar": false,
+                            "DurationOfMessagePopup": 8,
+                            "VisuColorText": 16777215,
+                            "VisuColorModeButton": 43764,
+                            "VisuColorTempButtons": 16469802,
+                            "UpdateInterval": 5,
+                            "AutoUpdate": true,
+                            "RoomID": 1
                         }
                     }
                 },
