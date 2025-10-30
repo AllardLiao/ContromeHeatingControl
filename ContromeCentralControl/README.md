@@ -76,7 +76,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_SetRoomTemperature();`
+#### `string CONCC_SetRoomTemperature();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -93,7 +93,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_setRoomTemperatureTemp();`
+#### `string CONCC_setRoomTemperatureTemp();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -110,7 +110,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_setRoomMode();`
+#### `string CONCC_setRoomMode();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -127,7 +127,8 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-NOTE: Currently (Oct 2025) there is a bug in the API implementation of setting the operation mode.
+#### NOTE:
+Currently (Oct 2025) there is a bug in the API implementation of setting the operation mode.
 The mode is set and understood by the Controme Mini-Server, however after setting the mode, the API returns
 the int values from the API and not (as documented and normally) the string representation.
 After loading the "operation mode" page of the web interface of the controme system (the set operation more

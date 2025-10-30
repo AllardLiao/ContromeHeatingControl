@@ -77,7 +77,7 @@ You might need to swich the appearance in the visualisation setup:
 
 ### 7. PHP-Befehlsreferenz
 
-* `string CONRT_WriteSetpoint(float SETPOINT);`
+#### `string CONRT_WriteSetpoint(float SETPOINT);`
 Writes the SETPOINT the Controme Mini-Server for the configured room of the instance.
 
 Beispiel:
@@ -89,7 +89,7 @@ Returns JSON:
     "payload" => []
 }
 
-* `string CONRT_CheckConnection();`
+####  `string CONRT_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
@@ -101,7 +101,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONRT_GetEffectiveTemperature();`
+#### `string CONRT_GetEffectiveTemperature();`
 Returns an JSON with information about the temperature of the room.
 In case the Controme Mini-Server does not deliver a value, it is taken from the defined Backup-Sensor.
 
@@ -114,7 +114,7 @@ Returns JSON, e.g.:
     "payload" => ["RoomID" => 1, "Temperature" => 22.1];
 }
 
-* `string CONRT_GetEffectiveHumidity();`
+#### `string CONRT_GetEffectiveHumidity();`
 Returns an JSON with information about the humidity of the room.
 In case the Controme Mini-Server does not deliver a value, it is taken from the defined Backup-Sensor.
 
@@ -127,7 +127,7 @@ Returns JSON, e.g.:
     "payload" => ["RoomID" => 1, "Humidity" => 46.8];
 }
 
-NOTE:
+#### NOTE
 The returned JSON include also a "salt" string leading the keys, e.g. "RW88_" => "RW88_success"
 
 ### 8. Lizenz
