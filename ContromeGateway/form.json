@@ -113,7 +113,7 @@
             "items": [
                 {
                     "type": "Label",
-                    "caption": "\nCheck connection to Controme MiniServer, executes one reading and one writing test (using room 1)."
+                    "caption": "Check connection to Controme MiniServer, executes one reading and one writing test (using room 1)."
                 },
                 {
                     "type": "RowLayout",
