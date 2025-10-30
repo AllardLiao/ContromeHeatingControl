@@ -19,12 +19,6 @@ use Controme\CONTROME_PROFILES;
 class ContromeCentralControl extends IPSModuleStrict
 {
     use DebugHelper;
-    use EventHelper;
-    use ProfileHelper;
-    use VariableHelper;
-    use VersionHelper;
-    use FormatHelper;
-    use WidgetHelper;
     use ReturnWrapper;
 
     public function Create(): void
