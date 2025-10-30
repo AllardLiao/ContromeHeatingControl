@@ -1,5 +1,5 @@
 
-# ContromeRoomThermostat
+# Controme Room Thermostat
 
 Module description: Room thermostat for Controme heating systems in IP-Symcon.
 

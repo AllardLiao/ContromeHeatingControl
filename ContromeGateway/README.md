@@ -1,5 +1,5 @@
 
-# ContromeGateway
+# Controme Gateway
 
 Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server.
 
