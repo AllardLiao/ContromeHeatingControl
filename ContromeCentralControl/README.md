@@ -53,10 +53,12 @@ Status variables are created automatically. Deleting individual variables may ca
 
 ## 6. Visualization
 
-PC/Tablet
+* PC/Tablet
+
 ![Visualisation tiles](../libs/assets/Controme_Heating_Control.png)
 
-Mobile
+* Mobile
+
 ![Visualization mobile](../libs/assets/CONCC_Visu_mobile.jpeg)
 
 ### 7. PHP-Befehlsreferenz
