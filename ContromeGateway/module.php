@@ -34,9 +34,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("Password", "");
         $this->RegisterPropertyInteger("HouseID", 1);
         $this->RegisterPropertyBoolean("UseHTTPS", false);
-        $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
         $this->RegisterPropertyInteger("Mode", 0);
-        $this->RegisterPropertyInteger("TargetCategory", 0); // Zielkategorie für neue Instanzen
 
         // API Get und Set URLs als Attribute speichern
         // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
@@ -96,20 +94,11 @@ class ContromeGateway extends IPSModuleStrict
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
         switch($ident) {
-            case ACTIONs::FETCH_ROOM_LIST:
-                $this->SetRoomList(); // Räume abrufen und im Konfig-Form speichern
-                break;
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection($value);
                 break;
             case ACTIONs::SET_SETPOINT:
                 $this->WriteSetpoint($value);
-                break;
-            case ACTIONs::CREATE_CENTRAL_CONTROL_INSTANCE:
-                $this->CreateCentralControlInstance();
-                break;
-            case ACTIONs::CREATE_ROOM_THERMOSTAT_INSTANCE:
-                $this->CreateRoomThermostatInstance($value);
                 break;
             default:
                 parent::RequestAction($ident, $value);
@@ -337,50 +326,6 @@ class ContromeGateway extends IPSModuleStrict
 
         // Alles gut — zurückgeben (Rohdaten, Struktur wie API liefert)
         return json_encode($data);
-    }
-
-    /**
-     * Build the form list and update the module/form UI.
-     * Liefert true bei Erfolg, false bei Fehler.
-     */
-    private function SetRoomList(): string
-    {
-        $data = $this->FetchRooms();
-
-        if ($this->isError($data)) {
-            $msg = $this->Translate("No data received from Controme API.");
-            $this->UpdateFormField("StatusInstances", "caption", $msg);
-            $this->SetStatus(IS_NO_CONNECTION);
-            return $this->wrapReturn(false, $msg);
-        }
-        else {
-            $data = json_decode($data, true);
-        }
-
-        $formListJson = [];
-        foreach ($data as $etage) {
-            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
-
-            foreach ($etage['raeume'] as $raum) {
-                $formListJson[] = [
-                    "FloorID"           => $etage['id'] ?? 0,
-                    "Floor"             => $etage['etagenname'] ?? "Haus",
-                    "RoomID"            => $raum['id'] ?? 0,
-                    "Room"              => $raum['name'] ?? "Raum"
-                ];
-            }
-        }
-
-        // Formular aktualisieren
-        $msg = $this->Translate("Room list updated.");
-        $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
-        $this->UpdateFormField("StatusInstances", "caption", $msg);
-        $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
-        $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
-        $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
-        $this->SendDebug(__FUNCTION__, "Updated Controme Heating room data.", 0);
-        $this->SetStatus(IS_ACTIVE);
-        return $this->wrapReturn(true, $msg);
     }
 
     public function fetchSystemInfo(): string
@@ -801,78 +746,6 @@ class ContromeGateway extends IPSModuleStrict
         return $this->wrapReturn(true, 'Mode updated.');
     }
 
-    private function CreateCentralControlInstance(): string
-    {
-        $parentId = $this->ReadPropertyInteger("TargetCategory"); // Gewählter Parent
-        $instanceName = "Controme Central Control";
-
-        if (!$parentId || !$instanceName) {
-            return $this->wrapReturn(false, "Parent or name not set!");
-        }
-
-        // Neue Central Control Instanz erstellen
-        $newId = IPS_CreateInstance(GUIDs::CENTRAL_CONTROL);
-        IPS_SetParent($newId, $parentId);
-        IPS_SetName($newId, $instanceName);
-        IPS_ApplyChanges($newId);
-
-        $msg = $this->Translate("Central Control created with name ") . "'$instanceName' (ID $newId)!";
-        $this->UpdateFormField("CCInstanceCreationResult", "caption", $msg);
-        return $this->wrapReturn(true, $msg);
-    }
-
-    private function CreateRoomThermostatInstance($roomRow): string
-    {
-        try {
-            // Raumdaten aus der gespeicherten Liste holen
-            $roomData = json_decode($roomRow, true);
-            if ($roomData === null) {
-                throw new Exception("Please select a room from the list to create an instance.");
-            }
-            $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
-
-            $floorId = $roomData['FloorID'];
-            $floorName = $roomData['Floor'];
-            $roomId = $roomData['RoomID'];
-            $roomName = $roomData['Room'];
-            $icon = "temperature-list";
-
-            // Zielkategorie aus Konfiguration lesen
-            $targetCategoryId = $this->ReadPropertyInteger("TargetCategory");
-
-            // Validierung: Kategorie muss ausgewählt sein
-            if ($targetCategoryId < 0) {
-                throw new Exception('Please select target category to create instances to.');
-            }
-
-            // Instanz erstellen
-            $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
-
-            // Erfolgsmeldung
-            $msg = $this->Translate("Room thermostat instance created with name ") . "'$floorName-$roomName' (ID: $instanceId)!";
-            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
-            return $this->wrapReturn(true, $msg, $instanceId);
-        } catch (Exception $e) {
-            $msg = $this->Translate("Error creating instance: ") . $e->getMessage();
-            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
-            return $this->wrapReturn(false, $msg);
-        }
-    }
-
-    private function EnableDisableFormButtons()
-    {
-        // Prüfen, ob Räume vorhanden sind
-        $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
-
-        if (is_array($rooms) && count($rooms) > 0) {
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", true);
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", true);
-        } else {
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", false);
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", false);
-        }
-    }
-
     private function CheckHttpReponseHeader($http_response_header): String
     {
         // Erste Zeile enthält den HTTP-Status
@@ -966,31 +839,6 @@ class ContromeGateway extends IPSModuleStrict
 
         $msg = "Response from $ip, HTTP Code: $httpCode";
         return $this->wrapReturn(true, $msg);
-    }
-
-    private function CreateAndConfigureRoomInstance(int $parentCategoryId, int $floorId, string $floorName, int $roomId, string $roomName, string $icon = "temperature-list"): int
-    {
-        // Neue Instanz erstellen
-        $instanceId = IPS_CreateInstance(GUIDs::ROOM_THERMOSTAT);
-        IPS_SetName($instanceId, "Thermostat " . $floorName . "-" . $roomName);
-        IPS_SetIcon($instanceId, $icon);
-
-        // In Kategorie verschieben
-        IPS_SetParent($instanceId, $parentCategoryId);
-
-        // Eigenschaften konfigurieren
-        IPS_SetProperty($instanceId, 'FloorID', $floorId);
-        IPS_SetProperty($instanceId, 'Floor', $floorName);
-        IPS_SetProperty($instanceId, 'RoomID', $roomId);
-        IPS_SetProperty($instanceId, 'Room', $roomName);
-
-        // Mit diesem Gateway verbinden
-        //IPS_ConnectInstance($instanceId, $this->InstanceID); Passiert automatisch ;-)
-
-        // Konfiguration anwenden
-        IPS_ApplyChanges($instanceId);
-
-        return $instanceId;
     }
 
     private function GetEeffectiveTemperatureForRoom(int $roomId): string
