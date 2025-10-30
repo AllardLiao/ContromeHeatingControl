@@ -17,7 +17,8 @@
             "No connection to Controme Mini-Server": "Keine Verbindung zum Controme Mini-Server",
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal",
-            "Press 'UPDATE' to get the room list from the gateway.": "Drücken Sie 'AKTUALISIEREN', um die Raumliste vom Gateway abzurufen."
+            "Press 'UPDATE' to get the room list from the gateway.": "Drücken Sie 'AKTUALISIEREN', um die Raumliste vom Gateway abzurufen.",
+            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Fehler beim Abrufen der Räume vom Controme Mini-Server. Bitte Gateway überprüfen."
         },
         "es": {
             "Controme Heating Control - Configurator": "Control de Calefacción Controme - Configurador",
@@ -36,7 +37,8 @@
             "No connection to Controme Mini-Server": "Sin conexión al Mini-Servidor Controme",
             "Authentication failed": "Autenticación fallida",
             "Communication not normal": "Comunicación no normal",
-            "Press 'UPDATE' to get the room list from the gateway.": "Presione 'ACTUALIZAR' para obtener la lista de habitaciones de la puerta de enlace."
+            "Press 'UPDATE' to get the room list from the gateway.": "Presione 'ACTUALIZAR' para obtener la lista de habitaciones de la puerta de enlace.",
+            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Error al obtener habitaciones del Mini-Servidor Controme. Por favor, verifique la puerta de enlace."
         }
     }
 }

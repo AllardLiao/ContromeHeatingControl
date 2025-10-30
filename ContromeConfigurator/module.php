@@ -58,12 +58,13 @@ class ContromeConfigurator extends IPSModuleStrict
 
         // Raumliste vom Gateway abrufen (gibt JSON-String zurück)
         $responseJson = $this->FetchRoomsFromGateway();
+        $fetchRoomsSuccess = true;
 
         // Response ist ein JSON-String, prüfen ob Fehler (wrapped mit success=false)
         if ($this->isError($responseJson)) {
             $msg = $this->getResponseMessage($responseJson);
-            $this->SendDebug(__FUNCTION__, "Could not fetch rooms from gateway: " . $msg, 0);
-            return json_encode($form);
+            $this->SendDebug(__FUNCTION__, "Could not fetch rooms from gateway: " . $msg . " Only displying Central Controls.", 0);
+            $fetchRoomsSuccess = false;
         }
 
         // JSON dekodieren - wenn isError false ist, sind die Rohdaten direkt im JSON
@@ -123,31 +124,41 @@ class ContromeConfigurator extends IPSModuleStrict
         ];
 
         // 4. Räume durchgehen und Instanzen anlegen
-        foreach ($roomsData as $etage) {
-            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) {
-                continue;
+        if ($fetchRoomsSuccess){
+            foreach ($roomsData as $etage) {
+                if (!isset($etage['raeume']) || !is_array($etage['raeume'])) {
+                    continue;
+                }
+                $floorId = $etage['id'] ?? 0;
+                $floorName = $etage['etagenname'] ?? 'Unknown Floor';
+                foreach ($etage['raeume'] as $raum) {
+                    $roomId = $raum['id'] ?? 0;
+                    $roomName = $raum['name'] ?? 'Unknown Room';
+                    // Prüfen, ob bereits eine Instanz für diesen Raum existiert
+                    $instanceID = $this->GetRoomThermostatInstanceID($roomId);
+                    // Aktuelle Konfiguration der Instanz holen (oder Defaults für neue Instanzen)
+                    $rtConfig = $this->GetConfigurationForRoomThermostat($instanceID, $floorId, $floorName, $roomId, $roomName);
+                    $values[] = [
+                        'parent' => 2,
+                        'name' => $floorName . ' / ' . $roomName,
+                        'FloorID' => $floorId,
+                        'RoomID' => $roomId,
+                        'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
+                        'create' => [
+                            'moduleID' => GUIDs::ROOM_THERMOSTAT,
+                            'configuration' => $rtConfig
+                        ]
+                    ];
+                }
             }
-            $floorId = $etage['id'] ?? 0;
-            $floorName = $etage['etagenname'] ?? 'Unknown Floor';
-            foreach ($etage['raeume'] as $raum) {
-                $roomId = $raum['id'] ?? 0;
-                $roomName = $raum['name'] ?? 'Unknown Room';
-                // Prüfen, ob bereits eine Instanz für diesen Raum existiert
-                $instanceID = $this->GetRoomThermostatInstanceID($roomId);
-                // Aktuelle Konfiguration der Instanz holen (oder Defaults für neue Instanzen)
-                $rtConfig = $this->GetConfigurationForRoomThermostat($instanceID, $floorId, $floorName, $roomId, $roomName);
-                $values[] = [
-                    'parent' => 2,
-                    'name' => $floorName . ' / ' . $roomName,
-                    'FloorID' => $floorId,
-                    'RoomID' => $roomId,
-                    'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
-                    'create' => [
-                        'moduleID' => GUIDs::ROOM_THERMOSTAT,
-                        'configuration' => $rtConfig
-                    ]
-                ];
-            }
+        } else {
+            $values[] = [
+                'parent' => 2,
+                'name' => 'Error fetching rooms from Controme Mini-Server. Please check gateway.',
+                'FloorID' => 0,
+                'RoomID' => 0,
+                'InstanceID' => 0 // 0 = nicht vorhanden, >0 = bereits erstellt
+            ];
         }
 
         // Values in Configurator eintragen
