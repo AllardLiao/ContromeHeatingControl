@@ -1,5 +1,5 @@
 
-# ContromeGateway
+# Controme Configurator
 
 Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server.
 
@@ -23,11 +23,11 @@ Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server
 
 ## 3. Installation
 
-- Add the 'Controme Configurator' instance.
+- Add the 'Controme Configurator' instance within "Configurators" folder.
 
 ## 4. Instance Setup in IP-Symcon
 
-You can find the 'Controme Configurator' instance using the quick filter under 'Add Configurator Instance'.
+You can find the 'Controme Configurator' instance using the quick filter under 'Add Configurator Instance' > 'Controme'.
 
 For more information on adding instances, see the [IP-Symcon documentation](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen).
 
@@ -37,8 +37,8 @@ __Configuration Page__:
 |----------------------------|-----------------------------------------------------------------------------------|
 | Target category            | Category where new instances (room thermostat or central control) will be placed  |
 | Controme Instances         |                                                                                   |
-| - Central Control(s)       | Identifier of the house (usually 1, rarely 2 according to Controme)               |
-| - Room Thermostat(s)       | DO NOT ACTIVATE - currently (Oct 2025) not implemented by Controme                |
+| - Central Control(s)       | Controme Central Control instances                                                |
+| - Room Thermostat(s)       | Room Thermostats to control the setpoint of rooms                                 |
 | Button "CREATE"            | Creates an instance from the selected line                                        |
 | Button "CREATE ALL"        | Creates all instances that do not exist (marked green)                            |
 
