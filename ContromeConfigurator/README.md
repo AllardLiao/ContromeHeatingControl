@@ -10,8 +10,7 @@ Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server
 3. [Installation](#3-installation)
 4. [Instance Setup in IP-Symcon](#4-instance-setup-in-ip-symcon)
 5. [Visualization](#6-visualization)
-6. [PHP Command Reference](#7-php-command-reference)
-7. [License](#8-license)
+6. [License](#8-license)
 
 ## 1. Features
 
@@ -49,11 +48,7 @@ There is not visualisation - only the configuration form:
 
 ![Controme Configuration Form](../libs/assets/CONCF_Form.jpeg)
 
-### 6. PHP-Befehlsreferenz
-
-n/a
-
-### 7. Lizenz
+### 6. Lizenz
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
