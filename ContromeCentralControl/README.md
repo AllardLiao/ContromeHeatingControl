@@ -63,7 +63,7 @@ Status variables are created automatically. Deleting individual variables may ca
 
 ### 7. PHP-Befehlsreferenz
 
-__`string CONCC_CheckConnection();`__
+#### `string CONCC_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
