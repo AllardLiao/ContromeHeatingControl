@@ -68,14 +68,14 @@ Name                  | Typ
 --------------------- | -----------------------------------------------------------------
 Controme.Betriebsart  | int (0-Kühlen, 1-Aus, 2-Heizen, 3-An) according to Controme-API
 
-### 6. Visualisierung
+### 6. Visualization
 
 Standard IP Symcon "Thermostat" visualisation tile.
 You might need to swich the appearance in the visualisation setup:
 
 ![Visualisation options](../libs/assets/CONRT_Visu.jpeg)
 
-### 7. PHP-Befehlsreferenz
+### 7. PHP Command Reference
 
 #### `string CONRT_WriteSetpoint(float SETPOINT);`
 Writes the SETPOINT the Controme Mini-Server for the configured room of the instance.
@@ -130,7 +130,7 @@ Returns JSON, e.g.:
 #### NOTE
 The returned JSON include also a "salt" string leading the keys, e.g. "RW88_" => "RW88_success"
 
-### 8. Lizenz
+### 8. License
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).

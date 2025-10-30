@@ -69,8 +69,8 @@ This project is licensed under the [CC BY-NC-SA 4.0 License](https://creativecom
 This project was developed to integrate **Controme Smart Heating** systems into IP-Symcon.
 Special thanks to:
 
-- **Controme GmbH** ([controme.com](https://www.controme.com)) for review of the project. API Informatiaon can be found at https://support.controme.com/api/
-- **Symcon GmbH** for IP-Symcon and the [StylePHP](https://github.com/symcon/StylePHP) project, which served as a basis for parts of this module.
+- **Controme GmbH** ([controme.com](https://www.controme.com)) for supporting the project. API Informatiaon can be found at https://support.controme.com/api/
+- **Symcon GmbH** for the [StylePHP](https://github.com/symcon/StylePHP) project, which served as a basis for parts of this module, as well as for review and support.
 - **Heiko Wilknitz** ([wilkware.de](https://wilkware.de)) for providing open-source traits under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 This module is an independent community project and is not officially affiliated with or endorsed by Controme GmbH nor by Symcon GmbH.

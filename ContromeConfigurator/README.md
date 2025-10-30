@@ -9,8 +9,8 @@ Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server
 2. [Requirements](#2-requirements)
 3. [Installation](#3-installation)
 4. [Instance Setup in IP-Symcon](#4-instance-setup-in-ip-symcon)
-5. [Visualization](#6-visualization)
-6. [License](#8-license)
+5. [Visualization](#5-visualization)
+6. [License](#6-license)
 
 ## 1. Features
 
@@ -42,13 +42,13 @@ __Configuration Page__:
 | Button "CREATE"            | Creates an instance from the selected line                                        |
 | Button "CREATE ALL"        | Creates all instances that do not exist (marked green)                            |
 
-### 5. Visualisierung
+### 5. Visualization
 
 There is not visualisation - only the configuration form:
 
 ![Controme Configuration Form](../libs/assets/CONCF_Form.jpeg)
 
-### 6. Lizenz
+### 6. License
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).

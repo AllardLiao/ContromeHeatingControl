@@ -1,5 +1,5 @@
 
-# ContromeCentralControl
+# Controme Central Control
 
 Module description: Central control for Controme heating systems in IP-Symcon.
 
@@ -61,7 +61,7 @@ Status variables are created automatically. Deleting individual variables may ca
 
 ![Visualization mobile](../libs/assets/CONCC_Visu_mobile.jpeg)
 
-### 7. PHP-Befehlsreferenz
+### 7. PHP Command Reference
 
 #### `string CONCC_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
@@ -134,7 +134,7 @@ the int values from the API and not (as documented and normally) the string repr
 After loading the "operation mode" page of the web interface of the controme system (the set operation more
 is reflected there) and saving, the normally expected values are delivered again from the API.
 
-### 8. Lizens
+### 8. License
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
