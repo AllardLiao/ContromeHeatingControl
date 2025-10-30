@@ -133,14 +133,18 @@ class ContromeConfigurator extends IPSModuleStrict
                 $floorName = $etage['etagenname'] ?? 'Unknown Floor';
                 foreach ($etage['raeume'] as $raum) {
                     $roomId = $raum['id'] ?? 0;
-                    $roomName = $raum['name'] ?? 'Unknown Room';
                     // Prüfen, ob bereits eine Instanz für diesen Raum existiert
                     $instanceID = $this->GetRoomThermostatInstanceID($roomId);
                     // Aktuelle Konfiguration der Instanz holen (oder Defaults für neue Instanzen)
+                    if ($instanceID === 0) {
+                        $roomName = $floorName . ' / ' . $raum['name'] ?? 'Unknown Room';
+                    } else {
+                        $roomName = IPS_GetName($instanceID);
+                    }
                     $rtConfig = $this->GetConfigurationForRoomThermostat($instanceID, $floorId, $floorName, $roomId, $roomName);
                     $values[] = [
                         'parent' => 2,
-                        'name' => $floorName . ' / ' . $roomName,
+                        'name' => $roomName,
                         'FloorID' => $floorId,
                         'RoomID' => $roomId,
                         'InstanceID' => $instanceID, // 0 = nicht vorhanden, >0 = bereits erstellt
@@ -180,13 +184,7 @@ class ContromeConfigurator extends IPSModuleStrict
      */
     public function RequestAction(string $ident, mixed $value): void
     {
-        switch($ident) {
-            case ACTIONs::CHECK_CONNECTION:
-                $this->CheckConnection($value);
-                break;
-            default:
-                parent::RequestAction($ident, $value);
-        }
+        parent::RequestAction($ident, $value);
     }
 
     /**
