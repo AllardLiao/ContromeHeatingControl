@@ -1,10 +1,9 @@
 {
     "translations": {
         "de": {
-            "Controme Heating Control - Room Thermostat\\n": "Controme Heizungssteuerung - Raumthermostat\\n",
-            "Symcon module for individual room temperature control.\\n\\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface.": "Symcon Modul für individuelle Raumtemperatursteuerung.\\n\\nDieses Modul zeigt die aktuelle Temperatur, Luftfeuchtigkeit und den Betriebsmodus an. Sie können auch die Solltemperatur direkt über diese Oberfläche anpassen.",
-            "\\nRoom Assignment\\n": "\\nRaumzuweisung\\n",
-            "Only modify the room number if you are sure of what you are doing.\\n\\nThe floor and room name are used for Symcon visualization - you can change them as you like.": "Ändern Sie die Raumnummer nur, wenn Sie sicher sind, was Sie tun.\\n\\nDer Etagen- und Raumname werden für die Symcon-Visualisierung verwendet - Sie können sie nach Belieben ändern.",
+            "Controme Heating Control - Room Thermostat\\n ": "Controme Heizungssteuerung - Raumthermostat\\n ",
+            "Room Assignment": "Raumzuweisung",
+            "Only modify the room number if you are sure of what you are doing.": "Ändern Sie die Raumnummer nur, wenn Sie sicher sind, was Sie tun.",
             "Floor-ID": "Etagen-ID",
             "Room-ID": "Raum-ID",
             "Floor name": "Etagenname",
@@ -22,6 +21,7 @@
             "Use fallback temperature sensors": "Ersatz-Temperatursensoren verwenden",
             "Select fallback temperature variable": "Ersatz-Temperaturvariable auswählen",
             "Alternative fixed temperature to be displayed": "Alternative feste Temperatur zur Anzeige",
+            "Humidity": "Luftfeuchtigkeit",
             "Use fallback humidity sensors": "Ersatz-Feuchtigkeitssensoren verwenden",
             "Select fallback humidity variable": "Ersatz-Feuchtigkeitsvariable auswählen",
             "Alternative fixed humidity to be displayed": "Alternative feste Luftfeuchtigkeit zur Anzeige",
@@ -33,15 +33,15 @@
             "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "Die Software ist für nicht-kommerzielle Nutzung kostenlos, ich würde mich über eine Spende freuen, wenn Ihnen das Modul gefällt.",
             "\\nLicense": "\\nLizenz",
             "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung-NichtKommerziell-Weitergabe unter gleichen Bedingungen 4.0 International Lizenz.",
+            "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Details unter https://creativecommons.org/licenses/by-nc-sa/4.0/.",
             "No connection to Controme Mini-Server": "Keine Verbindung zum Controme Mini-Server",
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal"
         },
         "es": {
-            "Controme Heating Control - Room Thermostat\\n": "Control de Calefacción Controme - Termostato de Habitación\\n",
-            "Symcon module for individual room temperature control.\\n\\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface.": "Módulo Symcon para control individual de temperatura de habitación.\\n\\nEste módulo muestra la temperatura actual, humedad y modo de operación. También puede ajustar la temperatura objetivo directamente desde esta interfaz.",
-            "\\nRoom Assignment\\n": "\\nAsignación de Habitación\\n",
-            "Only modify the room number if you are sure of what you are doing.\\n\\nThe floor and room name are used for Symcon visualization - you can change them as you like.": "Solo modifique el número de habitación si está seguro de lo que está haciendo.\\n\\nEl nombre de planta y habitación se usan para la visualización Symcon - puede cambiarlos como desee.",
+            "Controme Heating Control - Room Thermostat\\n ": "Control de Calefacción Controme - Termostato de Habitación\\n ",
+            "Room Assignment": "Asignación de Habitación",
+            "Only modify the room number if you are sure of what you are doing.": "Solo modifique el número de habitación si está seguro de lo que está haciendo.",
             "Floor-ID": "ID de Planta",
             "Room-ID": "ID de Habitación",
             "Floor name": "Nombre de planta",
@@ -59,6 +59,7 @@
             "Use fallback temperature sensors": "Usar sensores de temperatura de respaldo",
             "Select fallback temperature variable": "Seleccionar variable de temperatura de respaldo",
             "Alternative fixed temperature to be displayed": "Temperatura fija alternativa a mostrar",
+            "Humidity": "Humedad",
             "Use fallback humidity sensors": "Usar sensores de humedad de respaldo",
             "Select fallback humidity variable": "Seleccionar variable de humedad de respaldo",
             "Alternative fixed humidity to be displayed": "Humedad fija alternativa a mostrar",
@@ -70,6 +71,7 @@
             "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "El software es gratuito para uso no comercial, agradecería una donación si le gusta el módulo.",
             "\\nLicense": "\\nLicencia",
             "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Este trabajo está licenciado bajo una Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional.",
+            "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Consulte https://creativecommons.org/licenses/by-nc-sa/4.0/ para más detalles.",
             "No connection to Controme Mini-Server": "Sin conexión al Mini-Servidor Controme",
             "Authentication failed": "Autenticación fallida",
             "Communication not normal": "Comunicación no normal"

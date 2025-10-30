@@ -8,16 +8,12 @@
         },
         {
             "type": "Label",
-            "caption": "Symcon module for individual room temperature control.\n\nThis module displays the current temperature, humidity, and operating mode. You can also adjust the setpoint temperature directly from this interface."
-        },
-        {
-            "type": "Label",
-            "caption": "\nRoom Assignment\n",
+            "caption": "Room Assignment",
             "bold": true
         },
         {
             "type": "Label",
-            "caption": "Only modify the room number if you are sure of what you are doing.\n\nThe floor and room name are used for Symcon visualization - you can change them as you like."
+            "caption": "Only modify the room number if you are sure of what you are doing."
         },
         {
             "type": "RowLayout",
