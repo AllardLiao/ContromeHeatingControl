@@ -21,17 +21,16 @@ Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Vi
 
 ## Installation
 
-Erstelle zuerst eine Controme Gateway-Instanz als Splitter-Instanz und konfiguriere diese.
-Das Gateway stellt die Verbindung zum Controme Mini-Server her.
-
-Als nächstes erstelle eine Konfigurator-Instanz (im Baum unter den Konfiguratoren) und verbinde diese mit dem erstellen Controme-Gateway.
-
-Aus der Konfigurator-Instanz können nun die zwei Typen von Kontroll-Geräten erstellt werden:
-Zentrale Steuereinheit(en) und (je Raum ein) Raum-Thermostat(e).
+1. Erstelle zuerst eine Controme Konfigurator-Instanz. Bei der Erstellung des Konfigurators wird ein Gateway automatisch angelegt.
+2. Konfiguriere das Gateway. Dieses stellt die Verbindung zum Controme Mini-Server her.
+3. Erstelle mit der Konfigurator-Instanz zentrale Steuereinheit(en)
+4. Erstelle mit der Konfigurator-Instanz (je Raum ein) Raum-Thermostat
 
 Mehrere zentrale Steuereinheiten sind möglich - hierüber können End-User Steuerungen mit unterschiedlichen
 Berechtigungen erzeugt werden - wie z.B. das Umschalten zwischen Heiz- und Kühl-Betrieb in der einen Instanz
-möglich, in der anderen nicht.
+möglich, in der anderen nicht (und je nach Visu wird das eine oder andere eingeblendet).
+
+Alle Controme-Instanzen benötigen das Gateway um mit dem Controme Mini-Server via API kommunizieren zu können:
 
 ```
 Controme Gateway (type=2, parent)
@@ -51,6 +50,12 @@ Controme Gateway (type=2, parent)
 Hinweise:
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
 Wird dies nach Verbindung dieses Moduls in der Controme-App angepasst, ändern sich die Namen Räume in der Konfigurator-Instanz und werden ggf. nicht korrekt als schon angelegt erkannt.
+
+Tipp:
+Controme verwendet das EnOcean Protokoll, um Geräte an den Mini-Server anzubinden. Jedoch nur einen eingeschränkten EEP-Satz. (Stand 10/2025 z.B. für Fensterkontakt EEP D5-00-01, für Temperatur & Luftfeuchte EEP A5-04-01, EEP A5-02-05, A5-02-13 und für Bewegungsmelder A5-07-03.)
+Mit dem [EnOcean Converter](https://github.com/AllardLiao/EnOceanConverter.git) können von IP Symcon aus EnOcean-Telegramme an Controme gesendet werden und darüber z.B. auch EEP A5-04-02 nach A5-04-01 übersetzt werden.
+
+Damit lassen sich aktuelle Daten zu Temperaturen, Fensterzuständen und Bewegung an der API vorbei an Controme senden.
 
 ## License
 
