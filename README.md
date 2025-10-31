@@ -47,12 +47,17 @@ Controme Gateway (type=2, parent)
     .
 ```
 
-Hinweise:
+### Hinweis
 Die Configuration und Benennung der Räume und Sensoren im Controme Mini-Servers sollten final abgeschlossen sein.
 Wird dies nach Verbindung dieses Moduls in der Controme-App angepasst, ändern sich die Namen Räume in der Konfigurator-Instanz und werden ggf. nicht korrekt als schon angelegt erkannt.
 
-Tipp:
-Controme verwendet das EnOcean Protokoll, um Geräte an den Mini-Server anzubinden. Jedoch nur einen eingeschränkten EEP-Satz. (Stand 10/2025 z.B. für Fensterkontakt EEP D5-00-01, für Temperatur & Luftfeuchte EEP A5-04-01, EEP A5-02-05, A5-02-13 und für Bewegungsmelder A5-07-03.)
+### Tipp
+Controme verwendet das EnOcean Protokoll, um Geräte an den Mini-Server anzubinden, unterstützt jedoch nur einen eingeschränkten EEP-Satz:
+Stand 10/2025 z.B.
+* für Fensterkontakt EEP D5-00-01,
+* für Temperatur & Luftfeuchte EEP A5-04-01, EEP A5-02-05, A5-02-13 und
+* für Bewegungsmelder A5-07-03.
+
 Mit dem [EnOcean Converter](https://github.com/AllardLiao/EnOceanConverter.git) können von IP Symcon aus EnOcean-Telegramme an Controme gesendet werden und darüber z.B. auch EEP A5-04-02 nach A5-04-01 übersetzt werden.
 
 Damit lassen sich aktuelle Daten zu Temperaturen, Fensterzuständen und Bewegung an der API vorbei an Controme senden.
