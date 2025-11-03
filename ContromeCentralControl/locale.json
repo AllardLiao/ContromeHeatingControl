@@ -89,7 +89,20 @@
             "Allow changing of temporary temperature": "Ändern der temporären Temperatur erlauben",
             "Changing mode is disabled in the configuration of this instance!": "Das Ändern des Modus ist in der Konfiguration dieser Instanz deaktiviert!",
             "Changing permanent temperature is disabled in the configuration of this instance!": "Das Ändern der permanenten Temperatur ist in der Konfiguration dieser Instanz deaktiviert!",
-            "Changing temporary temperature is disabled in the configuration of this instance!": "Das Ändern der temporären Temperatur ist in der Konfiguration dieser Instanz deaktiviert!"
+            "Changing temporary temperature is disabled in the configuration of this instance!": "Das Ändern der temporären Temperatur ist in der Konfiguration dieser Instanz deaktiviert!",
+            "Error setting the mode: missing room id, temporary temperature or duration.": "Fehler beim Setzen des Modus: fehlende Raum-ID, temporäre Temperatur oder Dauer.",
+            "Error setting the mode: invalid target temperature (15 - 25 °C).": "Fehler beim Setzen des Modus: ungültige Zieltemperatur (15 - 25 °C).",
+            "Error setting the mode: invalid duration (min. 60 min).": "Fehler beim Setzen des Modus: ungültige Dauer (mind. 60 Min.).",
+            "Error setting the temporary setpoint for room id %s with temperature %s.": "Fehler beim Setzen des temporären Sollwerts für Raum %s mit Temperatur %s.",
+            "Temporary setpoint set for room id's %s with temperature %s for %s minutes.": "Temporärer Sollwert für Räume %s mit Temperatur %s für %s Minuten gesetzt.",
+            "Error setting the temperature: missing room id or temperature value.": "Fehler beim Setzen der Temperatur: fehlende Raum-ID oder Temperaturwert.",
+            "Error setting the temperature: invalid temperature value (15 - 25 °C).": "Fehler beim Setzen der Temperatur: ungültiger Temperaturwert (15 - 25 °C).",
+            "Error setting the setpoint for room id %s with temperature %s.": "Fehler beim Setzen des Sollwerts für Raum %s mit Temperatur %s.",
+            "Setpoint set for room id's %s with temperature %s.": "Sollwert für Räume %s mit Temperatur %s gesetzt.",
+            "Error setting the mode: missing room id or mode id.": "Fehler beim Setzen des Modus: fehlende Raum-ID oder Modus-ID.",
+            "Error setting the mode: invalid mode id.": "Fehler beim Setzen des Modus: ungültige Modus-ID.",
+            "Error setting the mode for room id %s with mode %s.": "Fehler beim Setzen des Modus für Raum %s mit Modus %s.",
+            "Mode set for room id's %s with mode %s.": "Modus für Räume %s mit Modus %s gesetzt."
         },
         "es": {
             "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:": "Controme solo permite establecer temperaturas y modos desde aplicaciones externas. Si desea cambiar otras configuraciones, utilice la interfaz de Controme:",
@@ -179,7 +192,21 @@
             "Allow changing of temporary temperature": "Permitir cambiar la temperatura temporal",
             "Changing mode is disabled in the configuration of this instance!": "¡Cambiar el modo está deshabilitado en la configuración de esta instancia!",
             "Changing permanent temperature is disabled in the configuration of this instance!": "¡Cambiar la temperatura permanente está deshabilitado en la configuración de esta instancia!",
-            "Changing temporary temperature is disabled in the configuration of this instance!": "¡Cambiar la temperatura temporal está deshabilitado en la configuración de esta instancia!"
+            "Changing temporary temperature is disabled in the configuration of this instance!": "¡Cambiar la temperatura temporal está deshabilitado en la configuración de esta instancia!",
+            "Reset to default values": "Restablecer valores predeterminados",
+            "Error setting the mode: missing room id, temporary temperature or duration.": "Error al establecer el modo: falta ID de habitación, temperatura temporal o duración.",
+            "Error setting the mode: invalid target temperature (15 - 25 °C).": "Error al establecer el modo: temperatura objetivo no válida (15 - 25 °C).",
+            "Error setting the mode: invalid duration (min. 60 min).": "Error al establecer el modo: duración no válida (mín. 60 min).",
+            "Error setting the temporary setpoint for room id %s with temperature %s.": "Error al establecer el valor objetivo temporal para la habitación %s con temperatura %s.",
+            "Temporary setpoint set for room id's %s with temperature %s for %s minutes.": "Valor objetivo temporal establecido para habitaciones %s con temperatura %s durante %s minutos.",
+            "Error setting the temperature: missing room id or temperature value.": "Error al establecer la temperatura: falta ID de habitación o valor de temperatura.",
+            "Error setting the temperature: invalid temperature value (15 - 25 °C).": "Error al establecer la temperatura: valor de temperatura no válido (15 - 25 °C).",
+            "Error setting the setpoint for room id %s with temperature %s.": "Error al establecer el valor objetivo para la habitación %s con temperatura %s.",
+            "Setpoint set for room id's %s with temperature %s.": "Valor objetivo establecido para habitaciones %s con temperatura %s.",
+            "Error setting the mode: missing room id or mode id.": "Error al establecer el modo: falta ID de habitación o ID de modo.",
+            "Error setting the mode: invalid mode id.": "Error al establecer el modo: ID de modo no válido.",
+            "Error setting the mode for room id %s with mode %s.": "Error al establecer el modo para la habitación %s con modo %s.",
+            "Mode set for room id's %s with mode %s.": "Modo establecido para habitaciones %s con modo %s."
         }
     }
 }

@@ -61,9 +61,6 @@ class ContromeCentralControl extends IPSModuleStrict
 
         // Timer für zyklische Abfrage (Voreingestellt: alle 5 Minuten)
         $this->RegisterTimer("UpdateContromeDataCentralControl" . $this->InstanceID, 5 * 60 * 1000, 'IPS_RequestAction(' . $this->InstanceID . ', "' . ACTIONs::UPDATE_DATA . '", true);');
-
-        // Link zum Controme Gateway anpassen
-        //$this->updateIPAddress();
     }
 
     public function Destroy(): void
@@ -905,26 +902,6 @@ class ContromeCentralControl extends IPSModuleStrict
             'Filesystem Build' => $this->GetValue('SysInfo_FBI'),
             'App kompatibel' => $this->GetValue('SysInfo_AppCompat') ? 'Yes' : 'No'
         ];
-    }
-
-    private function updateIPAddress(): string
-    {
-        // Link zum Controme Gateway anpassen
-        $response = $this->RequestGatewayIPAddress();
-        if ($this->isError($response)) {
-            $this->UpdateFormField("ContromeIP", "caption", "should be: ip-address-of-your-controme-gateway/raumregelung-pro/");
-            return $this->wrapReturn(false, "No valid IP from gateway.");
-        }
-        $ip = $this->getResponsePayload($response);
-
-        // Prüfen, ob es eine gültige IP-Adresse ist
-        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
-            $this->UpdateFormField("ContromeIP", "caption", "Invalid IP received from gateway!");
-            return $this->wrapReturn(false, "Invalid IP delivered: " . $ip);
-        }
-
-        $this->UpdateFormField("ContromeIP", "caption", $ip . "/raumregelung-pro/");
-        return $this->wrapReturn(true, "Valid IP delivered: " . $ip, $ip);
     }
 
     public function setRoomTemperatureTemp(mixed $params): string

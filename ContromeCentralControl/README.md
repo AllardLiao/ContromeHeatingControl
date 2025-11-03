@@ -20,6 +20,10 @@ Module description: Central control for Controme heating systems in IP-Symcon.
 - Set (permanent) setpoints
 - Set temporary setpoints
 
+**NOTE:**
+Setting the operation mode's API has a bug that was solved with V2, Release XX Software Version of the Controme Mini-Server.
+In case you are an older Release, setting of the operation mode might not work correctly.
+
 ## 2. Requirements
 
 - IP-Symcon version 7.1 or higher
@@ -126,13 +130,6 @@ Returns JSON:
     "msg" => Information message
     "payload" => addtl. information
 }
-
-#### NOTE:
-Currently (Oct 2025) there is a bug in the API implementation of setting the operation mode.
-The mode is set and understood by the Controme Mini-Server, however after setting the mode, the API returns
-the int values from the API and not (as documented and normally) the string representation.
-After loading the "operation mode" page of the web interface of the controme system (the set operation more
-is reflected there) and saving, the normally expected values are delivered again from the API.
 
 ### 8. License
 
