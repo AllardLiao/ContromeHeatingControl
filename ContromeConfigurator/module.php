@@ -131,7 +131,7 @@ class ContromeConfigurator extends IPSModuleStrict
                     $instanceID = $this->GetRoomThermostatInstanceID($roomId);
                     // Aktuelle Konfiguration der Instanz holen (oder Defaults für neue Instanzen)
                     if ($instanceID === 0) {
-                        $roomName = $floorName . ' / ' . $raum['name'] ?? 'Unknown Room';
+                        $roomName = $floorName . ' / ' . ($raum['name'] ?? 'Unknown Room');
                     } else {
                         $roomName = IPS_GetName($instanceID);
                     }

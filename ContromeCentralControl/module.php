@@ -181,6 +181,9 @@ class ContromeCentralControl extends IPSModuleStrict
     public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString, true);
+        if (!is_array($data) || !isset($data["Action"])) {
+            return $this->wrapReturn(false, "Invalid 'Action' within query - cf. payload.", $data, false);
+        }
         switch ($data["Action"]){
             case ACTIONs::REQUEST_CENTRAL_CONTROL_INFO:
                 return json_encode(['InstanceID' => $this->InstanceID, 'name' => IPS_GetName($this->InstanceID)]);
@@ -308,8 +311,8 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->registerSystemInfoVariables();
 
             $info = $data[ACTIONs::DATA_SYSTEM_INFO];
-            if (!is_array($info)) {
-                $this->SendDebug(__FUNCTION__, "SystemInfo is not array: " . print_r($info, true), 0);
+            if (!is_array($info) || $this->isError(json_encode($info))) {
+                $this->SendDebug(__FUNCTION__, "SystemInfo could not be fetched: " . print_r($info, true), 0);
             }
             else {
                 $this->SetValue("SysInfo_HW",           $info['hw'] ?? "");
@@ -336,8 +339,8 @@ class ContromeCentralControl extends IPSModuleStrict
             $this->SendDebug(__FUNCTION__, "Room data found: " . print_r($data[ACTIONs::DATA_ROOMS], true), 0);
 
             $rooms = $data[ACTIONs::DATA_ROOMS];
-            if (!is_array($rooms)) {
-                $this->SendDebug(__FUNCTION__, "Rooms is not array: " . print_r($rooms, true), 0);
+            if (!is_array($rooms) || $this->isError(json_encode($rooms))) {
+                $this->SendDebug(__FUNCTION__, "Rooms could not be fetched: " . print_r($rooms, true), 0);
             }
             else {
                 // Räume durchgehen
@@ -941,7 +944,8 @@ class ContromeCentralControl extends IPSModuleStrict
             ];
             return $this->wrapReturn(false, "Invalid duration: $duration");
         }
-        // Raumliste durchgehen und schreiben.
+        // Raumliste durchgehen und schreiben. Ein Fehler in einem Raum darf die übrigen Räume nicht abbrechen.
+        $failedRoomIds = [];
         foreach ($roomIds as $roomId) {
             $this->SendDebug(__FUNCTION__, "Setze Temperatur $target °C für Raum-ID $roomId", 0);
             $response = $this->SendDataToParent(json_encode([
@@ -953,18 +957,21 @@ class ContromeCentralControl extends IPSModuleStrict
             ]));
             if ($this->isError($response))
             {
-                $payloadToVisu = [
-                    'msg' => "Error setting the temporary setpoint for room id " . $roomId . " with temperature " . $target . ".",
-                    'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
-                ];
-                return $this->wrapReturn(false, "Temporary setpoint not set for room " . $roomId . " and temperature " . $target . ".", $payloadToVisu);
+                $failedRoomIds[] = $roomId;
             }
+        }
+        $this->updateData();
+        if (!empty($failedRoomIds)) {
+            $payloadToVisu = [
+                'msg' => "Error setting the temporary setpoint for room id(s) " . implode(", ", $failedRoomIds) . " with temperature " . $target . ".",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Temporary setpoint not set for room(s) " . implode(", ", $failedRoomIds) . " and temperature " . $target . ".", $payloadToVisu);
         }
         $payloadToVisu = [
             'msg' => "Temporary setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . " for " . $duration . " minutes.",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->updateData();
         return $this->wrapReturn(true, "Target setpoint set successfully.", $payloadToVisu);
     }
 
@@ -995,6 +1002,7 @@ class ContromeCentralControl extends IPSModuleStrict
             ];
             return $this->wrapReturn(false, "Invalid target temperature: $target", $payloadToVisu);
         }
+        $failedRoomIds = [];
         foreach ($roomIds as $roomId) {
             $this->SendDebug(__FUNCTION__, "Setze permanente Temperatur für Raum $roomId auf $target °C", 0);
 
@@ -1006,18 +1014,21 @@ class ContromeCentralControl extends IPSModuleStrict
             ]));
             if ($this->isError($response))
             {
-                $payloadToVisu = [
-                    'msg' => "Error setting the setpoint for room id " . $roomId . " with temperature " . $target . ".",
-                    'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
-                ];
-                return $this->wrapReturn(false, "Target setpoint not set for room " . $roomId . " and temperature " . $target . ".", $payloadToVisu);
+                $failedRoomIds[] = $roomId;
             }
+        }
+        $this->updateData();
+        if (!empty($failedRoomIds)) {
+            $payloadToVisu = [
+                'msg' => "Error setting the setpoint for room id(s) " . implode(", ", $failedRoomIds) . " with temperature " . $target . ".",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Target setpoint not set for room(s) " . implode(", ", $failedRoomIds) . " and temperature " . $target . ".", $payloadToVisu);
         }
         $payloadToVisu = [
             'msg' => "Setpoint set for room id's " . implode(", ", $roomIds) . " with temperature " . $target . ".",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->updateData();
         return $this->wrapReturn(true, "Permanent setpoint set successfully.", $payloadToVisu);
     }
 
@@ -1048,6 +1059,7 @@ class ContromeCentralControl extends IPSModuleStrict
             ];
             return $this->wrapReturn(false, "Invalid target mode: $mode", $payloadToVisu);
         }
+        $failedRoomIds = [];
         foreach ($roomIds as $roomId) {
             $this->SendDebug(__FUNCTION__, "Setze Betriebsmodus für Raum $roomId auf Betriebs-ID $mode.", 0);
 
@@ -1058,18 +1070,21 @@ class ContromeCentralControl extends IPSModuleStrict
                 'ModeID' => $mode
             ]));
             if ($this->isError($response)){
-                $payloadToVisu = [
-                    'msg' => "Error setting the mode for room id " . $roomId . " with mode " . $mode . ".",
-                    'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
-                ];
-                return $this->wrapReturn(false, "Target mode not set for room " . $roomId . " and mode " . $mode . ".", $payloadToVisu);
+                $failedRoomIds[] = $roomId;
             }
+        }
+        $this->updateData();
+        if (!empty($failedRoomIds)) {
+            $payloadToVisu = [
+                'msg' => "Error setting the mode for room id(s) " . implode(", ", $failedRoomIds) . " with mode " . $mode . ".",
+                'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")
+            ];
+            return $this->wrapReturn(false, "Target mode not set for room(s) " . implode(", ", $failedRoomIds) . " and mode " . $mode . ".", $payloadToVisu);
         }
         $payloadToVisu = [
             'msg' => "Mode set for room id's " . implode(", ", $roomIds) . " with mode " . $mode . ".",
             'duration' => $this->ReadPropertyInteger("DurationOfMessagePopup")  // Anzeigedauer
         ];
-        $this->updateData();
         return $this->wrapReturn(true, "Mode set successfully.", $payloadToVisu);
     }
 

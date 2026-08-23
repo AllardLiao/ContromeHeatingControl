@@ -251,8 +251,8 @@ class ContromeGateway extends IPSModuleStrict
 
         $roomData = json_decode($currentData, true);
         $roomName = $roomData['name'] ?? 'unknown';
-        $roomSollTemp = floatval($roomData['solltemperatur']) ?? 22.1;
-        $roomTemp = floatval($roomData['temperatur']) ?? 22.2;
+        $roomSollTemp = isset($roomData['solltemperatur']) ? floatval($roomData['solltemperatur']) : 22.1;
+        $roomTemp = isset($roomData['temperatur']) ? floatval($roomData['temperatur']) : 22.2;
         $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. ($roomName, $roomTemp °C)", 0);
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
@@ -357,7 +357,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($json === false) {
             $error = error_get_last();
-            $msg   = $this->Translate("Request failed for ") . "$url: " . $error['message'] ?? $this->Translate("Unknown error");
+            $msg   = $this->Translate("Request failed for ") . "$url: " . ($error['message'] ?? $this->Translate("Unknown error"));
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);

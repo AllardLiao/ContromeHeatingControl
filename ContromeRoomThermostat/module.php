@@ -168,6 +168,9 @@ class ContromeRoomThermostat extends IPSModuleStrict
     public function ReceiveData(string $JSONString): string
     {
         $data = json_decode($JSONString, true);
+        if (!is_array($data) || !isset($data["Action"])) {
+            return $this->wrapReturn(false, "Invalid payload for ReceiveData.", $data, false);
+        }
         if (isset($data["RoomID"]) && ($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
             switch ($data["Action"]){
                 case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
@@ -175,7 +178,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
                     return $this->getEffectiveTemperature();
                 default:
-                    $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data, false);
+                    return $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data, false);
             }
         } else {
             switch ($data["Action"]){
@@ -528,7 +531,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (!isset($temperature) || is_null($temperature) || !is_numeric($temperature) || is_nan($temperature) || floatval($temperature) < -30 || floatval($temperature) > 50) { // Controm liefert null
             if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
                 $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
-                if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
+                if ($fallbackId > 0 && IPS_VariableExists($fallbackId) && is_numeric(GetValue($fallbackId))) {
                     $newTemperature = floatval(GetValue($fallbackId));
                     $msgSuffix = ", taken from fallback variable";
                 } else {
@@ -569,8 +572,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (!isset($humidity) || is_null($humidity)|| !is_numeric($humidity)  || is_nan($humidity) || floatval($humidity) < 0 || floatval($humidity) > 100) {
             if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
                 $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
-                if ($fallbackHumidityId > 0 && is_numeric(GetValueFloat($fallbackHumidityId))) {
-                    $newHumidity = floatval(GetValueFloat($fallbackHumidityId));
+                if ($fallbackHumidityId > 0 && IPS_VariableExists($fallbackHumidityId) && is_numeric(GetValue($fallbackHumidityId))) {
+                    $newHumidity = floatval(GetValue($fallbackHumidityId));
                     $msgSuffix = ", humidity taken from fallback variable";
                 } else {
                     $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");
