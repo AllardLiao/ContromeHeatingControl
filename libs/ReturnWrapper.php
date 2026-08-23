@@ -54,21 +54,20 @@ trait ReturnWrapper
     /**
      * Wrapper for standard return messages
      *
-     * Sends $message to debug and Logger.
+     * Sends $message to debug in case of success = false, can be suppressed by param $log.
      * In case success === true LogLevel is KL_DEBUG, if false KL_ERROR
      *
      * @param bool      $success    true|false
      * @param string    $msg        Title of the log message.
      * @param mixed     $payload    any payload you want to use, will be serialized with json_encode!
+     * @param bool      $log        default: true - flag to log debug
      */
-    protected function wrapReturn(bool $success, string $msg, mixed $payload = null): string
+    protected function wrapReturn(bool $success, string $msg, mixed $payload = null, bool $log = true): string
     {
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
         $prefix = $success ? "Success" : "Fail";
-        if (!$success)
-        {
+        if (!$success && $log){
             $this->SendDebug($caller, "$prefix: $msg - payload: " . print_r($payload, true), 0);
-            $this->LogMessage("$prefix: $msg / $caller - payload: " . print_r($payload, true), $success ? KL_DEBUG : KL_ERROR);
         }
         return json_encode([self::SALT . 'success' => $success, self::SALT . 'message' => $msg, self::SALT . 'payload' => $payload]);
     }
@@ -82,13 +81,24 @@ trait ReturnWrapper
      * other JSON strings, use isError() instead.
      * Note: only for 'fail' status, the LogMessage errType is used, in case of 'success' KL_NOTIFY is used.
      *
-     * @param string    $result             Return message to be checked and has to be created by wrapReturn!
+     * @param mixed     $result             Return message to be checked and has to be created by wrapReturn!
+     *                                      Also tolerates non-string input (e.g. `false`, as returned by
+     *                                      SendDataToParent()/SendDataToChildren() when there is no receiver),
+     *                                      which is treated as a fail.
      * @param string    $errType            IPS error type for LogMessage in case of 'fail'. optional.
      * @param string    $msg                Message to be logged. optional.
      * @param bool      $onlyLogOnError     If true, only log on error. optional.
      */
-    protected function isSuccess(string $result, int $errType = 0, string $msg = "", bool $onlyLogOnError = false): bool
+    protected function isSuccess(mixed $result, int $errType = 0, string $msg = "", bool $onlyLogOnError = false): bool
     {
+        if (!is_string($result)) {
+            $this->SendDebug(__FUNCTION__, "Non-string result treated as fail: " . print_r($result, true), 0);
+            if ($errType !== 0) {
+                $fullMsg = "Fail: " . ($msg !== "" ? "$msg " : "") . "No/invalid response received.";
+                $this->LogMessage($fullMsg, $errType);
+            }
+            return false;
+        }
         $decoded = json_decode($result, true);
         if (!is_array($decoded) ||
             !array_key_exists(self::SALT . 'success', $decoded) ||
@@ -117,11 +127,18 @@ trait ReturnWrapper
      * Different to isSuccess only the existence of 'success' => false is checked and respective reply given.
      * Note: isError does NOT expect an JSON encoded string as created by wrapReturn!
      *
-     * @param string    $msg          Return message to be checked and created by wrapReturn!
+     * @param mixed     $result       Return message to be checked and created by wrapReturn!
+     *                                Also tolerates non-string input (e.g. `false`, as returned by
+     *                                SendDataToParent()/SendDataToChildren() when there is no receiver),
+     *                                which is treated as an error.
      * @param string    $errFunction  Function causing the request. optional.
      */
-    protected function isError(string $result): bool
+    protected function isError(mixed $result): bool
     {
+        if (!is_string($result)) {
+            $this->SendDebug(__FUNCTION__, "Non-string result treated as error: " . print_r($result, true), 0);
+            return true;
+        }
         $decoded = json_decode($result, true);
         if (!is_array($decoded)) {
             $this->SendDebug(__FUNCTION__, "Invalid JSON for return Wrapper, instead other data was returned (" . print_r($result, true) . ")", 0);
@@ -131,15 +148,21 @@ trait ReturnWrapper
         return isset($decoded[self::SALT . 'success']) && ($decoded[self::SALT . 'success']===false);
     }
 
-    protected function getResponseMessage(string $result): string
+    protected function getResponseMessage(mixed $result): string
     {
+        if (!is_string($result)) {
+            return "No/invalid response received.";
+        }
         $decoded = json_decode($result, true);
-        return $decoded[self::SALT . 'message'];
+        return is_array($decoded) ? ($decoded[self::SALT . 'message'] ?? "") : "";
     }
 
-    protected function getResponsePayload(string $result): mixed
+    protected function getResponsePayload(mixed $result): mixed
     {
+        if (!is_string($result)) {
+            return null;
+        }
         $decoded = json_decode($result, true);
-        return $decoded[self::SALT . 'payload'];
+        return is_array($decoded) ? ($decoded[self::SALT . 'payload'] ?? null) : null;
     }
 }

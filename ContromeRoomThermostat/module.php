@@ -20,12 +20,6 @@ use Controme\CONTROME_PROFILES;
 class ContromeRoomThermostat extends IPSModuleStrict
 {
     use DebugHelper;
-    use EventHelper;
-    use ProfileHelper;
-    use VariableHelper;
-    use VersionHelper;
-    use FormatHelper;
-    use WidgetHelper;
     use ReturnWrapper;
 
     public function Create(): void
@@ -70,6 +64,20 @@ class ContromeRoomThermostat extends IPSModuleStrict
         parent::Destroy();
     }
 
+    /***
+     * Gibt die Konfiguration für die Parent-Verbindung zurück
+     * Wird von IP-Symcon verwendet, um kompatible Parent-Instanzen zu finden
+     *
+     * @return string JSON-kodierte Konfiguration
+     *
+    public function GetConfigurationForParent(): string
+    {
+        return json_encode([
+            'DataID' => GUIDs::DATAFLOW
+        ]);
+    }
+    */
+    
     public function ApplyChanges() : void
     {
         //Never delete this line!
@@ -155,6 +163,52 @@ class ContromeRoomThermostat extends IPSModuleStrict
             default:
                 parent::RequestAction($ident, $value);
         }
+    }
+
+    public function ReceiveData(string $JSONString): string
+    {
+        $data = json_decode($JSONString, true);
+        if (!is_array($data) || !isset($data["Action"])) {
+            return $this->wrapReturn(false, "Invalid payload for ReceiveData.", $data, false);
+        }
+        if (isset($data["RoomID"]) && ($data["RoomID"] == $this->ReadPropertyInteger("RoomID"))){
+            switch ($data["Action"]){
+                case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
+                    return $this->getEffectiveHumidity();
+                case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
+                    return $this->getEffectiveTemperature();
+                case ACTIONs::PUSH_ROOM_UPDATE:
+                    return $this->applyPushedRoomUpdate($data);
+                default:
+                    return $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data, false);
+            }
+        } else {
+            switch ($data["Action"]){
+                case ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO:
+                    return json_encode(['InstanceID' => $this->InstanceID, 'RoomID' => $this->ReadPropertyInteger("RoomID"), 'FloorID' => $this->ReadPropertyInteger("FloorID"), 'name' => IPS_GetName($this->InstanceID)]);
+                default:
+                    return $this->wrapReturn(false, "Invalid 'Action' without room id within query - cf. payload.", $data, false);
+            }
+        }
+    }
+
+    /**
+     * Wendet ein optimistisches Update an, das der Gateway direkt nach erfolgreichem Schreiben
+     * über die Controme-API an den zugehörigen Raum-Thermostat sendet - damit die Visualisierung
+     * nicht erst auf den nächsten regulären Controme-Sendezyklus (bis zu 15 Minuten) warten muss.
+     *
+     * @param array $data Assoziatives Array, ggf. mit 'Setpoint' (float) und/oder 'ModeID' (int)
+     */
+    private function applyPushedRoomUpdate(array $data): string
+    {
+        if (isset($data['Setpoint']) && is_numeric($data['Setpoint'])) {
+            $this->SetValue('Setpoint', floatval($data['Setpoint']));
+        }
+        if (isset($data['ModeID']) && is_numeric($data['ModeID'])) {
+            $this->SetValue('Mode', intval($data['ModeID']));
+        }
+        $this->updateVisualization();
+        return $this->wrapReturn(true, "Room update applied.", null, false);
     }
 
     private function updateVisualization(): void
@@ -381,10 +435,11 @@ class ContromeRoomThermostat extends IPSModuleStrict
         $this->MaintainVariable("Setpoint", "Set Temperature", VARIABLETYPE_FLOAT, CONTROME_PROFILES::getSetPointPresentation(), 2, true);
         $this->MaintainVariable("Humidity", "Humidity", VARIABLETYPE_FLOAT, "~Humidity.F", 3, true);
         $this->MaintainVariable("Mode", "Operating Mode", VARIABLETYPE_INTEGER, CONTROME_PROFILES::BETRIEBSART, 4, true);
-        $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
-        $varID = $this->GetIDForIdent("Hinweis");
-        IPS_SetIcon($varID, "circle-info");
-        //$this->EnableAction("Setpoint");
+        $newCreated = $this->MaintainVariable("Hinweis", "Hinweis", VARIABLETYPE_STRING, "", 5, true);
+        if ($newCreated) {
+            $varID = $this->GetIDForIdent("Hinweis");
+            IPS_SetIcon($varID, "circle-info");
+        }
 
         if (isset($data['temperatur'])) {
             $this->SetValue("Temperature", floatval($data['temperatur']));
@@ -484,10 +539,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $fromFallback = true;
                 $msg = "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C (fallback)";
             }
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
-            return $this->wrapReturn($fromFallback, $msg, $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp, "Fallback" => $fromFallback];
+            return $this->wrapReturn(true, $msg, $payload);
         } else {
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp];
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Temperature" => $temp, "Fallback" => false];
             return $this->wrapReturn(true, "Temperature for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($temp, 2, '.', '') . " °C" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }
@@ -497,7 +552,7 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (!isset($temperature) || is_null($temperature) || !is_numeric($temperature) || is_nan($temperature) || floatval($temperature) < -30 || floatval($temperature) > 50) { // Controm liefert null
             if ($this->ReadPropertyBoolean('FallbackTempSensorUse')) {
                 $fallbackId = $this->ReadPropertyInteger("FallbackTempSensor");
-                if ($fallbackId > 0 && is_numeric(GetValue($fallbackId))) {
+                if ($fallbackId > 0 && IPS_VariableExists($fallbackId) && is_numeric(GetValue($fallbackId))) {
                     $newTemperature = floatval(GetValue($fallbackId));
                     $msgSuffix = ", taken from fallback variable";
                 } else {
@@ -525,10 +580,10 @@ class ContromeRoomThermostat extends IPSModuleStrict
                 $fromFallback = true;
                 $msg = "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " % (fallback)";
             }
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
-            return $this->wrapReturn($fromFallback, $msg, $payload);
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity, "Fallback" => $fromFallback];
+            return $this->wrapReturn(true, $msg, $payload);
         } else {
-            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity];
+            $payload = ["RoomID" => $this->ReadPropertyInteger('RoomID'), "Humidity" => $humidity, "Fallback" => false];
             return $this->wrapReturn(true, "Humidity for room " . $this->ReadPropertyInteger('RoomID') . " is " . number_format($humidity, 2, '.', '') . " %" . (strlen($this->GetValue('Hinweis')) > 0 ? " (Hinweis: " . $this->GetValue('Hinweis') . ")" : ""), $payload);
         }
     }
@@ -538,8 +593,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
         if (!isset($humidity) || is_null($humidity)|| !is_numeric($humidity)  || is_nan($humidity) || floatval($humidity) < 0 || floatval($humidity) > 100) {
             if ($this->ReadPropertyBoolean('FallbackHumiditySensorUse')) {
                 $fallbackHumidityId = $this->ReadPropertyInteger("FallbackHumiditySensor");
-                if ($fallbackHumidityId > 0 && is_numeric(GetValueFloat($fallbackHumidityId))) {
-                    $newHumidity = floatval(GetValueFloat($fallbackHumidityId));
+                if ($fallbackHumidityId > 0 && IPS_VariableExists($fallbackHumidityId) && is_numeric(GetValue($fallbackHumidityId))) {
+                    $newHumidity = floatval(GetValue($fallbackHumidityId));
                     $msgSuffix = ", humidity taken from fallback variable";
                 } else {
                     $newHumidity = $this->ReadPropertyFloat("FallbackHumidityValue");

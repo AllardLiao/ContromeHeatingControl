@@ -13,6 +13,7 @@ class GUIDs
     public const GATEWAY              = '{E2DEC3C5-AA7D-0310-69A8-77F429D8C526}';
     public const CENTRAL_CONTROL      = '{A19ABE82-5AB1-7969-3851-E6446DECEBA9}';
     public const ROOM_THERMOSTAT      = '{E73194C2-C9BC-D3A5-4EED-CE5DF055290E}';
+    public const CONFIGURATION        = '{80E566C5-A75E-C38F-7267-9890C20D2AEA}';
 
     // --- Weitere GUIDs ---
     public const PROFILE_BETRIEBSART  = '{16B16C23-64B7-26D3-6BE9-9B9E43AD491B}';
@@ -30,10 +31,21 @@ class ACTIONs
     public const FETCH_ROOM_LIST                    = "FetchRoomList";
     public const GET_TEMP_DATA_FOR_ROOM             = 'GetTempDataForRoom';
     public const GET_DATA_FOR_CENTRAL_CONTROL       = 'GetDataForCentralControl';
+    public const GET_ROOMS_FOR_CONFIGURATOR         = 'GetRoomsForConfigurator';
+    public const GET_ROOM_THERMOSTAT_INSTANCES      = 'GetRoomThermostatInstances';
+    public const PUSH_ROOM_UPDATE                   = 'PushRoomUpdate'; // Optimistisches Update Richtung Room Thermostat nach erfolgreichem Schreiben
+    public const REQUEST_ROOM_THERMOSTAT_INFO       = 'RequestRoomThermostatInfo';
+    public const GET_CENTRAL_CONTROL_INSTANCES      = 'GetCentralControlInstances';
+    public const REQUEST_CENTRAL_CONTROL_INFO       = 'RequestCentralControlInfo';
     public const GET_IP_ADDRESS                     = "GetIPAddress";
     public const TEST_READ_ROOM_DATA                = "TestReadRoomData";
     public const UPDATE_DATA                        = 'UpdateData';
     public const UPDATE_ROOM_DATA                   = 'UpdateRoomData';
+
+    // Effective-Werte liefern einen Wert unter Beachtung der Konfiguration in der RT-Instanz,
+    // d.h. unter Beachtung der Fallback-Instanz bzw. Fallback-Wert
+    public const GET_EFFECTIVE_TEMP_FOR_ROOM        = 'GetEffectiveTemperatureForRoom';
+    public const GET_EFFECTIVE_HUMIDITY_FOR_ROOM    = 'GetEffectiveHumidityForRoom';
 
     // Implementierte Actions (nur CentralControl) die Daten speichern
     public const SET_SETPOINT                       = 'SetSetpoint'; // Permanente Temperaturänderung
@@ -59,7 +71,7 @@ class ACTIONs
     public const RESET_TO_DEFAULT                     = 'ResetToDefault';
     public const DISABLE_FORM_FIELD                   = 'DisableFormField';
 
-    // Abzufragende Daten vom Gateway
+    // Abzufragende Daten vom Gateway (API-Befehle)
     public const DATA_SYSTEM_INFO   = 'info';
     public const DATA_ROOMS         = 'rooms'; // inkl. Temps
     public const DATA_ROOM_OFFSETS  = 'roomoffsets';

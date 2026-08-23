@@ -1,7 +1,9 @@
 
-# ContromeCentralControl
+# Controme Central Control
 
 Module description: Central control for Controme heating systems in IP-Symcon.
+
+Änderungshistorie: siehe [CHANGELOG.md](../CHANGELOG.md).
 
 ## Table of Contents
 
@@ -19,6 +21,10 @@ Module description: Central control for Controme heating systems in IP-Symcon.
 - Set operation mode
 - Set (permanent) setpoints
 - Set temporary setpoints
+
+**NOTE:**
+Setting the operation mode's API has a bug that was solved with software release "LabV2" published Nov. 07, 2025 of the Controme Mini-Server.
+In case you are using an older Release, setting of the operation mode might not work correctly.
 
 ## 2. Requirements
 
@@ -53,11 +59,17 @@ Status variables are created automatically. Deleting individual variables may ca
 
 ## 6. Visualization
 
+* PC/Tablet
+
 ![Visualisation tiles](../libs/assets/Controme_Heating_Control.png)
 
-### 7. PHP-Befehlsreferenz
+* Mobile
 
-* `string CONCC_CheckConnection();`
+![Visualization mobile](../libs/assets/CONCC_Visu_mobile.jpeg)
+
+### 7. PHP Command Reference
+
+#### `string CONCC_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
@@ -70,7 +82,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_SetRoomTemperature();`
+#### `string CONCC_SetRoomTemperature();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -87,7 +99,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_setRoomTemperatureTemp();`
+#### `string CONCC_setRoomTemperatureTemp();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -104,7 +116,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-* `string CONCC_setRoomMode();`
+#### `string CONCC_setRoomMode();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Parameters:
@@ -121,13 +133,7 @@ Returns JSON:
     "payload" => addtl. information
 }
 
-NOTE: Currently (Oct 2025) there is a bug in the API implementation of setting the operation mode.
-The mode is set and understood by the Controme Mini-Server, however after setting the mode, the API returns
-the int values from the API and not (as documented and normally) the string representation.
-After loading the "operation mode" page of the web interface of the controme system (the set operation more
-is reflected there) and saving, the normally expected values are delivered again from the API.
-
-### 8. Lizens
+### 8. License
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).

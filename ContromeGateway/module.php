@@ -21,12 +21,6 @@ use Controme\CONTROME_PROFILES;
 class ContromeGateway extends IPSModuleStrict
 {
     use DebugHelper;
-    use EventHelper;
-    use ProfileHelper;
-    use VariableHelper;
-    use VersionHelper;
-    use FormatHelper;
-    use WidgetHelper;
     use ReturnWrapper;
 
     public function Create(): void
@@ -40,9 +34,7 @@ class ContromeGateway extends IPSModuleStrict
         $this->RegisterPropertyString("Password", "");
         $this->RegisterPropertyInteger("HouseID", 1);
         $this->RegisterPropertyBoolean("UseHTTPS", false);
-        $this->RegisterPropertyString("Rooms", "[]"); // gem. Controme-API: get-rooms
         $this->RegisterPropertyInteger("Mode", 0);
-        $this->RegisterPropertyInteger("TargetCategory", 0); // Zielkategorie für neue Instanzen
 
         // API Get und Set URLs als Attribute speichern
         // Controme unterstützt (momentan) kein HTTPS -> https://support.controme.com/api/
@@ -102,26 +94,17 @@ class ContromeGateway extends IPSModuleStrict
         $this->setJsonSet($this->ReadPropertyString("IPAddress"), $this->ReadPropertyInteger("HouseID"), $this->ReadPropertyBoolean("UseHTTPS"));
 
         switch($ident) {
-            case ACTIONs::FETCH_ROOM_LIST:
-                $this->SetRoomList(); // Räume abrufen und im Konfig-Form speichern
-                break;
             case ACTIONs::CHECK_CONNECTION:
                 $this->CheckConnection($value);
                 break;
             case ACTIONs::SET_SETPOINT:
                 $this->WriteSetpoint($value);
                 break;
-            case ACTIONs::CREATE_CENTRAL_CONTROL_INSTANCE:
-                $this->CreateCentralControlInstance();
-                break;
-            case ACTIONs::CREATE_ROOM_THERMOSTAT_INSTANCE:
-                $this->CreateRoomThermostatInstance($value);
-                break;
             default:
                 parent::RequestAction($ident, $value);
         }
         // Hier kommen wir raus, wenn der Funktion "irgendwas" übergeben wurde
-        $this->wrapReturn(false, "ForwardData not executed", $ident . print_r($value, true));
+        // $this->wrapReturn(false, "ForwardData not executed", $ident . print_r($value, true));
     }
 
     //
@@ -183,6 +166,31 @@ class ContromeGateway extends IPSModuleStrict
                 return json_encode($result);
                 break;
 
+            case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
+                if (!isset($data['RoomID'])) {
+                    return $this->wrapReturn(false, "Missing room id");
+                }
+                return $this->GetEeffectiveTemperatureForRoom((int)$data['RoomID']);
+
+            case ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM:
+                if (!isset($data['RoomID'])) {
+                    return $this->wrapReturn(false, "Missing room id");
+                }
+                return $this->GetEeffectiveHumidityForRoom((int)$data['RoomID']);
+
+            case ACTIONs::GET_ROOMS_FOR_CONFIGURATOR:
+                // Nur Raumdaten für Konfigurator abrufen
+                $this->SendDebug(__FUNCTION__, "Fetching rooms for configurator", 0);
+                return $this->FetchRooms();
+
+            case ACTIONs::GET_ROOM_THERMOSTAT_INSTANCES:
+                // Liste aller Room Thermostat Child-Instanzen zurückgeben
+                return $this->GetRoomThermostatInstances();
+
+            case ACTIONs::GET_CENTRAL_CONTROL_INSTANCES:
+                // Liste aller Central Control Child-Instanzen zurückgeben
+                return $this->GetCentralControlInstances();
+
             case ACTIONs::SET_SETPOINT:
                 return $this->WriteSetpoint($data);
 
@@ -235,7 +243,7 @@ class ContromeGateway extends IPSModuleStrict
         // Sollte eigentlich klappen - Controme prüft beim get nicht das Passwort. Wenn es nicht klappt kann es fast nur die IP sein.
         if ($this->isError($currentData))
         {
-            $msg = "No connection to Controme Mini-Server, please check IP: " . $ip;
+            $msg = $this->Translate("No connection to Controme Mini-Server, please check IP: ") . $ip;
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $this->getResponseMessage($currentData));
@@ -243,8 +251,8 @@ class ContromeGateway extends IPSModuleStrict
 
         $roomData = json_decode($currentData, true);
         $roomName = $roomData['name'] ?? 'unknown';
-        $roomSollTemp = floatval($roomData['solltemperatur']) ?? 22.1;
-        $roomTemp = floatval($roomData['temperatur']) ?? 22.2;
+        $roomSollTemp = isset($roomData['solltemperatur']) ? floatval($roomData['solltemperatur']) : 22.1;
+        $roomTemp = isset($roomData['temperatur']) ? floatval($roomData['temperatur']) : 22.2;
         $this->SendDebug(__FUNCTION__, "Check 2 - connection to Controme MiniServer at $ip established. ($roomName, $roomTemp °C)", 0);
 
         // 3. Test: Wird das Passwort akzeptiert? Dazu schreiben wir die eben ausgelesene Solltemperatur zurück.
@@ -253,12 +261,12 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($this->isSuccess($result, KL_ERROR, "Connection for user " . $user . ".", true))
         {
-            $msg = "Success - connection established for user " . $user;
+            $msg = $this->Translate("Success - connection established for user ") . $user;
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_ACTIVE);
             return $this->wrapReturn(true, $msg);
         } else {
-            $msg = "Failed - could not establish connection for user " . $user . " (" . $this->getResponseMessage($result) . ")";
+            $msg = $this->Translate("Failed - could not establish connection for user ") . $user . " (" . $this->getResponseMessage($result) . ")";
             $this->UpdateFormField("Result", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -303,14 +311,14 @@ class ContromeGateway extends IPSModuleStrict
                 $msg = $this->CheckHttpReponseHeader($http_response_header);
             }
             $msg = "Error calling {$url}: {$msg}";
-            $this->UpdateFormField("StatusInstances", "caption", "Failed to read data.");
+            $this->UpdateFormField("StatusInstances", "caption", $this->Translate("Failed to read data."));
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
         }
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $msg = "Failed to decode data (invalid JSON).";
+            $msg = $this->Translate("Failed to decode data (invalid JSON).");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
             return $this->wrapReturn(false, $msg);
@@ -318,50 +326,6 @@ class ContromeGateway extends IPSModuleStrict
 
         // Alles gut — zurückgeben (Rohdaten, Struktur wie API liefert)
         return json_encode($data);
-    }
-
-    /**
-     * Build the form list and update the module/form UI.
-     * Liefert true bei Erfolg, false bei Fehler.
-     */
-    private function SetRoomList(): string
-    {
-        $data = $this->FetchRooms();
-
-        if ($this->isError($data)) {
-            $msg = "No data received from Controme API.";
-            $this->UpdateFormField("StatusInstances", "caption", $msg);
-            $this->SetStatus(IS_NO_CONNECTION);
-            return $this->wrapReturn(false, $msg);
-        }
-        else {
-            $data = json_decode($data, true);
-        }
-
-        $formListJson = [];
-        foreach ($data as $etage) {
-            if (!isset($etage['raeume']) || !is_array($etage['raeume'])) continue;
-
-            foreach ($etage['raeume'] as $raum) {
-                $formListJson[] = [
-                    "FloorID"           => $etage['id'] ?? 0,
-                    "Floor"             => $etage['etagenname'] ?? "Haus",
-                    "RoomID"            => $raum['id'] ?? 0,
-                    "Room"              => $raum['name'] ?? "Raum"
-                ];
-            }
-        }
-
-        // Formular aktualisieren
-        $msg = "Room list updated.";
-        $this->UpdateFormField("Rooms", "values", json_encode($formListJson));
-        $this->UpdateFormField("StatusInstances", "caption", $msg);
-        $this->UpdateFormField("ExpansionPanelRooms", "expanded", "true");
-        $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", "true");
-        $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", "true");
-        $this->SendDebug(__FUNCTION__, "Updated Controme Heating room data.", 0);
-        $this->SetStatus(IS_ACTIVE);
-        return $this->wrapReturn(true, $msg);
     }
 
     public function fetchSystemInfo(): string
@@ -393,7 +357,7 @@ class ContromeGateway extends IPSModuleStrict
 
         if ($json === false) {
             $error = error_get_last();
-            $msg   = "Request failed for " . "$url: " . $error['message'] ?? "Unknown error";
+            $msg   = $this->Translate("Request failed for ") . "$url: " . ($error['message'] ?? $this->Translate("Unknown error"));
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -401,7 +365,7 @@ class ContromeGateway extends IPSModuleStrict
 
         $data = json_decode($json, true);
         if (!is_array($data)) {
-            $msg = "Invalid/unexpected response from Controme API (non JSON provided).";
+            $msg = $this->Translate("Invalid/unexpected response from Controme API (non JSON provided).");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_BAD_JSON);
             return $this->wrapReturn(false, $msg);
@@ -422,7 +386,7 @@ class ContromeGateway extends IPSModuleStrict
         $houseId = $this->ReadPropertyInteger("HouseID");
 
         if (empty($ip) || empty($user) || empty($pass) || empty($houseId)) {
-            $msg = "Conection check not possible: IP, User, Password or House-ID missing!";
+            $msg = $this->Translate("Conection check not possible: IP, User, Password or House-ID missing!");
             $this->UpdateFormField("StatusInstances", "caption", $msg);
             $this->SetStatus(IS_NO_CONNECTION);
             return $this->wrapReturn(false, $msg);
@@ -569,6 +533,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -585,6 +550,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
         return $this->wrapReturn(true, 'Setpoint updated.');
     }
 
@@ -666,6 +632,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -682,8 +649,10 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
         return $this->wrapReturn(true, 'Target updated.');
     }
+
     /**
      * Writes the mode to Controme
      *
@@ -762,6 +731,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['ModeID' => $modeID]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -778,79 +748,8 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['ModeID' => $modeID]);
         return $this->wrapReturn(true, 'Mode updated.');
-    }
-
-    private function CreateCentralControlInstance(): string
-    {
-        $parentId = $this->ReadPropertyInteger("TargetCategory"); // Gewählter Parent
-        $instanceName = "Controme Central Control";
-
-        if (!$parentId || !$instanceName) {
-            return $this->wrapReturn(false, "Parent or name not set!");
-        }
-
-        // Neue Central Control Instanz erstellen
-        $newId = IPS_CreateInstance(GUIDs::CENTRAL_CONTROL);
-        IPS_SetParent($newId, $parentId);
-        IPS_SetName($newId, $instanceName);
-        IPS_ApplyChanges($newId);
-
-        $msg = "Central Control created with name '$instanceName' (ID $newId)!";
-        $this->UpdateFormField("CCInstanceCreationResult", "caption", $msg);
-        return $this->wrapReturn(true, $msg);
-    }
-
-    private function CreateRoomThermostatInstance($roomRow): string
-    {
-        try {
-            // Raumdaten aus der gespeicherten Liste holen
-            $roomData = json_decode($roomRow, true);
-            if ($roomData === null) {
-                throw new Exception("Please select a room from the list to create an instance.");
-            }
-            $this->SendDebug(__FUNCTION__, "Create RT instance for: " . print_r($roomData, true), 0);
-
-            $floorId = $roomData['FloorID'];
-            $floorName = $roomData['Floor'];
-            $roomId = $roomData['RoomID'];
-            $roomName = $roomData['Room'];
-            $icon = "temperature-list";
-
-            // Zielkategorie aus Konfiguration lesen
-            $targetCategoryId = $this->ReadPropertyInteger("TargetCategory");
-
-            // Validierung: Kategorie muss ausgewählt sein
-            if ($targetCategoryId < 0) {
-                throw new Exception('Please select target category to create instances to.');
-            }
-
-            // Instanz erstellen
-            $instanceId = $this->CreateAndConfigureRoomInstance($targetCategoryId, $floorId, $floorName, $roomId, $roomName, $icon);
-
-            // Erfolgsmeldung
-            $msg = "Room thermostat instance '$floorName-$roomName' created (ID: $instanceId)!";
-            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
-            return $this->wrapReturn(true, $msg, $instanceId);
-        } catch (Exception $e) {
-            $msg = "Error creating instance: " . $e->getMessage();
-            $this->UpdateFormField("InstanceCreationResult", "caption", $msg);
-            return $this->wrapReturn(false, $msg);
-        }
-    }
-
-    private function EnableDisableFormButtons()
-    {
-        // Prüfen, ob Räume vorhanden sind
-        $rooms = json_decode($this->ReadPropertyString("Rooms"), true);
-
-        if (is_array($rooms) && count($rooms) > 0) {
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", true);
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", true);
-        } else {
-            $this->UpdateFormField("ButtonCreateCentralInstance", "enabled", false);
-            $this->UpdateFormField("ButtonCreateRoomInstance", "enabled", false);
-        }
     }
 
     private function CheckHttpReponseHeader($http_response_header): String
@@ -948,29 +847,83 @@ class ContromeGateway extends IPSModuleStrict
         return $this->wrapReturn(true, $msg);
     }
 
-    private function CreateAndConfigureRoomInstance(int $parentCategoryId, int $floorId, string $floorName, int $roomId, string $roomName, string $icon = "temperature-list"): int
+    /**
+     * Sendet ein optimistisches Update direkt an den Room-Thermostat für $roomId, nachdem ein
+     * Schreibvorgang über die Controme-API erfolgreich war - damit die Visualisierung nicht erst
+     * auf den nächsten regulären Controme-Sendezyklus (bis zu 15 Minuten) warten muss.
+     * Best-effort: das Ergebnis wird nicht ausgewertet, ein fehlendes/nicht erreichbares
+     * Room-Thermostat-Modul darf den eigentlichen (bereits erfolgreichen) Schreibvorgang nicht als Fehler melden.
+     *
+     * @param int   $roomId Die Controme RoomID
+     * @param array $fields Zusätzliche Felder, z. B. ['Setpoint' => 21.5] oder ['ModeID' => 2]
+     */
+    private function pushRoomUpdateToChildren(int $roomId, array $fields): void
     {
-        // Neue Instanz erstellen
-        $instanceId = IPS_CreateInstance(GUIDs::ROOM_THERMOSTAT);
-        IPS_SetName($instanceId, "Thermostat " . $floorName . "-" . $roomName);
-        IPS_SetIcon($instanceId, $icon);
-
-        // In Kategorie verschieben
-        IPS_SetParent($instanceId, $parentCategoryId);
-
-        // Eigenschaften konfigurieren
-        IPS_SetProperty($instanceId, 'FloorID', $floorId);
-        IPS_SetProperty($instanceId, 'Floor', $floorName);
-        IPS_SetProperty($instanceId, 'RoomID', $roomId);
-        IPS_SetProperty($instanceId, 'Room', $roomName);
-
-        // Mit diesem Gateway verbinden
-        //IPS_ConnectInstance($instanceId, $this->InstanceID); Passiert automatisch ;-)
-
-        // Konfiguration anwenden
-        IPS_ApplyChanges($instanceId);
-
-        return $instanceId;
+        $payload = array_merge([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::PUSH_ROOM_UPDATE,
+            "RoomID" => $roomId
+        ], $fields);
+        $this->SendDataToChildren(json_encode($payload));
     }
 
+    private function GetEeffectiveTemperatureForRoom(int $roomId): string
+    {
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM, "RoomID" => $roomId);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!empty($result) && !$this->isError($result)){
+                return $result;
+            }
+        }
+        return $this->wrapReturn(false, "Could not find room thermostat for room id " . $roomId);
+    }
+
+    private function GetEeffectiveHumidityForRoom(int $roomId): string
+    {
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::GET_EFFECTIVE_HUMIDITY_FOR_ROOM, "RoomID" => $roomId);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!empty($result) && !$this->isError($result)){
+                return $result;
+            }
+        }
+        return $this->wrapReturn(false, "Could not find room thermostat for room id " . $roomId);
+    }
+
+    /**
+     * Gibt alle Room Thermostat Child-Instanzen dieses Gateways zurück
+     *
+     * @return string JSON mit Array von Instanzen [{"InstanceID": X, "RoomID": Y}, ...]
+     */
+    private function GetRoomThermostatInstances(): string
+    {
+        $instances = [];
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_ROOM_THERMOSTAT_INFO);
+        $thermostatResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($thermostatResults as $result) {
+            if (!empty($result) && !$this->isError($result)){
+                $instances[] = $result;
+            }
+        }
+        return json_encode($instances);
+    }
+
+    /**
+     * Gibt alle Central Control Child-Instanzen dieses Gateways zurück
+     *
+     * @return string JSON mit Array von Instanzen [{"InstanceID": X, "Name": "..."}, ...]
+     */
+    private function GetCentralControlInstances(): string
+    {
+        $instances = [];
+        $queryChilds = Array("DataID" => GUIDs::DATAFLOW, "Action" => ACTIONs::REQUEST_CENTRAL_CONTROL_INFO);
+        $ccResults = $this->SendDataToChildren(json_encode($queryChilds));
+        foreach ($ccResults as $result) {
+            if (!empty($result) && !$this->isError($result)){
+                $instances[] = $result;
+            }
+        }
+        return json_encode($instances);
+    }
 }

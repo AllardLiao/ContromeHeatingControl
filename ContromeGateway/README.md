@@ -1,7 +1,9 @@
 
-# ContromeGateway
+# Controme Gateway
 
 Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server.
+
+Änderungshistorie: siehe [CHANGELOG.md](../CHANGELOG.md).
 
 ## Table of Contents
 
@@ -61,16 +63,16 @@ n/a
 
 n/a
 
-### 6. Visualisierung
+### 6. Visualization
 
 There is not visualisation - only the configuration form:
 
 ![Configuration form](../libs/assets/CONGW_Form.jpeg)
 
 
-### 7. PHP-Befehlsreferenz
+### 7. PHP Command Reference
 
-* `string CONGW_FetchRooms();`
+#### `string CONGW_FetchRooms();`
 Holt über das Controme API konfigurierte Räumen.
 
 Beispiel:
@@ -79,7 +81,7 @@ Beispiel:
 Return:
 JSON encoded list of rooms
 
-* `string CONGW_FetchSystemInfo();`
+#### `string CONGW_FetchSystemInfo();`
 Holt über das Controme API Systeminformationen des Mini-Servers.
 
 Beispiel:
@@ -88,7 +90,7 @@ Beispiel:
 Return:
 JSON encoded system information
 
-* `string CONGW_GetTempDataForRoom(int room-id);`
+#### `string CONGW_GetTempDataForRoom(int room-id);`
 Holt über das Controme API Daten zu dem Raum mit Nummer room-id vom Controme Mini-Servers.
 
 Beispiel:
@@ -97,7 +99,7 @@ Beispiel:
 Return:
 JSON encoded temperature information
 
-* `string CONGW_CheckConnection();`
+#### `string CONGW_CheckConnection();`
 Checks the connection to the Controme Gateway (IPS) and the Controme Mini-Server.
 
 Beispiel:
@@ -110,7 +112,7 @@ Returns JSON:
 }
 
 
-### 8. Lizenz
+### 8. License
 
 This project is licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).

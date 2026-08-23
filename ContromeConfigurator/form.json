@@ -2,141 +2,90 @@
     "elements": [
         {
             "type": "Label",
-            "caption": "Controme Heating Control - Gateway Component",
+            "caption": "Controme Heating Control - Configurator",
             "link": false,
             "bold": true
         },
         {
-            "type": "Label",
-            "caption": "Symcon module for local control and monitoring of Controme heating systems."
-        },
-        {
-            "type": "Label",
-            "caption": "Display of rooms, sensors, actual/target temperatures, humidity, and operating mode.\nSupports reading and writing via the Controme API.\nFully integrable into IPS with timer and variable profiles.\n"
-        },
-        {
-            "type": "Label",
-            "caption": "Limitations: this gateway is tested with Controme firmware branche V2.0 (stable) from 2025-02-18 16:04:25 or later\n",
-            "italic": true
-        },
-        {
-            "type": "Label",
-            "caption": "\nConfiguration",
-            "bold": true
-        },
-        {
-            "type": "RowLayout",
-            "items": [
+            "type": "Configurator",
+            "caption": "Controme Instances",
+            "discoveryInterval": 0,
+            "delete": false,
+            "name": "ContromeConfiguratorRTs",
+            "onExpand": "",
+            "rowCount": 10,
+            "columns": [
                 {
-                    "type": "ValidationTextBox",
-                    "name": "User",
-                    "caption": "Username (Super-Admin from your Controme App)",
-                    "width": "300px"
+                    "caption": "Floor id",
+                    "name": "FloorID",
+                    "width": "75px"
                 },
                 {
-                    "type": "PasswordTextBox",
-                    "caption": "Password",
-                    "enabled": true,
-                    "name": "Password",
-                    "onChange": "",
-                    "validate": "",
-                    "value": "",
-                    "visible": true,
-                    "width": "300px"
+                    "caption": "Room id",
+                    "name": "RoomID",
+                    "width": "75px"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "width": "auto"
                 }
-            ]
-        },
-        {
-            "type": "ValidationTextBox",
-            "name": "IPAddress",
-            "caption": "Device IP (local, e.g. 192.168.1.101)",
-            "width": "300px"
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Expert Settings...",
-            "expanded": false,
-            "link": false,
-            "visible": true,
-            "width": "",
-            "items": [
+            ],
+            "values": [
                 {
-                    "type": "Label",
-                    "caption": "Normally these settings do not need to be changed.",
-                    "bold": true
+                    "id": 1,
+                    "name": "Central Control"
                 },
                 {
-                    "type": "Label",
-                    "caption": "Controme note: API returns nothing?\nIn this case, please first check whether you are using the correct house id. For various reasons, the id is sometimes '2' and not '1'.",
-                    "italic": true
+                    "parent": 1,
+                    "name": "Create new Controme central control",
+                    "create": {
+                        "moduleID": "{A19ABE82-5AB1-7969-3851-E6446DECEBA9}",
+                        "configuration": {
+                            "ShowMainElements": true,
+                            "AllowChangeOfMode": true,
+                            "AllowChangeOfPermanentTemperature": true,
+                            "AllowChangeOfTemporaryTemperature": true,
+                            "VisuColorMainTiles": 4539717,
+                            "ShowSystemInfo": true,
+                            "VisuColorSystemInfoTile": 6909590,
+                            "ShowRooms": true,
+                            "VisuColorRoomTiles": 6053980,
+                            "VisuColorFloorTiles": 4539717,
+                            "ShowRoomData": true,
+                            "ShowRoomOffsets": false,
+                            "ShowRoomOffsetsOnlyActive": false,
+                            "ShowRoomSensors": false,
+                            "ShowVTR": false,
+                            "ShowTimer": false,
+                            "ShowCalendar": false,
+                            "DurationOfMessagePopup": 8,
+                            "VisuColorText": 16777215,
+                            "VisuColorModeButton": 43764,
+                            "VisuColorTempButtons": 16469802,
+                            "UpdateInterval": 5,
+                            "AutoUpdate": true,
+                            "RoomID": 1
+                        }
+                    }
                 },
                 {
-                    "type": "NumberSpinner",
-                    "caption": "House ID",
-                    "digits": 0,
-                    "enabled": true,
-                    "hex": false,
-                    "maximum": null,
-                    "minimum": 1,
-                    "moreDigits": false,
-                    "name": "HouseID",
-                    "onChange": "",
-                    "suffix": "",
-                    "value": 1,
-                    "visible": true,
-                    "width": "300px"
+                    "id": 2,
+                    "name": "Room Thermostat"
                 },
                 {
-                    "type": "Label",
-                    "caption": "If Controme supports HTTPS in the future, the plan is to enable it here.",
-                    "italic": true
-                },
-                {
-                    "type": "Label",
-                    "caption": "Controme note:\nSince there are no certificates installed on the miniserver, it is recommended to send /set/ requests only within the local network.",
-                    "italic": true
-                },
-                {
-                    "type": "CheckBox",
-                    "name": "UseHTTPS",
-                    "caption": "Use HTTPS (Mini server with certificates)",
-                    "enabled": false
+                    "parent": 2,
+                    "name": "Press 'UPDATE' to get the room list from the gateway."
                 }
-            ]
+            ],
+            "visible": true
         }
     ],
     "actions": [
         {
             "type": "ExpansionPanel",
-            "caption": "Execute action ...",
-            "expanded": true,
-            "items": [
-                {
-                    "type": "Label",
-                    "caption": "Check connection to Controme MiniServer, executes one reading and one writing test (using room 1)."
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        {
-                            "type": "Button",
-                            "caption": "Check connection",
-                            "onClick": "IPS_RequestAction($id,'CheckConnection',true);",
-                            "enabled": true
-                        },
-                        {
-                            "type": "Label",
-                            "name": "Result",
-                            "caption": " "
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
             "caption": "Source code, donation and licence ...",
-            "expanded": true,
+            "expanded": false,
             "items": [
                 {
                     "type": "Label",
