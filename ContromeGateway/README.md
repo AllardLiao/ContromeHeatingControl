@@ -3,6 +3,8 @@
 
 Module description: Gateway for connecting IP-Symcon to the Controme Mini-Server.
 
+Änderungshistorie: siehe [CHANGELOG.md](../CHANGELOG.md).
+
 ## Table of Contents
 
 1. [Features](#1-features)

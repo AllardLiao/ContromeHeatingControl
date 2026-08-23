@@ -3,6 +3,8 @@
 
 Module description: Room thermostat for Controme heating systems in IP-Symcon.
 
+Änderungshistorie: siehe [CHANGELOG.md](../CHANGELOG.md).
+
 ## Table of Contents
 
 1. [Features](#1-features)
