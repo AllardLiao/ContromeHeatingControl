@@ -177,6 +177,8 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     return $this->getEffectiveHumidity();
                 case ACTIONs::GET_EFFECTIVE_TEMP_FOR_ROOM:
                     return $this->getEffectiveTemperature();
+                case ACTIONs::PUSH_ROOM_UPDATE:
+                    return $this->applyPushedRoomUpdate($data);
                 default:
                     return $this->wrapReturn(false, "Invalid 'Action' for room id within query - cf. payload.", $data, false);
             }
@@ -188,6 +190,25 @@ class ContromeRoomThermostat extends IPSModuleStrict
                     return $this->wrapReturn(false, "Invalid 'Action' without room id within query - cf. payload.", $data, false);
             }
         }
+    }
+
+    /**
+     * Wendet ein optimistisches Update an, das der Gateway direkt nach erfolgreichem Schreiben
+     * über die Controme-API an den zugehörigen Raum-Thermostat sendet - damit die Visualisierung
+     * nicht erst auf den nächsten regulären Controme-Sendezyklus (bis zu 15 Minuten) warten muss.
+     *
+     * @param array $data Assoziatives Array, ggf. mit 'Setpoint' (float) und/oder 'ModeID' (int)
+     */
+    private function applyPushedRoomUpdate(array $data): string
+    {
+        if (isset($data['Setpoint']) && is_numeric($data['Setpoint'])) {
+            $this->SetValue('Setpoint', floatval($data['Setpoint']));
+        }
+        if (isset($data['ModeID']) && is_numeric($data['ModeID'])) {
+            $this->SetValue('Mode', intval($data['ModeID']));
+        }
+        $this->updateVisualization();
+        return $this->wrapReturn(true, "Room update applied.", null, false);
     }
 
     private function updateVisualization(): void

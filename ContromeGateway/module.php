@@ -533,6 +533,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -549,6 +550,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
         return $this->wrapReturn(true, 'Setpoint updated.');
     }
 
@@ -630,6 +632,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -646,6 +649,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['Setpoint' => $setpoint]);
         return $this->wrapReturn(true, 'Target updated.');
     }
 
@@ -727,6 +731,7 @@ class ContromeGateway extends IPSModuleStrict
             }
             else {
                 $this->SetStatus(IS_ACTIVE);
+                $this->pushRoomUpdateToChildren($roomId, ['ModeID' => $modeID]);
                 return $this->wrapReturn(true, 'Short non-JSON response from Controme API. Assuming success.', $response);
             }
         }
@@ -743,6 +748,7 @@ class ContromeGateway extends IPSModuleStrict
 
         //Alle ist ok.
         $this->SetStatus(IS_ACTIVE);
+        $this->pushRoomUpdateToChildren($roomId, ['ModeID' => $modeID]);
         return $this->wrapReturn(true, 'Mode updated.');
     }
 
@@ -839,6 +845,26 @@ class ContromeGateway extends IPSModuleStrict
 
         $msg = "Response from $ip, HTTP Code: $httpCode";
         return $this->wrapReturn(true, $msg);
+    }
+
+    /**
+     * Sendet ein optimistisches Update direkt an den Room-Thermostat für $roomId, nachdem ein
+     * Schreibvorgang über die Controme-API erfolgreich war - damit die Visualisierung nicht erst
+     * auf den nächsten regulären Controme-Sendezyklus (bis zu 15 Minuten) warten muss.
+     * Best-effort: das Ergebnis wird nicht ausgewertet, ein fehlendes/nicht erreichbares
+     * Room-Thermostat-Modul darf den eigentlichen (bereits erfolgreichen) Schreibvorgang nicht als Fehler melden.
+     *
+     * @param int   $roomId Die Controme RoomID
+     * @param array $fields Zusätzliche Felder, z. B. ['Setpoint' => 21.5] oder ['ModeID' => 2]
+     */
+    private function pushRoomUpdateToChildren(int $roomId, array $fields): void
+    {
+        $payload = array_merge([
+            "DataID" => GUIDs::DATAFLOW,
+            "Action" => ACTIONs::PUSH_ROOM_UPDATE,
+            "RoomID" => $roomId
+        ], $fields);
+        $this->SendDataToChildren(json_encode($payload));
     }
 
     private function GetEeffectiveTemperatureForRoom(int $roomId): string
