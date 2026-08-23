@@ -21,8 +21,8 @@ Module description: Central control for Controme heating systems in IP-Symcon.
 - Set temporary setpoints
 
 **NOTE:**
-Setting the operation mode's API has a bug that was solved with V2, Release XX Software Version of the Controme Mini-Server.
-In case you are an older Release, setting of the operation mode might not work correctly.
+Setting the operation mode's API has a bug that was solved with software release "LabV2" published Nov. 07, 2025 of the Controme Mini-Server.
+In case you are using an older Release, setting of the operation mode might not work correctly.
 
 ## 2. Requirements
 

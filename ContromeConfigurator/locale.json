@@ -11,14 +11,16 @@
             "Room Thermostat": "Raumthermostat",
             "Source code, donation and licence ...": "Quellcode, Spende und Lizenz ...",
             "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "Die Software ist für nicht-kommerzielle Nutzung kostenlos. Ich würde mich über eine Spende freuen, wenn Ihnen das Modul gefällt.",
-            "\\nLicense": "\\nLizenz",
+            "\nLicense": "\nLizenz",
             "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung-Nicht kommerziell-Weitergabe unter gleichen Bedingungen 4.0 International Lizenz.",
             "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Details unter https://creativecommons.org/licenses/by-nc-sa/4.0/.",
             "No connection to Controme Mini-Server": "Keine Verbindung zum Controme Mini-Server",
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal",
             "Press 'UPDATE' to get the room list from the gateway.": "Drücken Sie 'AKTUALISIEREN', um die Raumliste vom Gateway abzurufen.",
-            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Fehler beim Abrufen der Räume vom Controme Mini-Server. Bitte Gateway überprüfen."
+            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Fehler beim Abrufen der Räume vom Controme Mini-Server. Bitte Gateway überprüfen.",
+            "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
+            "Definition:": "Definition:"
         },
         "es": {
             "Controme Heating Control - Configurator": "Control de Calefacción Controme - Configurador",
@@ -31,14 +33,16 @@
             "Room Thermostat": "Termostato de Habitación",
             "Source code, donation and licence ...": "Código fuente, donación y licencia ...",
             "The software is free of charge for non-commercial use, I would appreciate a donation if you like the module.": "El software es gratuito para uso no comercial. Agradecería una donación si le gusta el módulo.",
-            "\\nLicense": "\\nLicencia",
+            "\nLicense": "\nLicencia",
             "This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.": "Este trabajo está licenciado bajo una Licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional.",
             "See https://creativecommons.org/licenses/by-nc-sa/4.0/ for details.": "Consulte https://creativecommons.org/licenses/by-nc-sa/4.0/ para más detalles.",
             "No connection to Controme Mini-Server": "Sin conexión al Mini-Servidor Controme",
             "Authentication failed": "Autenticación fallida",
             "Communication not normal": "Comunicación no normal",
             "Press 'UPDATE' to get the room list from the gateway.": "Presione 'ACTUALIZAR' para obtener la lista de habitaciones de la puerta de enlace.",
-            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Error al obtener habitaciones del Mini-Servidor Controme. Por favor, verifique la puerta de enlace."
+            "Error fetching rooms from Controme Mini-Server. Please check gateway.": "Error al obtener habitaciones del Mini-Servidor Controme. Por favor, verifique la puerta de enlace.",
+            "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
+            "Definition:": "Definición:"
         }
     }
 }

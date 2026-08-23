@@ -13,7 +13,7 @@ Automatisches Anlegen von Räumen, Sensoren, Ist-/Soll-Temperaturen, Luftfeuchte
 
 Vollständig in IPS integrierbar mit Timer, Variablenprofilen, Tiles für die Visualisierung.
 
-Unterstützt Lesen und Schreiben über die Controme API, V2 Branch, Release XX.
+Unterstützt Lesen und Schreiben über die Controme API, Software-Version LabV2, Release vom 07.11.2025.
 API Informatiaon can be found at https://support.controme.com/api/
 
 **HINWEISE:**
