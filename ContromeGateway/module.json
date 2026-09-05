@@ -3,7 +3,6 @@
     "name": "Controme Gateway",
     "type": 2,
     "vendor": "Controme GmbH",
-    "LibraryID": "{89077CE1-F783-DE03-9291-0EEF49585535}",
     "aliases": [
         "Controme Gateway"
     ],
@@ -15,13 +14,5 @@
         "{ED578E4B-01FB-EFD4-6C72-6FF4A4633AD5}"
     ],
     "prefix": "CONGW",
-    "url": "",
-    "translations": {
-        "de": {
-            "Controme Gateway": "Controme Gateway"
-        },
-        "es": {
-            "Controme Gateway": "Puerta de Enlace Controme"
-        }
-    }
+    "url": ""
 }

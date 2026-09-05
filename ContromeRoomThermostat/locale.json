@@ -38,7 +38,10 @@
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal",
             "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
-            "Definition:": "Definition:"
+            "Definition:": "Definition:",
+            "Controme Room Thermostat": "Controme Raumthermostat",
+            "Controme Thermostat": "Controme Thermostat",
+            "Room Thermostat (Controme)": "Raumthermostat (Controme)"
         },
         "es": {
             "Controme Heating Control - Room Thermostat\n ": "Control de Calefacción Controme - Termostato de Habitación\n ",
@@ -78,7 +81,10 @@
             "Authentication failed": "Autenticación fallida",
             "Communication not normal": "Comunicación no normal",
             "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
-            "Definition:": "Definición:"
+            "Definition:": "Definición:",
+            "Controme Room Thermostat": "Termostato de Habitación Controme",
+            "Controme Thermostat": "Termostato Controme",
+            "Room Thermostat (Controme)": "Termostato de Habitación (Controme)"
         }
     }
 }

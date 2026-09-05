@@ -111,7 +111,8 @@
             "Advanced settings ...": "Erweiterte Einstellungen ...",
             "Automatically update system values": "Systemwerte automatisch aktualisieren",
             "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
-            "Definition:": "Definition:"
+            "Definition:": "Definition:",
+            "Controme Zentraleinheit": "Controme Zentraleinheit"
         },
         "es": {
             "Controme only allows setting temperatures and modes from external applications. In case you want to change other configurations please use the Controme interface:": "Controme solo permite establecer temperaturas y modos desde aplicaciones externas. Si desea cambiar otras configuraciones, utilice la interfaz de Controme:",
@@ -224,7 +225,8 @@
             "Advanced settings ...": "Configuración avanzada ...",
             "Automatically update system values": "Actualizar automáticamente los valores del sistema",
             "Copyright (c) 2025 Kai J. Oey aka AllardLiao": "Copyright (c) 2025 Kai J. Oey aka AllardLiao",
-            "Definition:": "Definición:"
+            "Definition:": "Definición:",
+            "Controme Zentraleinheit": "Unidad Central Controme"
         }
     }
 }

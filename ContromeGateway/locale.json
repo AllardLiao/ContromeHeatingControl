@@ -29,7 +29,16 @@
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Communication not normal": "Kommunikation nicht normal",
             "No connection to Controme Mini-Server, please check IP: ": "Keine Verbindung zum Controme Mini-Server, bitte überprüfen Sie die IP: ",
-            "Definition:": "Definition:"
+            "Definition:": "Definition:",
+            "Controme Gateway": "Controme Gateway",
+            "Success - connection established for user ": "Erfolgreich - Verbindung hergestellt für Benutzer ",
+            "Failed - could not establish connection for user ": "Fehlgeschlagen - Verbindung konnte nicht hergestellt werden für Benutzer ",
+            "Failed to read data.": "Fehler beim Lesen der Daten.",
+            "Failed to decode data (invalid JSON).": "Fehler beim Dekodieren der Daten (ungültiges JSON).",
+            "Request failed for ": "Anfrage fehlgeschlagen für ",
+            "Unknown error": "Unbekannter Fehler",
+            "Invalid/unexpected response from Controme API (non JSON provided).": "Ungültige/unerwartete Antwort von der Controme-API (kein JSON geliefert).",
+            "Conection check not possible: IP, User, Password or House-ID missing!": "Verbindungsprüfung nicht möglich: IP, Benutzer, Passwort oder Haus-ID fehlt!"
         },
         "es": {
             "Controme Heating Control - Gateway Component": "Control de Calefacción Controme - Componente Gateway",
@@ -60,7 +69,16 @@
             "Authentication failed": "Autenticación fallida",
             "Communication not normal": "Comunicación no normal",
             "No connection to Controme Mini-Server, please check IP: ": "Sin conexión al Mini-Servidor Controme, por favor verifique la IP: ",
-            "Definition:": "Definición:"
+            "Definition:": "Definición:",
+            "Controme Gateway": "Puerta de Enlace Controme",
+            "Success - connection established for user ": "Éxito - conexión establecida para el usuario ",
+            "Failed - could not establish connection for user ": "Fallo - no se pudo establecer la conexión para el usuario ",
+            "Failed to read data.": "Error al leer los datos.",
+            "Failed to decode data (invalid JSON).": "Error al decodificar los datos (JSON no válido).",
+            "Request failed for ": "Solicitud fallida para ",
+            "Unknown error": "Error desconocido",
+            "Invalid/unexpected response from Controme API (non JSON provided).": "Respuesta no válida/inesperada de la API de Controme (no se proporcionó JSON).",
+            "Conection check not possible: IP, User, Password or House-ID missing!": "No es posible comprobar la conexión: falta la IP, el usuario, la contraseña o el ID de la casa."
         }
     }
 }
